@@ -32,8 +32,9 @@ ActiveAdmin.register User do
       f.input :lastname
       f.input :email
     end
+    f.actions
   end
-
+  
   # See permitted parameters documentation:
   # https://github.com/gregbell/active_admin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
