@@ -15,7 +15,7 @@ ActiveAdmin.register User do
     column :sign_in_count
     column :last_sign_in_at do |user|
       span style: 'white-space: pre'  do
-        l user.last_sign_in_at, format: :iso
+        user.last_sign_in_at ?  l(user.last_sign_in_at, format: :iso) : ""
       end
     end
     column :created_at do |user|
@@ -34,7 +34,7 @@ ActiveAdmin.register User do
     end
     f.actions
   end
-  
+
   # See permitted parameters documentation:
   # https://github.com/gregbell/active_admin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -47,5 +47,5 @@ ActiveAdmin.register User do
   #  permitted << :other if resource.something?
   #  permitted
   # end
-  
+
 end
