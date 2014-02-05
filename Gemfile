@@ -20,6 +20,7 @@ gem 'unicorn'
 gem 'activeadmin', github: 'gregbell/active_admin'
 gem 'airbrake'
 gem 'rails_config'
+gem 'dragonfly'
 
 group :development do
   gem 'capistrano',         '~> 3.1.0'

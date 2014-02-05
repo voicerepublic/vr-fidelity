@@ -90,6 +90,9 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     disable_assets_logger (1.0.0)
+    dragonfly (1.0.3)
+      multi_json (~> 1.0)
+      rack
     erubis (2.7.0)
     execjs (2.0.2)
     formtastic (2.3.0.rc2)
@@ -229,6 +232,7 @@ DEPENDENCIES
   coffee-rails (~> 4.0.0)
   debugger
   disable_assets_logger
+  dragonfly
   jbuilder (~> 1.2)
   jquery-rails
   pg
