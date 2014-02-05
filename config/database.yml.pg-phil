@@ -1,0 +1,31 @@
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: vr_dev
+  #pool: 5
+  #username: root
+  #password: 
+  #host: localhost
+  username: phil
+  password: blablub
+
+  # Connect on a TCP socket. Omitted by default since the client uses a
+  # domain socket that doesn't need configuration. Windows does not have
+  # domain sockets, so uncomment these lines.
+  #host: localhost
+  #port: 5432
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  database: vr_test
+  #pool: 5
+  #username: root
+  #password: 
+  #host: localhost
+
+production:
+  adapter: sqlite3
+  database: db/production.sqlite3
+  pool: 5
+  timeout: 5000
