@@ -18,3 +18,11 @@ This app provides the BackOffice interface to the VoiceRepublic
 database. Therefore this app will not have any
 migrations. VoiceRepublic Dev is the single repository to store and
 run migrations from.
+
+
+Data Migration/Seeds
+--------------------
+
+Run
+
+    rake data:migrate:create_admin
