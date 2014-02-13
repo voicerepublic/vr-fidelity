@@ -32,7 +32,7 @@ ActiveAdmin.register Talk do
     f.inputs do
       f.input :title
       f.input :starts_at
-      # f.input :featured_from # FIXME introduce featured_from for talks
+      f.input :featured_from
       f.input :duration # FIXME make it a select box with discrete values
       f.input :venue
       f.input :teaser
