@@ -31,6 +31,7 @@ class Talk < ActiveRecord::Base
 
   scope :upcoming, -> { where('ends_at > NOW()') }
   scope :archived, -> { where('ends_at < NOW()') }
+  scope :featured, -> { where.not(featured_from: nil) }
 
   def starts_in # seconds (for prelive)
     (starts_at - Time.now).to_i

@@ -31,6 +31,11 @@ ActiveAdmin.register Talk do
     actions
   end
 
+  scope :all
+  scope :upcoming
+  scope :archived
+  scope :featured
+
   form do |f|
     f.inputs do
       f.input :title
