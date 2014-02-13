@@ -11,18 +11,12 @@ ActiveAdmin.register Venue do
     column :description, sortable: :description do |venue|
       truncate venue.description
     end
-    # FIXME remove featured_from
-    column :featured_from, sortable: :featured_from do |venue|
-      l venue.featured_from, format: :iso unless venue.featured_from.nil?
-    end
     column :user
     actions
   end
 
   form do |f|
     f.inputs do
-      # FIXME remove featured_from
-      f.input :featured_from # FIXME use a proper datepicker
       f.input :title
       f.input :teaser # FIXME teaser should be a string rather than a text
       f.input :description
