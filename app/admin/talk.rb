@@ -23,6 +23,9 @@ ActiveAdmin.register Talk do
     column :description, sortable: :description do |talk|
       truncate talk.description # FIXME properly display html
     end
+    column :featured_from, sortable: :featured_from do |talk|
+      l talk.featured_from, format: :iso unless talk.featured_from.nil?
+    end
     column :record
     column :venue
     actions
