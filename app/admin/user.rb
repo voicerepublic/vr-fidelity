@@ -15,7 +15,7 @@ ActiveAdmin.register User do
     column :sign_in_count
     column :last_sign_in_at do |user|
       span style: 'white-space: pre'  do
-        l user.last_sign_in_at, format: :iso
+        l user.last_sign_in_at, format: :iso unless user.last_sign_in_at.nil?
       end
     end
     column :created_at do |user|
