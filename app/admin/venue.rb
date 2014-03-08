@@ -21,6 +21,7 @@ ActiveAdmin.register Venue do
       f.input :teaser # FIXME teaser should be a string rather than a text
       f.input :description
       f.input :user
+      f.input :options
     end
     f.actions
   end
