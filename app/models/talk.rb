@@ -29,8 +29,9 @@ class Talk < ActiveRecord::Base
 
   dragonfly_accessor :image
 
-  scope :upcoming, -> { where('ends_at > NOW()') }
-  scope :archived, -> { where('ends_at < NOW()') }
+  %w(prelive live postlive processing archived).each do |state|
+    scope state.to_sym, -> { where(state: state) }
+  end
   scope :featured, -> { where.not(featured_from: nil) }
 
   def starts_in # seconds (for prelive)
