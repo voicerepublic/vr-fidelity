@@ -1,4 +1,5 @@
 ActiveAdmin.register Venue do
+  permit_params :id, :title, :teaser, :description, :user, :options
 
   index do
     column :id
@@ -21,11 +22,22 @@ ActiveAdmin.register Venue do
       f.input :teaser # FIXME teaser should be a string rather than a text
       f.input :description
       f.input :user
-      f.input :options
+      f.input :options, :input_html => { :rows => 6 },
+      :hint => "<b>These options are supported:</b><br/>
+                no_auto_postprocessing: true/false<br/>
+                no_auto_end_talk: true/false<br/>
+                no_email: true/false<br/>
+                suppress_chat: true/false<br/>
+                <b>Example configuration:</b>
+                <pre>
+                ---
+                :no_email: true
+                :no_auto_end_talk: true
+                </pre>".html_safe
     end
     f.actions
   end
-  
+
   # See permitted parameters documentation:
   # https://github.com/gregbell/active_admin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -38,5 +50,5 @@ ActiveAdmin.register Venue do
   #  permitted << :other if resource.something?
   #  permitted
   # end
-  
+
 end
