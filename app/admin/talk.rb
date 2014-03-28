@@ -5,7 +5,7 @@ ActiveAdmin.register Talk do
       link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
     end
   end
-  
+
   member_action :postprocess, method: 'put' do
     Delayed::Job.enqueue Postprocess.new(params[:id]), queue: 'audio'
     redirect_to({ action: :show }, { notice: "Placed in queue for postprocessing." })
@@ -63,7 +63,7 @@ ActiveAdmin.register Talk do
       f.input :record
     end
     f.inputs 'Fields dependent on state' do
-      f.input :state, input_html: { disabled: true } 
+      f.input :state, input_html: { disabled: true }
       if f.object.state == 'postlive'
         f.input :started_at
         f.input :ended_at
@@ -71,7 +71,7 @@ ActiveAdmin.register Talk do
     end
     f.actions
   end
-  
+
   permit_params %w( title
                     starts_at
                     featured_from
@@ -82,5 +82,5 @@ ActiveAdmin.register Talk do
                     record
                     started_at
                     ended_at ).map(&:to_sym)
-  
+
 end
