@@ -19,10 +19,10 @@ ActiveAdmin.register Venue do
   form do |f|
     f.inputs do
       f.input :title
-      f.input :teaser # FIXME teaser should be a string rather than a text
+      f.input :teaser, input_html: { rows: 1 }
       f.input :description
-      f.input :user
-      f.input :options, :input_html => { :rows => 6 },
+      #f.input :user
+      f.input :options, input_html: { rows: 6 },
       :hint => "<b>These options are supported:</b><br/>
                 no_auto_postprocessing: true/false<br/>
                 no_auto_end_talk: true/false<br/>
@@ -30,10 +30,12 @@ ActiveAdmin.register Venue do
                 suppress_chat: true/false<br/>
                 <b>Example configuration:</b>
                 <pre>
-                ---
-                :no_email: true
-                :no_auto_end_talk: true
+                no_auto_postprocessing: true
+                no_auto_end_talk: true
+                no_email: true
+                suppress_chat: true
                 </pre>".html_safe
+      f.input :image, as: :dragonfly
     end
     f.actions
   end
