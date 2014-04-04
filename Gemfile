@@ -25,6 +25,7 @@ gem 'rails_config'
 gem 'activeadmin-dragonfly', github: 'stefanoverna/activeadmin-dragonfly'
 
 group :development do
+  gem 'annotator'
   gem 'capistrano',         '~> 3.1.0'
   gem 'capistrano-rbenv',   '~> 2.0.1'
   gem 'capistrano-bundler', '~> 1.1.1'

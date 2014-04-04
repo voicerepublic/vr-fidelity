@@ -1,5 +1,8 @@
 ActiveAdmin.register User do
 
+  scope :nonguests
+  scope :guests
+  
   index do
     column :id
     column :firstname
@@ -31,6 +34,7 @@ ActiveAdmin.register User do
       f.input :firstname
       f.input :lastname
       f.input :email
+      f.input :avatar, as: :dragonfly
     end
     f.actions
   end

@@ -55,6 +55,8 @@ GEM
     airbrake (3.1.15)
       builder
       multi_json
+    annotator (0.0.10)
+      activerecord (>= 3.0)
     arbre (1.0.1)
       activesupport (>= 3.0.0)
     arel (4.0.1)
@@ -242,6 +244,7 @@ DEPENDENCIES
   activeadmin!
   activeadmin-dragonfly!
   airbrake
+  annotator
   capistrano (~> 3.1.0)
   capistrano-bundler (~> 1.1.1)
   capistrano-rails (~> 1.1.1)

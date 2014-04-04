@@ -2,14 +2,22 @@
 #
 # Attributes:
 # * id [integer, primary, not null] - primary key
+# * audio_formats [text, default="--- []\n"] - TODO: document me
 # * created_at [datetime] - creation time
 # * description [text] - TODO: document me
-# * duration [integer] - TODO: document me
+# * duration [integer, default=30] - TODO: document me
 # * ended_at [datetime] - TODO: document me
 # * ends_at [datetime] - TODO: document me
-# * record [boolean] - TODO: document me
+# * featured_from [datetime] - TODO: document me
+# * image_uid [string] - TODO: document me
+# * play_count [integer, default=0] - TODO: document me
+# * processed_at [datetime] - TODO: document me
+# * record [boolean, default=true] - TODO: document me
 # * recording [string] - TODO: document me
+# * session [text] - TODO: document me
+# * started_at [datetime] - TODO: document me
 # * starts_at [datetime] - TODO: document me
+# * state [string] - TODO: document me
 # * teaser [string] - TODO: document me
 # * title [string]
 # * updated_at [datetime] - last update time
