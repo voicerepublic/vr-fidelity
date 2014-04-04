@@ -26,3 +26,10 @@ Data Migration/Seeds
 Run
 
     rake data:migrate:create_admin
+
+
+Deployment Setup
+----------------
+    
+`public/system/dragonfly` needs to by symlink to the same directory of
+the main app.

@@ -16,6 +16,15 @@ GIT
       ransack (~> 1.0)
       sass-rails
 
+GIT
+  remote: git://github.com/stefanoverna/activeadmin-dragonfly.git
+  revision: 89a47f9124b1c4ee4ae79f6c32aa999d2566c5d1
+  specs:
+    activeadmin-dragonfly (0.0.2)
+      activeadmin
+      dragonfly (= 0.9.15)
+      rack-cache
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -95,7 +104,7 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     disable_assets_logger (1.0.0)
-    dragonfly (1.0.3)
+    dragonfly (0.9.15)
       multi_json (~> 1.0)
       rack
     erubis (2.7.0)
@@ -146,6 +155,8 @@ GEM
     pry-rails (0.3.2)
       pry (>= 0.9.10)
     rack (1.5.2)
+    rack-cache (1.2)
+      rack (>= 0.4)
     rack-test (0.6.2)
       rack (>= 1.0)
     rails (4.0.2)
@@ -229,6 +240,7 @@ PLATFORMS
 
 DEPENDENCIES
   activeadmin!
+  activeadmin-dragonfly!
   airbrake
   capistrano (~> 3.1.0)
   capistrano-bundler (~> 1.1.1)
@@ -239,7 +251,6 @@ DEPENDENCIES
   delayed_job
   delayed_job_active_record
   disable_assets_logger
-  dragonfly
   jbuilder (~> 1.2)
   jquery-rails
   pg

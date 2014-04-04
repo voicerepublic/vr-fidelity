@@ -16,6 +16,8 @@
 # * venue_id [integer] - belongs to :venue
 class Talk < ActiveRecord::Base
 
+  STATES = %w( prelive live postlive processing archived )
+  
   # attr_accessible :title, :teaser, :starts_at, :duration,
   #                 :description, :record, :image
 
@@ -27,9 +29,9 @@ class Talk < ActiveRecord::Base
 
   delegate :user, to: :venue
 
-  dragonfly_accessor :image
+  image_accessor :image
 
-  %w(prelive live postlive processing archived).each do |state|
+  STATES.each do |state|
     scope state.to_sym, -> { where(state: state) }
   end
   scope :featured, -> { where.not(featured_from: nil) }

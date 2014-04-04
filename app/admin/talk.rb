@@ -57,6 +57,7 @@ ActiveAdmin.register Talk do
       f.input :starts_at
       f.input :featured_from
       f.input :duration # FIXME make it a select box with discrete values
+      f.input :image, as: :dragonfly
       f.input :venue
       f.input :teaser
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
