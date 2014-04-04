@@ -82,6 +82,9 @@ ActiveAdmin.register Talk do
                     description
                     record
                     started_at
-                    ended_at ).map(&:to_sym)
+                    ended_at
+                    image
+                    retained_image
+                    remove_image ).map(&:to_sym)
 
 end
