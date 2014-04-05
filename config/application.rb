@@ -28,7 +28,8 @@ module VoicerepublicBackoffice
     # config.i18n.default_locale = :de
 
     # http://stackoverflow.com/questions/4707896/prefix-urls-in-rails-application
-    config.action_controller.relative_url_root = '/backend'
+    # RAILS_RELATIVE_URL_ROOT
+    config.relative_url_root = '/backend'
     
   end
 end
