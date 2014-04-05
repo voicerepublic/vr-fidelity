@@ -24,7 +24,8 @@ rbenv: bundle: command not found
     [...]
 
 
-DEBUG [60fe565e]  database configuration does not specify adapter
------------------------------------------------------------------
-
-TODO
+Failing: unicorn_wrapper restart
+--------------------------------
+DEBUG [78ea7dd4]  pkill:
+DEBUG [78ea7dd4]  killing pid 1231 failed
+DEBUG [78ea7dd4]  : Operation not permitted

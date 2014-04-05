@@ -26,5 +26,9 @@ module VoicerepublicBackoffice
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
+
+    # http://stackoverflow.com/questions/4707896/prefix-urls-in-rails-application
+    config.action_controller.relative_url_root = '/backend'
+    
   end
 end

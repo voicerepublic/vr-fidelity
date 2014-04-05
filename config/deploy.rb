@@ -10,6 +10,8 @@ set :repo_url, 'git@github.com:munen/voicerepublic_backoffice.git'
 
 set :ssh_options, { forward_agent: true }
 
+set :rails_env, "production"
+
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
