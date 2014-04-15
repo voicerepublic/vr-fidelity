@@ -30,6 +30,7 @@ ActiveAdmin.register Venue do
                 suppress_chat: true/false<br/>
                 <b>Example configuration:</b>
                 <pre>
+                ---
                 no_auto_postprocessing: true
                 no_auto_end_talk: true
                 no_email: true
