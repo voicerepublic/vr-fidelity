@@ -66,8 +66,18 @@ ActiveAdmin.register Talk do
     f.inputs 'Fields dependent on state' do
       f.input :state, input_html: { disabled: true }
       if f.object.state == 'postlive'
-        f.input :started_at
-        f.input :ended_at
+        f.input :started_at,
+          as: :string,
+          input_html: {
+            class: 'picker',
+            value: f.object.started_at.strftime("%Y-%m-%d %H:%M:%S")
+          }
+        f.input :ended_at,
+          as: :string,
+          input_html: {
+            class: 'picker',
+            value: f.object.started_at.strftime("%Y-%m-%d %H:%M:%S")
+          }
       end
     end
     f.actions
