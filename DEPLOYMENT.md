@@ -24,8 +24,12 @@ rbenv: bundle: command not found
     [...]
 
 
-Failing: unicorn_wrapper restart
+Warning: unicorn_wrapper restart
 --------------------------------
 DEBUG [78ea7dd4]  pkill:
 DEBUG [78ea7dd4]  killing pid 1231 failed
 DEBUG [78ea7dd4]  : Operation not permitted
+
+This error shows up in the log while deploying, since it tries to kill
+processes it doesn't own. While this is not a problem, it is somewhat
+irritating.
