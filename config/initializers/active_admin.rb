@@ -1,3 +1,4 @@
+# coding: utf-8
 ActiveAdmin.setup do |config|
 
   # == Site Title
@@ -162,8 +163,10 @@ ActiveAdmin.setup do |config|
   # and feel.
   #
   # To load a stylesheet:
+  config.register_stylesheet 'jquery.ui.datepicker.css'
+  config.register_stylesheet 'jquery.ui.slider.css'
   config.register_stylesheet 'jquery-ui-timepicker-addon.css'
-  #
+  
   # You can provide an options hash for more control, which is passed along to stylesheet_link_tag():
   #   config.register_stylesheet 'my_print_stylesheet.css', :media => :print
   #

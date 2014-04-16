@@ -76,7 +76,7 @@ ActiveAdmin.register Talk do
           as: :string,
           input_html: {
             class: 'picker',
-            value: f.object.started_at.strftime("%Y-%m-%d %H:%M:%S")
+            value: f.object.ended_at.strftime("%Y-%m-%d %H:%M:%S")
           }
       end
     end
