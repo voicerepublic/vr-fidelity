@@ -256,6 +256,7 @@ DEPENDENCIES
   disable_assets_logger
   jbuilder (~> 1.2)
   jquery-rails
+  jquery-ui-rails
   pg
   pry-rails
   rails (= 4.0.2)
