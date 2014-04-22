@@ -25,32 +25,33 @@
 class Talk < ActiveRecord::Base
 
   STATES = %w( prelive live postlive processing archived )
-  
-  # attr_accessible :title, :teaser, :starts_at, :duration,
-  #                 :description, :record, :image
+
+  # TODO create a better more specific pattern for urls
+  URL_PATTERN = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
+  URL_MESSAGE = "if changed, must be a valid URL, i.e. matching #{URL_PATTERN}"
 
   belongs_to :venue, :inverse_of => :talks
 
   validates :venue, :title, :starts_at, :ends_at, presence: true
 
+  validates :recording_override, format: { with: URL_PATTERN, message: URL_MESSAGE },
+            if: ->(t) { t.recording_override? && t.recording_override_changed? }
+  
   before_validation :set_ends_at
 
+  after_save :schedule_processing_override,
+             if: ->(t) { t.recording_override? && t.recording_override_changed? }
+  
   delegate :user, to: :venue
 
   image_accessor :image
 
+  # poor man's auto scopes
   STATES.each do |state|
     scope state.to_sym, -> { where(state: state) }
   end
+
   scope :featured, -> { where.not(featured_from: nil) }
-
-  def starts_in # seconds (for prelive)
-    (starts_at - Time.now).to_i
-  end
-
-  def ends_in # seconds (for live)
-    (ends_at - Time.now).to_i
-  end
 
   private
 
@@ -59,4 +60,8 @@ class Talk < ActiveRecord::Base
     self.ends_at = starts_at + duration.minutes
   end
 
+  def schedule_processing_override
+    Delayed::Job.enqueue ProcessOverride.new(id), queue: 'audio'
+  end
+  
 end

@@ -1,3 +1,6 @@
+# the require is needed since we're monkey patching delayed job
+# with ap/model/delayed_job, but since it undermines rails' autoload
+# we'll have to restart the server after editing ap/model/delayed_job
 require Rails.root.join 'app', 'models', 'delayed_job'
 
 ActiveAdmin.register Delayed::Job, as: "Job" do

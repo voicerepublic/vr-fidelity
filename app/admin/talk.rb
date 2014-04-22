@@ -70,10 +70,11 @@ ActiveAdmin.register Talk do
       f.input :teaser
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
       f.input :record
+      f.input :recording_override, hint: 'paste a URL to import a manually processed file, e.g. a dropbox URL'
     end
     f.inputs 'Fields dependent on state' do
       f.input :state, input_html: { disabled: true }
-      if f.object.state == 'postlive'
+      if %w(postlive archived).include? f.object.state
         f.input :started_at,
           as: :string,
           input_html: {
@@ -103,6 +104,7 @@ ActiveAdmin.register Talk do
                     ended_at
                     image
                     retained_image
-                    remove_image ).map(&:to_sym)
+                    remove_image
+                    recording_override ).map(&:to_sym)
 
 end

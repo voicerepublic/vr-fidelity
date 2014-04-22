@@ -8,6 +8,8 @@ class Delayed::Job
 
   def display_handler
     case handler
+    when /struct:ProcessOverride/
+      "Talk.find(#{payload_object.talk_id}).process_override!"
     when /struct:Postprocess/
       "Talk.find(#{payload_object.talk_id}).postprocess!"
     when /struct:Reprocess/
