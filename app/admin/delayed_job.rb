@@ -1,6 +1,6 @@
 require Rails.root.join 'app', 'models', 'delayed_job'
 
-ActiveAdmin.register Delayed::Job, as: "DelayedJob" do
+ActiveAdmin.register Delayed::Job, as: "Job" do
   actions :all, :except => [:edit, :new]
 
   show do |job|
@@ -31,10 +31,13 @@ ActiveAdmin.register Delayed::Job, as: "DelayedJob" do
     column :run_at
     column :attempts
     column :queue
+    column :handler do |job|
+      job.display_handler
+    end
     column :locked_at
     column :locked_by
-    column :last_error do |c|
-      c.last_error.try(:split, "\n").try(:first)
+    column :last_error do |job|
+      job.last_error.try(:split, "\n").try(:first)
     end
 
     actions

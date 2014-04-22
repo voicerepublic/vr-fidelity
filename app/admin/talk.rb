@@ -4,11 +4,19 @@ ActiveAdmin.register Talk do
     if talk.state == 'postlive'
       link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
     end
+    if talk.state == 'archived'
+      link_to 'Reprocess', reprocess_admin_talk_path(talk), method: 'put'
+    end
   end
 
   member_action :postprocess, method: 'put' do
     Delayed::Job.enqueue Postprocess.new(params[:id]), queue: 'audio'
     redirect_to({ action: :show }, { notice: "Placed in queue for postprocessing." })
+  end
+
+  member_action :reprocess, method: 'put' do
+    Delayed::Job.enqueue Reprocess.new(params[:id]), queue: 'audio'
+    redirect_to({ action: :show }, { notice: "Placed in queue for reprocessing." })
   end
 
   index do

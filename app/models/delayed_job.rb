@@ -6,4 +6,19 @@ class Delayed::Job
   scope :trigger, -> { where(queue: 'trigger') }
   scope :mail, -> { where(queue: 'mail') }
 
+  def display_handler
+    case handler
+    when /struct:Postprocess/
+      "Talk.find(#{payload_object.talk_id}).postprocess!"
+    when /struct:Reprocess/
+      "Talk.find(#{payload_object.talk_id}).reprocess!"
+    when /object:Delayed::PerformableMethod\nobject: !ruby\/ActiveRecord/
+      clazz = handler.match(/ActiveRecord:(.+)/).to_a.last
+      meth = payload_object.method_name
+      oid = payload_object.id
+      "#{clazz}.find(#{oid}).#{meth} # PM"
+    else '?'
+    end
+  end
+  
 end
