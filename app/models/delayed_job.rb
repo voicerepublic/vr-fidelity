@@ -17,6 +17,8 @@ class Delayed::Job
       meth = payload_object.method_name
       oid = payload_object.id
       "#{clazz}.find(#{oid}).#{meth} # PM"
+    when /object:Delayed::PerformableMailer/
+      handler.match(/email: (.+)/)
     else '?'
     end
   end

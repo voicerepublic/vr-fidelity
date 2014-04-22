@@ -43,6 +43,7 @@ ActiveAdmin.register Delayed::Job, as: "Job" do
     actions
   end
 
+  scope :all
   scope :failed
   scope :audio
   scope :trigger
