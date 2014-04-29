@@ -21,6 +21,7 @@ ActiveAdmin.register Talk do
 
   index do
     column :id
+    column :uri
     column :starts_at, sortable: :starts_at do |talk|
       span style: 'white-space: pre' do
         l talk.starts_at, format: :iso
