@@ -1,1 +1,6 @@
 #= require active_admin/base
+#
+#= require jquery.ui.datepicker
+#= require jquery.ui.slider
+#= require jquery-ui-timepicker-addon
+#= require datepicker
