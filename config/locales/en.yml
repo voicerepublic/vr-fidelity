@@ -21,6 +21,9 @@
 
 en:
   hello: "Hello world"
+  date:
+    formats:
+      long: "%Y-%m-%d"
   time:
     formats:
-      iso: '%Y-%m-%d %H:%M'
+      long: "%Y-%m-%d %H:%M:%S"

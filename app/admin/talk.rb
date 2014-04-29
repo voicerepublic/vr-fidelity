@@ -18,7 +18,7 @@ ActiveAdmin.register Talk do
     Delayed::Job.enqueue Reprocess.new(params[:id]), queue: 'audio'
     redirect_to({ action: :show }, { notice: "Placed in queue for reprocessing." })
   end
-
+  
   index do
     column :id
     column :uri
