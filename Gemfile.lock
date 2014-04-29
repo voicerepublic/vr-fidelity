@@ -116,6 +116,8 @@ GEM
     has_scope (0.6.0.rc)
       actionpack (>= 3.2, < 5)
       activesupport (>= 3.2, < 5)
+    highcharts-rails (3.0.10)
+      railties (>= 3.1)
     hike (1.2.3)
     i18n (0.6.9)
     inherited_resources (1.4.1)
@@ -254,6 +256,7 @@ DEPENDENCIES
   delayed_job
   delayed_job_active_record
   disable_assets_logger
+  highcharts-rails (~> 3.0.0)
   jbuilder (~> 1.2)
   jquery-rails
   jquery-ui-rails

@@ -12,6 +12,7 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 1.2'
 gem 'delayed_job'
 gem 'delayed_job_active_record'
+gem "highcharts-rails", "~> 3.0.0"
 
 group :doc do
   gem 'sdoc', require: false

@@ -4,3 +4,5 @@
 #= require jquery.ui.slider
 #= require jquery-ui-timepicker-addon
 #= require datepicker
+#= require highcharts
+#= require highcharts/highcharts-more
