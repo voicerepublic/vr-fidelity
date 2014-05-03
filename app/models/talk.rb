@@ -36,12 +36,14 @@ class Talk < ActiveRecord::Base
 
   validates :recording_override, format: { with: URL_PATTERN, message: URL_MESSAGE },
             if: ->(t) { t.recording_override? && t.recording_override_changed? }
-  
+
+  validate :related_talk_id_is_talk?, :on => :update
+
   before_validation :set_ends_at
 
   after_save :schedule_processing_override,
              if: ->(t) { t.recording_override? && t.recording_override_changed? }
-  
+
   delegate :user, to: :venue
 
   image_accessor :image
@@ -63,5 +65,12 @@ class Talk < ActiveRecord::Base
   def schedule_processing_override
     Delayed::Job.enqueue ProcessOverride.new(id), queue: 'audio'
   end
-  
+
+  def related_talk_id_is_talk?
+    begin
+      Talk.find(related_talk_id)
+    rescue
+      errors.add(:related_talk_id, "is not a proper talk id")
+    end
+  end
 end

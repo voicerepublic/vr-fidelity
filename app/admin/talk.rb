@@ -18,7 +18,7 @@ ActiveAdmin.register Talk do
     Delayed::Job.enqueue Reprocess.new(params[:id]), queue: 'audio'
     redirect_to({ action: :show }, { notice: "Placed in queue for reprocessing." })
   end
-  
+
   index do
     column :id
     column :uri
@@ -72,6 +72,7 @@ ActiveAdmin.register Talk do
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
       f.input :record
       f.input :recording_override, hint: 'paste a URL to import a manually processed file, e.g. a dropbox URL'
+      f.input :related_talk_id, as: :string, hint: 'ID of related talk'
     end
     f.inputs 'Fields dependent on state' do
       f.input :state, input_html: { disabled: true }
@@ -104,6 +105,7 @@ ActiveAdmin.register Talk do
                     started_at
                     ended_at
                     image
+                    related_talk_id
                     retained_image
                     remove_image
                     recording_override ).map(&:to_sym)
