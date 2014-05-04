@@ -13,6 +13,8 @@ gem 'jbuilder', '~> 1.2'
 gem 'delayed_job'
 gem 'delayed_job_active_record'
 gem "highcharts-rails", "~> 3.0.0"
+gem 'd3_rails'
+gem 'private_pub'
 
 group :doc do
   gem 'sdoc', require: false

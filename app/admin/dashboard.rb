@@ -4,6 +4,10 @@ ActiveAdmin.register_page "Dashboard" do
 
   content :title => proc{ I18n.t("active_admin.dashboard") } do
 
+    div id: 'livedashboard' do
+      subscribe_to "/monitoring"
+    end
+    
     div style: 'font-size: 32px; text-align: center' do
       "WITH GREAT POWER COMES GREAT RESPONSIBILITY"
     end

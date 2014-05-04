@@ -6,3 +6,6 @@
 #= require datepicker
 #= require highcharts
 #= require highcharts/highcharts-more
+#= require d3
+#= require private_pub
+#= require dashboard

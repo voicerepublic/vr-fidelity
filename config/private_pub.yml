@@ -1,0 +1,18 @@
+development:
+  server: "http://localhost:9292/faye"
+  #server: "http://localhost:9292/faye"
+  #server: "http://127.0.0.1:9292/faye"
+  #server: "http://172.21.21.171:9292/faye"
+  #server: "http://192.168.20.62:9292/faye"
+  secret_token: "secret"
+test:
+  server: "http://localhost:9292/faye"
+  secret_token: "secret"
+production:
+  server: "http://localhost:9292/faye"
+  secret_token: "1ca35552f8b33e95302a951002a835fc39b6699ab2447f9140d36190fca0c0a7"
+  signature_expiration: 3600 # one hour
+staging:
+  server: "http://kluuu-staging.panter.ch:9292/faye"
+  secret_token: "1ca35552f8b33e95302a951002a835fc39b6699ab2447f9140d36190fca0c0a7"
+  signature_expiration: 3600 # one hour
