@@ -24,7 +24,7 @@ ActiveAdmin.register Talk do
 
   index do
     column :id
-    column :uri do
+    column :uri do |talk|
       # TODO fix absolute url
       link_to talk.uri, "https://voicerepublic.com/talk/#{talk.id}"
     end
