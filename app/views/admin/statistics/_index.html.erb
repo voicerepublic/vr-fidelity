@@ -8,6 +8,7 @@
         title: { text: 'Users' }
       },
       series: [{
+        name: "Users",
         pointInterval: <%= 1.day * 1000 %>,
         pointStart: <%= 4.weeks.ago.at_midnight.to_i * 1000 %>,
         data: <%= (4.weeks.ago.to_date..Date.today).map { |date| User.where(guest: nil).where('created_at <= ?', date).count}.inspect %>
@@ -29,6 +30,7 @@
         title: { text: 'Talks' }
       },
       series: [{
+        name: "Talks",
         pointInterval: <%= 1.day * 1000 %>,
         pointStart: <%= 4.weeks.ago.at_midnight.to_i * 1000 %>,
         data: <%= (4.weeks.ago.to_date..Date.today).map { |date| Talk.where('created_at <= ?', date).count}.inspect %>
@@ -47,11 +49,32 @@
       yAxis: {
         title: { text: 'Social Shares' }
       },
-      series: [{
+      series: [
+      {
+        name: 'total',
         pointInterval: <%= 1.day * 1000 %>,
         pointStart: <%= 4.weeks.ago.at_midnight.to_i * 1000 %>,
         data: <%= (4.weeks.ago.to_date..Date.today).map { |date| SocialShare.where('created_at <= ?', date).count}.inspect %>
-      }]
+      },
+      {
+        name: 'mail',
+        pointInterval: <%= 1.day * 1000 %>,
+        pointStart: <%= 4.weeks.ago.at_midnight.to_i * 1000 %>,
+        data: <%= (4.weeks.ago.to_date..Date.today).map { |date| SocialShare.where('created_at <= ?', date).where(social_network: 'mail').count}.inspect %>
+      },
+      {
+        name: 'twitter',
+        pointInterval: <%= 1.day * 1000 %>,
+        pointStart: <%= 4.weeks.ago.at_midnight.to_i * 1000 %>,
+        data: <%= (4.weeks.ago.to_date..Date.today).map { |date| SocialShare.where('created_at <= ?', date).where(social_network: 'twitter').count}.inspect %>
+      },
+      {
+        name: 'facebook',
+        pointInterval: <%= 1.day * 1000 %>,
+        pointStart: <%= 4.weeks.ago.at_midnight.to_i * 1000 %>,
+        data: <%= (4.weeks.ago.to_date..Date.today).map { |date| SocialShare.where('created_at <= ?', date).where(social_network: 'facebook').count}.inspect %>
+      }
+      ]
     });
   });
 </script>
