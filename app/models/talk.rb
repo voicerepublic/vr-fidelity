@@ -67,6 +67,7 @@ class Talk < ActiveRecord::Base
   end
 
   def related_talk_id_is_talk?
+    return if related_talk_id.blank?
     begin
       Talk.find(related_talk_id)
     rescue

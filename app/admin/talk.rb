@@ -24,7 +24,10 @@ ActiveAdmin.register Talk do
 
   index do
     column :id
-    column :uri
+    column :uri do
+      # TODO fix absolute url
+      link_to talk.uri, "https://voicerepublic.com/talk/#{talk.id}"
+    end
     column :starts_at, sortable: :starts_at do |talk|
       span style: 'white-space: pre' do
         l talk.starts_at, format: :iso
