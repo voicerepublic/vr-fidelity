@@ -8,6 +8,19 @@ ActiveAdmin.register_page "Dashboard" do
       "WITH GREAT POWER COMES GREAT RESPONSIBILITY"
     end
 
+    # div do
+    #   script do
+    #     # talks = Talk.prelive + Talk.live
+    #     talks = Talk.prelive
+    #     raw 'window.talks = ' +
+    #         talks.inject({}) { |r, t| r.merge t.id => t.attributes }.to_json
+    #   end
+    # end
+    
+    #div id: 'livedashboard', style: 'margin: 30px' do
+    #  subscribe_to "/monitoring"
+    #end
+
     div do
       script do
         # talks = Talk.prelive + Talk.live
@@ -15,10 +28,6 @@ ActiveAdmin.register_page "Dashboard" do
         raw 'window.talks = ' +
             talks.inject({}) { |r, t| r.merge t.id => t.attributes }.to_json
       end
-    end
-    
-    div id: 'livedashboard', style: 'margin: 30px' do
-      subscribe_to "/monitoring"
     end
 
     div id: 'notifications', style: 'margin: 30px' do

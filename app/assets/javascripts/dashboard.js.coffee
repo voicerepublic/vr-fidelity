@@ -61,8 +61,6 @@ update = (data, channel) ->
   rects.data(talkList)
 
 
-notify = {}
-
 $ ->
   if $('#livedashboard').length
     setup()
@@ -70,13 +68,73 @@ $ ->
       console.log data
       update(data, channel)
 
+# --------------------------------------------------------------------------------
+
+
+color = (talk) ->
+  switch talk.call
+    when 'update_publish'
+      'green'
+    when 'over_due'
+      'red'
+    when 'publish'
+      'blue'
+    when 'record_done'
+      'yellow'
+    else
+      'grey'
+
+opacity = (talk) ->
+  return (60 - talk.age) / 80 if talk.call in ['update_publish', 'publish']
+  1
+  
+$ ->
+    
+
   if $('#notifications').length
-    PrivatePub.subscribe "/notifications", (data, channel) ->
-      console.log data
-      #$('#notifications').prepend(JSON.stringify(data))
-      notify[data.name] = data
-      $('#notifications').empty()
-      for id, talk of notify
-        console.log talk
-        text = "<p><a href='#{talk.pageurl}'>#{id} (#{talk.call})</a></p>"
-        $('#notifications').append(text)
+
+    talks = []
+
+    svg = d3.select('#notifications').append("svg")
+    svg.attr("width", '100%').attr("height", maxY)
+    maxX = svg[0][0].getBoundingClientRect().width
+
+    update = (data) ->
+      names = (talk.name for talk in data)
+      scaleX = d3.scale.ordinal().domain(names).rangePoints([0, maxX])
+
+      nodes = svg.selectAll('circle').data(data)
+      nodes.attr('opacity', opacity)
+      nodes.attr('style', (t) -> "fill: #{color(t)}")
+
+      enter = nodes.enter()
+      node = enter.append('circle')
+      node.attr('r', (t) -> 20)
+      node.attr('cx', (t) -> scaleX(t.name))
+      node.attr('cy', (t) -> 30)
+      nodes.attr('style', (t) -> "fill: #{color(t)}")
+          
+    tick = ->
+      for index, talk of talks
+        age = talks[index].age += 1
+        talks[index].call = 'over_due' if age > 61
+      update talks
+            
+    setInterval tick, 500
+
+    PrivatePub.subscribe "/notifications", (payload, channel) ->
+      console.log payload
+      #$('#notifications').prepend(JSON.stringify(payload))
+
+      payload.age = 0
+      index = idx for idx, value of talks when value.name == payload.name
+      if index then talks[index] = payload else talks.push payload
+
+      update talks
+      # console.log talks
+
+      #$('#notifications').empty()
+      #for talk in talks
+      #  console.log talk
+      #  text = "<p><a href='#{talk.pageurl}'>#{talk.name} (#{talk.call})</a></p>"
+      #  $('#notifications').append(text)
