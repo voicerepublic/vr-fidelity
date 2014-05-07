@@ -70,7 +70,6 @@ $ ->
 
 # --------------------------------------------------------------------------------
 
-
 color = (talk) ->
   switch talk.call
     when 'update_publish'
@@ -79,13 +78,14 @@ color = (talk) ->
       'red'
     when 'publish'
       'blue'
-    when 'record_done'
+    when 'record_done', 'publish_done'
       'yellow'
     else
       'grey'
 
 opacity = (talk) ->
-  return (60 - talk.age) / 80 if talk.call in ['update_publish', 'publish']
+  if talk.call in ['update_publish', 'publish']
+    return (60 - talk.age) / 50 
   1
   
 $ ->
@@ -125,7 +125,7 @@ $ ->
     setInterval tick, 500
 
     PrivatePub.subscribe "/notifications", (payload, channel) ->
-      console.log payload
+      #console.log payload
       #$('#notifications').prepend(JSON.stringify(payload))
 
       payload.age = 0
