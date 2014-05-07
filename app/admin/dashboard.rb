@@ -4,20 +4,29 @@ ActiveAdmin.register_page "Dashboard" do
 
   content :title => proc{ I18n.t("active_admin.dashboard") } do
 
-    div id: 'livedashboard' do
-      subscribe_to "/monitoring"
-    end
-    
     div style: 'font-size: 32px; text-align: center' do
       "WITH GREAT POWER COMES GREAT RESPONSIBILITY"
     end
 
-    div :class => "blank_slate_container", :id => "dashboard_default_message" do
-      span :class => "blank_slate" do
-        span I18n.t("active_admin.dashboard_welcome.welcome")
-        small I18n.t("active_admin.dashboard_welcome.call_to_action")
+    div do
+      script do
+        # talks = Talk.prelive + Talk.live
+        talks = Talk.prelive
+        raw 'window.talks = ' +
+            talks.inject({}) { |r, t| r.merge t.id => t.attributes }.to_json
       end
     end
+    
+    div id: 'livedashboard', style: 'margin: 30px' do
+      subscribe_to "/monitoring"
+    end
+    
+    # div :class => "blank_slate_container", :id => "dashboard_default_message" do
+    #   span :class => "blank_slate" do
+    #     span I18n.t("active_admin.dashboard_welcome.welcome")
+    #     small I18n.t("active_admin.dashboard_welcome.call_to_action")
+    #   end
+    # end
 
     # Here is an example of a simple dashboard with columns and panels.
     #
