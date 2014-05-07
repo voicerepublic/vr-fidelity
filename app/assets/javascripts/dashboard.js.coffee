@@ -60,9 +60,23 @@ update = (data, channel) ->
   #console.log talkList()
   rects.data(talkList)
 
+
+notify = {}
+
 $ ->
   if $('#livedashboard').length
     setup()
     PrivatePub.subscribe "/monitoring", (data, channel) ->
       console.log data
       update(data, channel)
+
+  if $('#notifications').length
+    PrivatePub.subscribe "/notifications", (data, channel) ->
+      console.log data
+      #$('#notifications').prepend(JSON.stringify(data))
+      notify[data.name] = data
+      $('#notifications').empty()
+      for id, talk of notify
+        console.log talk
+        text = "<p><a href='#{talk.pageurl}'>#{id} (#{talk.call})</a></p>"
+        $('#notifications').append(text)

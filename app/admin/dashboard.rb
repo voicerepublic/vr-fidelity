@@ -20,6 +20,10 @@ ActiveAdmin.register_page "Dashboard" do
     div id: 'livedashboard', style: 'margin: 30px' do
       subscribe_to "/monitoring"
     end
+
+    div id: 'notifications', style: 'margin: 30px' do
+      subscribe_to "/notifications"
+    end
     
     # div :class => "blank_slate_container", :id => "dashboard_default_message" do
     #   span :class => "blank_slate" do
