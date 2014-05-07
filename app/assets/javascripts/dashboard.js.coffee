@@ -108,7 +108,9 @@ $ ->
       nodes.attr('style', (t) -> "fill: #{color(t)}")
 
       enter = nodes.enter()
-      node = enter.append('circle')
+      link = enter.append('a')
+      link.attr('xlink:href', (t) -> t.pageurl)
+      node = link.append('circle')
       node.attr('r', (t) -> 20)
       node.attr('cx', (t) -> scaleX(t.name))
       node.attr('cy', (t) -> 30)
