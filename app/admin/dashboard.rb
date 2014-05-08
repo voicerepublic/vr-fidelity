@@ -17,16 +17,9 @@ ActiveAdmin.register_page "Dashboard" do
     #   end
     # end
     
-    #div id: 'livedashboard', style: 'margin: 30px' do
-    #  subscribe_to "/monitoring"
-    #end
-
     div do
       script do
-        # talks = Talk.prelive + Talk.live
-        talks = Talk.prelive
-        raw 'window.talks = ' +
-            talks.inject({}) { |r, t| r.merge t.id => t.attributes }.to_json
+        raw 'window.talks = ' + Talk.live.map(&:attributes).to_json
       end
     end
 
@@ -34,6 +27,10 @@ ActiveAdmin.register_page "Dashboard" do
       subscribe_to "/notifications"
     end
     
+    div id: 'livedashboard', style: 'margin: 30px' do
+      subscribe_to "/monitoring"
+    end
+
     # div :class => "blank_slate_container", :id => "dashboard_default_message" do
     #   span :class => "blank_slate" do
     #     span I18n.t("active_admin.dashboard_welcome.welcome")
