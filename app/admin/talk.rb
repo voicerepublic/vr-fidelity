@@ -25,20 +25,14 @@ ActiveAdmin.register Talk do
   index do
     column :id
     column :uri do |talk|
-      # TODO fix absolute url
-      link_to talk.uri, "https://voicerepublic.com/talk/#{talk.id}"
+      # TODO check absolute url
+      link_to talk.uri, "https://#{request.host}/talk/#{talk.id}"
     end
     column :starts_at, sortable: :starts_at do |talk|
       span style: 'white-space: pre' do
         l talk.starts_at, format: :iso
       end
     end
-    # FIXME introduce featured_from for talks
-    # column :featured_from, sortable: :featured_from do |talk|
-    #   span style: 'white-space: pre' do
-    #     l talk.featured_from, format: :iso
-    #   end
-    # end
     column :duration
     column :title, sortable: :title do |talk|
       truncate talk.title
@@ -69,16 +63,29 @@ ActiveAdmin.register Talk do
   form do |f|
     f.inputs do
       f.input :title
-      f.input :starts_at
-      f.input :featured_from
+      f.input :starts_at,
+              as: :string,
+              input_html: {
+                class: 'picker',
+                value: f.object.starts_at.strftime("%Y-%m-%d %H:%M:%S")
+              }
+      f.input :featured_from,
+              as: :string,
+              input_html: {
+                class: 'picker',
+                value: f.object.featured_from &&
+                f.object.featured_from.strftime("%Y-%m-%d %H:%M:%S")
+              }
       f.input :duration # FIXME make it a select box with discrete values
-      f.input :image, as: :dragonfly
       f.input :venue
       f.input :teaser
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
       f.input :record
       f.input :recording_override, hint: 'paste a URL to import a manually processed file, e.g. a dropbox URL'
       f.input :related_talk_id, as: :string, hint: 'ID of related talk'
+    end
+    f.inputs 'Image' do
+      f.input :image, as: :dragonfly
     end
     f.inputs 'Fields dependent on state' do
       f.input :state, input_html: { disabled: true }
