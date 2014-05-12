@@ -23,6 +23,7 @@ ActiveAdmin.register Talk do
   end
 
   index do
+    selectable_column
     column :id
     column :uri do |talk|
       # TODO check absolute url

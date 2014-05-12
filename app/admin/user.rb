@@ -4,6 +4,7 @@ ActiveAdmin.register User do
   scope :guests
   
   index do
+    selectable_column
     column :id
     column :firstname
     column :lastname
