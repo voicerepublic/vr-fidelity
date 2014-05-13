@@ -26,6 +26,7 @@ ActiveAdmin.register Delayed::Job, as: "Job" do
         end
       end
     end
+    active_admin_comments
   end
 
   index do
