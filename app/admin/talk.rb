@@ -90,8 +90,14 @@ ActiveAdmin.register Talk do
         number_to_human_size talk.disk_usage
       end
       row :files do
-        pre do
-          talk.all_files.map { |file| file.compact * ', ' } * "\n"
+        table do
+          talk.all_files.each do |file|
+            tr do
+              file.each do |cell|
+                td cell
+              end
+            end
+          end
         end
       end
     end
