@@ -55,6 +55,30 @@ class Talk < ActiveRecord::Base
 
   scope :featured, -> { where.not(featured_from: nil) }
 
+  def effective_duration # in seconds
+    ended_at - started_at
+  end
+
+  def disk_usage # in bytes
+    all_files.inject(0) do |result, file|
+      result + File.size(file)
+    end
+  end
+
+  def all_files
+    path0 = File.expand_path(Settings.rtmp.archive_raw_path, Rails.root)
+    rec0  = File.dirname(recording)
+    glob0 = File.join(path0, rec0, "t#{id}-u*.flv")
+
+    path1 = File.expand_path(Settings.rtmp.archive_path, Rails.root)
+    glob1 = File.join(path1, "#{recording}*.*")
+
+    path2 = File.expand_path(Settings.rtmp.recordings_path, Rails.root)
+    glob2 = File.join(path2, "t#{id}-u*.flv")
+
+    Dir.glob(glob0) + Dir.glob(glob1) + Dir.glob(glob2)
+  end
+
   private
 
   def set_ends_at

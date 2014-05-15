@@ -1,0 +1,5 @@
+rtmp:
+  archive_path:       /home/app/app/shared/archive
+  archive_raw_path:   /home/app/app/shared/archive_raw
+  recordings_path:    /home/app/app/shared/recordings
+    

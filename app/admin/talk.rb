@@ -22,6 +22,15 @@ ActiveAdmin.register Talk do
     redirect_to({ action: :show }, { notice: "Placed in queue for reprocessing." })
   end
 
+  scope :all
+  scope :featured
+
+  scope :prelive
+  scope :live
+  scope :postlive
+  scope :processing
+  scope :archived
+
   index do
     selectable_column
     column :id
@@ -52,15 +61,38 @@ ActiveAdmin.register Talk do
     actions
   end
 
-  scope :all
-  scope :featured
-
-  scope :prelive
-  scope :live
-  scope :postlive
-  scope :processing
-  scope :archived
-
+  show do
+    attributes_table do
+      row :id
+      row :uri
+      row :state
+      row :featured_from
+      row :starts_at
+      row :ends_at
+      row :venue
+      row :title
+      row :teaser
+      row :description
+      row :related_talk_id
+      row :record
+      row :recording
+      row :started_at
+      row :ended_at
+      row :processed_at
+      row :recording_override
+      row :play_count
+      row :disk_usage do
+        number_to_human_size talk.disk_usage
+      end
+      row :files do
+        pre do
+          talk.all_files * "\n"
+        end
+      end
+    end
+    active_admin_comments
+  end
+  
   form do |f|
     f.inputs do
       f.input :title

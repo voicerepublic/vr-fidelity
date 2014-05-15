@@ -1,12 +1,9 @@
 ActiveAdmin.register_page "Dashboard" do
 
-  menu :priority => 1, :label => proc{ I18n.t("active_admin.dashboard") }
+  menu priority: 1, label: proc{ I18n.t("active_admin.dashboard") }
 
-  content :title => proc{ I18n.t("active_admin.dashboard") } do
-
-    div style: 'font-size: 32px; text-align: center' do
-      "WITH GREAT POWER COMES GREAT RESPONSIBILITY"
-    end
+  title = 'WITH GREAT POWER COMES GREAT RESPONSIBILITY'
+  content title: title do
 
     # div do
     #   script do
@@ -16,7 +13,7 @@ ActiveAdmin.register_page "Dashboard" do
     #         talks.inject({}) { |r, t| r.merge t.id => t.attributes }.to_json
     #   end
     # end
-    
+
     div do
       script do
         raw 'window.talks = ' + Talk.live.map(&:attributes).to_json
