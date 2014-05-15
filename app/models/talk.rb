@@ -96,9 +96,11 @@ class Talk < ActiveRecord::Base
     all_files.each do |file|
       path, size, duration, start = file
       if path =~ /\.flv$/
-        sum_size += size
-        h, m, s = duration.split(':').map(&:to_i)
-        sum_duration += (h * 60 + m) * 60 + s
+        sum_size += size if size
+        if duration
+          h, m, s = duration.split(':').map(&:to_i)
+          sum_duration += (h * 60 + m) * 60 + s
+        end
       end
     end
     h = sum_duration / 3600
