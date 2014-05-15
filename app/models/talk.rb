@@ -59,28 +59,51 @@ class Talk < ActiveRecord::Base
     ended_at - started_at
   end
 
+  # TODO to be removed as sonn as `storage` ist available
   def disk_usage # in bytes
     all_files.inject(0) do |result, file|
-      result + File.size(file)
+      result + File.size(file.first)
     end
   end
 
+  # TODO to be removed as sonn as `storage` ist available
   def all_files
     path0 = File.expand_path(Settings.rtmp.archive_raw_path, Rails.root)
-    rec0  = File.dirname(recording)
+    rec0  = File.dirname(recording.to_s)
     glob0 = File.join(path0, rec0, "t#{id}-u*.flv")
-
+    
     path1 = File.expand_path(Settings.rtmp.archive_path, Rails.root)
     glob1 = File.join(path1, "#{recording}*.*")
-
+    
     path2 = File.expand_path(Settings.rtmp.recordings_path, Rails.root)
     glob2 = File.join(path2, "t#{id}-u*.flv")
-
-    Dir.glob(glob0) + Dir.glob(glob1) + Dir.glob(glob2)
+    
+    files = (Dir.glob(glob0) + Dir.glob(glob1) + Dir.glob(glob2)).sort
+    
+    files.map do |file|
+      [ file,
+        File.size(file),
+        duration(file),
+        Time.at(start_of_file(file).to_i) ]
+    end
   end
 
   private
 
+  # TODO to be removed as sonn as `storage` ist available
+  def duration(path)
+    cmd = "avconv -i #{path} 2>&1 | grep Duration"
+    output = %x[ #{cmd} ]
+    md = output.match(/\d+:\d\d:\d\d/)
+    md ? md[0] : nil
+  end
+
+  # TODO to be removed as sonn as `storage` ist available
+  def start_of_file(path)
+    md = path.match(/-(\d+).flv/)
+    md ? md[1] : nil
+  end
+  
   def set_ends_at
     return unless starts_at
     self.ends_at = starts_at + duration.minutes

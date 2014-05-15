@@ -35,8 +35,9 @@ ActiveAdmin.register Talk do
     selectable_column
     column :id
     column :uri do |talk|
-      # TODO check absolute url
-      link_to talk.uri, "https://#{request.host}/talk/#{talk.id}"
+      url = "//#{request.host_with_port}/talk/#{talk.id}".
+            sub(':444', '').sub(':3001', ':3000')
+      link_to talk.uri, url, target: '_blank'
     end
     column :starts_at, sortable: :starts_at do |talk|
       span style: 'white-space: pre' do
@@ -64,7 +65,11 @@ ActiveAdmin.register Talk do
   show do
     attributes_table do
       row :id
-      row :uri
+      row :uri do
+        url = "//#{request.host_with_port}/talk/#{talk.id}".
+              sub(':444', '').sub(':3001', ':3000')
+        link_to talk.uri, url, target: '_blank'
+      end
       row :state
       row :featured_from
       row :starts_at
@@ -86,7 +91,7 @@ ActiveAdmin.register Talk do
       end
       row :files do
         pre do
-          talk.all_files * "\n"
+          talk.all_files.map { |file| file.compact * ', ' } * "\n"
         end
       end
     end
