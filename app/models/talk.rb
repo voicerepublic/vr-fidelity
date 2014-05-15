@@ -68,6 +68,8 @@ class Talk < ActiveRecord::Base
 
   # TODO to be removed as sonn as `storage` ist available
   def all_files
+    return @all_files unless @all_files.nil?
+
     path0 = File.expand_path(Settings.rtmp.archive_raw_path, Rails.root)
     rec0  = File.dirname(recording.to_s)
     glob0 = File.join(path0, rec0, "t#{id}-u*.flv")
@@ -80,7 +82,7 @@ class Talk < ActiveRecord::Base
     
     files = (Dir.glob(glob0) + Dir.glob(glob1) + Dir.glob(glob2)).sort
     
-    files.map do |file|
+    @all_files = files.map do |file|
       [ file,
         File.size(file),
         duration(file),
@@ -88,6 +90,23 @@ class Talk < ActiveRecord::Base
     end
   end
 
+  def flv_data
+    return @flv_data unless @flv_data.nil?
+    sum_size, sum_duration = 0, 0
+    all_files.each do |file|
+      path, size, duration, start = file
+      if path =~ /\.flv$/
+        sum_size += size
+        h, m, s = duration.split(':').map(&:to_i)
+        sum_duration += (h * 60 + m) * 60 + s
+      end
+    end
+    h = sum_duration / 3600
+    m = sum_duration % 3600 / 60
+    s = sum_duration % 60
+    @flv_data = [sum_size, '%02d:%02d:%02d' % [h, m, s]]
+  end
+  
   private
 
   # TODO to be removed as sonn as `storage` ist available
