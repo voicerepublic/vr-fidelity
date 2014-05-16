@@ -85,7 +85,7 @@ class Talk < ActiveRecord::Base
     @all_files = files.map do |file|
       [ file,
         File.size(file),
-        duration(file),
+        duration_of_file(file),
         Time.at(start_of_file(file).to_i) ]
     end
   end
@@ -94,11 +94,11 @@ class Talk < ActiveRecord::Base
     return @flv_data unless @flv_data.nil?
     sum_size, sum_duration = 0, 0
     all_files.each do |file|
-      path, size, duration, start = file
+      path, size, dur, start = file
       if path =~ /\.flv$/
         sum_size += size if size
-        if duration
-          h, m, s = duration.split(':').map(&:to_i)
+        if dur
+          h, m, s = dur.split(':').map(&:to_i)
           sum_duration += (h * 60 + m) * 60 + s
         end
       end
@@ -112,7 +112,7 @@ class Talk < ActiveRecord::Base
   private
 
   # TODO to be removed as sonn as `storage` ist available
-  def duration(path)
+  def duration_of_file(path)
     cmd = "avconv -i #{path} 2>&1 | grep Duration"
     output = %x[ #{cmd} ]
     md = output.match(/\d+:\d\d:\d\d/)
