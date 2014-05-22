@@ -63,6 +63,15 @@ ActiveAdmin.register Talk do
   end
 
   show do
+    div id: 'visual' do
+      script do
+        [
+          "data = #{talk.storage.values.to_json}",
+          "startedAt = #{talk.started_at.to_i}",
+          "endedAt = #{talk.ended_at.to_i}"
+        ].join(";\n").html_safe
+      end
+    end
     attributes_table do
       row :id
       row :uri do
@@ -86,19 +95,24 @@ ActiveAdmin.register Talk do
       row :processed_at
       row :recording_override
       row :play_count
-      row :flv_data do
-        number_to_human_size(talk.flv_data[0]) +
-          ' (' + talk.flv_data[1] + ')'
-      end
+      # row :flv_data do
+      #   number_to_human_size(talk.flv_data[0]) +
+      #     ' (' + talk.flv_data[1] + ')'
+      # end
       row :disk_usage do
         number_to_human_size talk.disk_usage
       end
       row :files do
-        table do
-          talk.all_files.each do |file|
-            tr do
-              file.each do |cell|
-                td cell
+        if talk.storage.is_a?(Hash)
+          table do
+            keys = talk.storage.keys.sort
+            keys.each do |key|
+              meta = talk.storage[key]
+              tr do
+                td meta[:key]
+                td meta[:size]
+                td meta[:duration]
+                td meta[:start] && Time.at(meta[:start].to_i)
               end
             end
           end
