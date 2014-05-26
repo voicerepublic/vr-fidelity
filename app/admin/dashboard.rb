@@ -5,15 +5,6 @@ ActiveAdmin.register_page "Dashboard" do
   title = 'WITH GREAT POWER COMES GREAT RESPONSIBILITY'
   content title: title do
 
-    # div do
-    #   script do
-    #     # talks = Talk.prelive + Talk.live
-    #     talks = Talk.prelive
-    #     raw 'window.talks = ' +
-    #         talks.inject({}) { |r, t| r.merge t.id => t.attributes }.to_json
-    #   end
-    # end
-
     div do
       script do
         raw 'window.talks = ' + Talk.live.map(&:attributes).to_json
@@ -21,11 +12,16 @@ ActiveAdmin.register_page "Dashboard" do
     end
 
     div id: 'notifications', style: 'margin: 30px' do
-      subscribe_to "/notifications"
+        subscribe_to("/notifications")       # notifications from rtmpd
     end
     
     div id: 'livedashboard', style: 'margin: 30px' do
-      subscribe_to "/monitoring"
+      namespaces = [
+        "/monitoring", # generic monitoring namespace (depr.)
+        "/dj",         # hooks in MonitoredJob
+        "/event/talk"  # state changes of talks
+      ]        
+      (namespaces.map { |ns| subscribe_to(ns) } * "\n").html_safe
     end
 
     # div :class => "blank_slate_container", :id => "dashboard_default_message" do
