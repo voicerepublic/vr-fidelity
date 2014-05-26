@@ -63,13 +63,15 @@ ActiveAdmin.register Talk do
   end
 
   show do
-    div id: 'visual' do
-      script do
-        [
-          "data = #{talk.storage.values.to_json}",
-          "startedAt = #{talk.started_at.to_i}",
-          "endedAt = #{talk.ended_at.to_i}"
-        ].join(";\n").html_safe
+    if %w(postlive processing archived).include?(talk.state)
+      div id: 'visual' do
+        script do
+          [
+            "data = #{talk.storage.values.to_json}",
+            "startedAt = #{talk.started_at.to_i}",
+            "endedAt = #{talk.ended_at.to_i}"
+          ].join(";\n").html_safe
+        end
       end
     end
     attributes_table do
@@ -89,30 +91,32 @@ ActiveAdmin.register Talk do
       row :description
       row :related_talk_id
       row :record
-      row :recording
       row :started_at
-      row :ended_at
-      row :processed_at
-      row :recording_override
-      row :play_count
-      # row :flv_data do
-      #   number_to_human_size(talk.flv_data[0]) +
-      #     ' (' + talk.flv_data[1] + ')'
-      # end
-      row :disk_usage do
-        number_to_human_size talk.disk_usage
-      end
-      row :files do
-        if talk.storage.is_a?(Hash)
-          table do
-            keys = talk.storage.keys.sort
-            keys.each do |key|
-              meta = talk.storage[key]
-              tr do
-                td meta[:key]
-                td meta[:size]
-                td meta[:duration]
-                td meta[:start] && Time.at(meta[:start].to_i)
+      if %w(postlive processing archived).include?(talk.state)
+        row :ended_at
+        row :processed_at
+        row :recording
+        row :recording_override
+        row :play_count
+        # row :flv_data do
+        #   number_to_human_size(talk.flv_data[0]) +
+        #     ' (' + talk.flv_data[1] + ')'
+        # end
+        row :disk_usage do
+          number_to_human_size talk.disk_usage
+        end
+        row :files do
+          if talk.storage.is_a?(Hash)
+            table do
+              keys = talk.storage.keys.sort
+              keys.each do |key|
+                meta = talk.storage[key]
+                tr do
+                  td meta[:key]
+                  td meta[:size]
+                  td meta[:duration]
+                  td meta[:start] && Time.at(meta[:start].to_i)
+                end
               end
             end
           end
