@@ -22,11 +22,22 @@ ActiveAdmin.register Talk do
     redirect_to({ action: :show }, { notice: "Placed in queue for reprocessing." })
   end
 
+  scope :all
+  scope :featured
+
+  scope :prelive
+  scope :live
+  scope :postlive
+  scope :processing
+  scope :archived
+
   index do
+    selectable_column
     column :id
     column :uri do |talk|
-      # TODO check absolute url
-      link_to talk.uri, "https://#{request.host}/talk/#{talk.id}"
+      url = "//#{request.host_with_port}/talk/#{talk.id}".
+            sub(':444', '').sub(':3001', ':3000')
+      link_to talk.uri, url, target: '_blank'
     end
     column :starts_at, sortable: :starts_at do |talk|
       span style: 'white-space: pre' do
@@ -51,15 +62,70 @@ ActiveAdmin.register Talk do
     actions
   end
 
-  scope :all
-  scope :featured
-
-  scope :prelive
-  scope :live
-  scope :postlive
-  scope :processing
-  scope :archived
-
+  show do
+    if %w(postlive processing archived).include?(talk.state)
+      div id: 'visual' do
+        script do
+          [
+            "data = #{talk.storage.values.to_json}",
+            "startedAt = #{talk.started_at.to_i}",
+            "endedAt = #{talk.ended_at.to_i}"
+          ].join(";\n").html_safe
+        end
+      end
+    end
+    attributes_table do
+      row :id
+      row :uri do
+        url = "//#{request.host_with_port}/talk/#{talk.id}".
+              sub(':444', '').sub(':3001', ':3000')
+        link_to talk.uri, url, target: '_blank'
+      end
+      row :state
+      row :featured_from
+      row :starts_at
+      row :ends_at
+      row :venue
+      row :title
+      row :teaser
+      row :description
+      row :related_talk_id
+      row :record
+      row :started_at
+      if %w(postlive processing archived).include?(talk.state)
+        row :ended_at
+        row :processed_at
+        row :recording
+        row :recording_override
+        row :play_count
+        # row :flv_data do
+        #   number_to_human_size(talk.flv_data[0]) +
+        #     ' (' + talk.flv_data[1] + ')'
+        # end
+        row :disk_usage do
+          number_to_human_size talk.disk_usage
+        end
+        row :files do
+          if talk.storage.is_a?(Hash)
+            table do
+              keys = talk.storage.keys.sort
+              keys.each do |key|
+                meta = talk.storage[key]
+                tr do
+                  td meta[:key]
+                  td meta[:size]
+                  td meta[:duration]
+                  td meta[:start] && Time.at(meta[:start].to_i)
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+    active_admin_comments
+  end
+  
   form do |f|
     f.inputs do
       f.input :title

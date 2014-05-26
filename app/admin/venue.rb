@@ -2,6 +2,7 @@ ActiveAdmin.register Venue do
   permit_params :id, :title, :teaser, :description, :user, :options
 
   index do
+    selectable_column
     column :id
     column :title, sortable: :title do |venue|
       truncate venue.title

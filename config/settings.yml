@@ -1,0 +1,4 @@
+rtmp:
+  archive_path:     ../dev/local/archive
+  archive_raw_path: ../dev/local/archive_raw
+  recordings_path:  ../dev/local/recordings

@@ -26,9 +26,11 @@ ActiveAdmin.register Delayed::Job, as: "Job" do
         end
       end
     end
+    active_admin_comments
   end
 
   index do
+    selectable_column
     column :created_at
     column :failed_at
     column :run_at

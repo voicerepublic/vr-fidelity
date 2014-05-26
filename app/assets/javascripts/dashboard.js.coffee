@@ -1,3 +1,8 @@
+# Extending Array's prototype
+unless Array::filter
+  Array::filter = (callback) ->
+    element for element in this when callback(element)
+
 maxY = 300
 
 # rects = null
@@ -91,6 +96,37 @@ opacity = (talk) ->
   1
   
 $ ->
+
+  if $('#visual').length
+    data = window.data.filter (d) -> d.start?
+    t0 = (parseInt(d.start) for i, d of data)
+    tn = (parseInt(d.start)+parseInt(d.seconds) for i, d of data)
+    start = d3.min(t0)
+    end = d3.max(tn)
+
+    maxY = 15
+    svg = d3.select('#visual').append('svg')
+    svg.attr("width", '100%').attr("height", maxY)
+    maxX = svg[0][0].getBoundingClientRect().width
+    scaleX = d3.scale.linear().domain([start, end]).range([0, maxX])
+
+    mark = (x) ->
+      line = svg.append('line')
+      line.attr('x1', x).attr('x2', x)
+      line.attr('y1', 0).attr('y2', 15)
+      line.attr('stroke', 'black').attr('stroke-width', 2)
+
+    mark(scaleX(startedAt))
+    mark(scaleX(endedAt))
+
+    nodes = svg.selectAll('rect').data(data)
+    nodes = nodes.enter().append('rect')
+    nodes.attr('style', (d) -> "fill: green")
+    nodes.attr('y', 5)
+    nodes.attr 'x', (d) -> scaleX(d.start)
+    nodes.attr('height', 10)
+    nodes.attr 'width', (d) ->
+      scaleX(parseInt(d.start) + parseInt(d.seconds)) - scaleX(parseInt(d.start))
 
   if $('#notifications').length
 
