@@ -24,6 +24,14 @@
 # * venue_id [integer] - belongs to :venue
 class Talk < ActiveRecord::Base
 
+  GRADES = {
+    ok:           "Everything ok. Quality acceptable. (ok)",
+    override:     "Manually overriden, quailty is good. (override)",
+    insufficient: "Insufficient or empty recording. (insufficient)",
+    norecording:  "No recording, no override available. (no recording)",
+    failed:       "Recording available, but processing failed. (failed)"
+  }
+  
   STATES = %w( prelive live postlive processing archived )
 
   # TODO create a better more specific pattern for urls
@@ -55,6 +63,10 @@ class Talk < ActiveRecord::Base
     scope state.to_sym, -> { where(state: state) }
   end
 
+  GRADES.keys.each do |grade|
+    scope grade.to_sym, -> { where(grade: grade) }
+  end
+  
   scope :featured, -> { where.not(featured_from: nil) }
 
   def effective_duration # in seconds
