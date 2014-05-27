@@ -165,23 +165,25 @@ $ ->
       index = idx for idx, value of talks when value.id == talk.id
       if index then $.extend(talks[index], talk) else talks.push talk
 
+
+    # --- handle messages
+
     PrivatePub.subscribe "/notifications", (payload, channel) ->
+      console.log "#{channel}: #{payload}"
       payload.id = parseInt(payload.name.match(/t(\d+)-/)[1])
       payload.age = 0
-
-      # console.log payload
-      console.log "Notification: #{payload.call}: #{payload.id}"
-
       return if payload.call == 'update_play'
-
       merge payload
       update talks
 
+    PrivatePub.subscribe "/dj", (payload, channel) ->
+      console.log "#{channel}: #{payload}"
+
+    PrivatePub.subscribe "/event/talk", (payload, channel) ->
+      console.log "#{channel}: #{payload}"
+    
     PrivatePub.subscribe "/monitoring", (payload, channel) ->
+      console.log "#{channel}: #{payload}"
       talk = payload.talk
-
-      # console.log payload
-      console.log "Event: #{payload.event}: #{talk.id} #{talk.state}"
-
       merge talk
       update talks
