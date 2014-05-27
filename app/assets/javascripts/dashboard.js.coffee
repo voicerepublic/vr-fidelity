@@ -169,7 +169,7 @@ $ ->
     # --- handle messages
 
     PrivatePub.subscribe "/notifications", (payload, channel) ->
-      console.log "#{channel}: #{payload}"
+      console.log "#{channel}: #{JSON.stringify(payload)}"
       payload.id = parseInt(payload.name.match(/t(\d+)-/)[1])
       payload.age = 0
       return if payload.call == 'update_play'
@@ -177,13 +177,13 @@ $ ->
       update talks
 
     PrivatePub.subscribe "/dj", (payload, channel) ->
-      console.log "#{channel}: #{payload}"
+      console.log "#{channel}: #{JSON.stringify(payload)}"
 
     PrivatePub.subscribe "/event/talk", (payload, channel) ->
-      console.log "#{channel}: #{payload}"
+      console.log "#{channel}: #{JSON.stringify(payload)}"
     
     PrivatePub.subscribe "/monitoring", (payload, channel) ->
-      console.log "#{channel}: #{payload}"
+      console.log "#{channel}: #{JSON.stringify(payload)}"
       talk = payload.talk
       merge talk
       update talks
