@@ -66,7 +66,8 @@ class Talk < ActiveRecord::Base
   GRADES.keys.each do |grade|
     scope grade.to_sym, -> { where(grade: grade) }
   end
-  
+
+  scope :nograde, -> { where(grade: nil) }
   scope :featured, -> { where.not(featured_from: nil) }
 
   def effective_duration # in seconds

@@ -25,6 +25,7 @@ ActiveAdmin.register Talk do
   scope :all
   scope :featured
   Talk::STATES.each { |state| scope state.to_sym }
+  scope :nograde
   Talk::GRADES.keys.each { |grade| scope grade.to_sym }
 
   index do
