@@ -1,10 +1,13 @@
 development:
+  secret_token: "secret"
   server: "http://localhost:9292/faye"
-  #server: "http://localhost:9292/faye"
   #server: "http://127.0.0.1:9292/faye"
   #server: "http://172.21.21.171:9292/faye"
   #server: "http://192.168.20.62:9292/faye"
-  secret_token: "secret"
+
+  #server: "https://voicerepublic.com:9292/faye"
+  #secret_token: "1ca35552f8b33e95302a951002a835fc39b6699ab2447f9140d36190fca0c0a7"
+  #signature_expiration: 7200 # one hour
 test:
   server: "http://localhost:9292/faye"
   secret_token: "secret"

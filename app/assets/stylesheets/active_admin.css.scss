@@ -38,3 +38,21 @@
 .badge.norecording { background-color: red; }
 .badge.failed { background-color: orange; }
 
+html, body {
+    width: 100%;
+}
+
+.admin_dashboard {
+    svg {
+        a {
+            text-decoration: none;
+        }
+        text {
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+        circle {
+            stroke: black;
+        }
+    }
+}
