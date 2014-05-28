@@ -19,3 +19,40 @@
 @import 'jquery.ui.datepicker';
 @import 'jquery.ui.slider';
 @import 'jquery-ui-timepicker-addon';
+
+.dropdown_menu {
+    float: left;
+}
+
+.badge {
+    background-color: lightgrey;
+    color: white;
+    font-weight: bold;
+    padding: 2px 4px;
+    @include rounded;
+}
+
+.badge.ok { background-color: green; }
+.badge.override { background-color: green; }
+.badge.insufficient { background-color: red; }
+.badge.norecording { background-color: red; }
+.badge.failed { background-color: orange; }
+
+html, body {
+    width: 100%;
+}
+
+.admin_dashboard {
+    svg {
+        a {
+            text-decoration: none;
+        }
+        text {
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+        circle {
+            stroke: black;
+        }
+    }
+}

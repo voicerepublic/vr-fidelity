@@ -24,12 +24,9 @@ ActiveAdmin.register Talk do
 
   scope :all
   scope :featured
-
-  scope :prelive
-  scope :live
-  scope :postlive
-  scope :processing
-  scope :archived
+  Talk::STATES.each { |state| scope state.to_sym }
+  scope :nograde
+  Talk::GRADES.keys.each { |grade| scope grade.to_sym }
 
   index do
     selectable_column
@@ -59,6 +56,11 @@ ActiveAdmin.register Talk do
     column :record
     column :venue
     column :state
+    column :grade do |talk|
+      span class: "badge #{talk.grade}" do
+        talk.grade || 'none'
+      end
+    end
     actions
   end
 
@@ -93,6 +95,7 @@ ActiveAdmin.register Talk do
       row :record
       row :started_at
       if %w(postlive processing archived).include?(talk.state)
+        row :grade
         row :ended_at
         row :processed_at
         row :recording
@@ -147,7 +150,9 @@ ActiveAdmin.register Talk do
       f.input :teaser
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
       f.input :record
-      f.input :recording_override, hint: 'paste a URL to import a manually processed file, e.g. a dropbox URL'
+      f.input :recording_override,
+              hint: 'Paste a URL to import a manually'+
+              ' processed file, e.g. a dropbox URL.'
       f.input :related_talk_id, as: :string, hint: 'ID of related talk'
     end
     f.inputs 'Image' do
@@ -155,6 +160,10 @@ ActiveAdmin.register Talk do
     end
     f.inputs 'Fields dependent on state' do
       f.input :state, input_html: { disabled: true }
+      if f.object.state == 'archived'
+        f.input :grade, collection: Talk::GRADES.invert,
+                hint: 'Used to manually classify the talks quality.'
+      end
       if %w(postlive archived).include? f.object.state
         f.input :started_at,
           as: :string,
@@ -187,6 +196,7 @@ ActiveAdmin.register Talk do
                     related_talk_id
                     retained_image
                     remove_image
+                    grade
                     recording_override ).map(&:to_sym)
 
 end

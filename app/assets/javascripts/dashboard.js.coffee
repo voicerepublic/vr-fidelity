@@ -130,29 +130,39 @@ $ ->
 
   if $('#notifications').length
 
+    url = window.location.host
+    url = url.replace('3001', '3000')
+    url = url.replace(':444', '')
+
     svg = d3.select('#notifications').append("svg")
     svg.attr("width", '100%').attr("height", maxY)
     maxX = svg[0][0].getBoundingClientRect().width
 
     update = (data) ->
       ids = (talk.id for talk in data)
-      # console.log ids
-      # console.log data
-      scaleX = d3.scale.ordinal().domain(ids).rangePoints([0, maxX], 20)
+      scaleX = d3.scale.ordinal().domain(ids).rangePoints([0, maxX], 30)
+      position = (d) ->
+        "translate(#{scaleX(d.id)}, #{maxY/2})"
 
-      nodes = svg.selectAll('circle').data(data)
-      nodes.attr('opacity', opacity)
-      nodes.attr('style', (t) -> "fill: #{color(t)}")
-
-      enter = nodes.enter()
-      link = enter.append('a')
-      link.attr('xlink:href', (t) -> t.pageurl)
-      node = link.append('circle')
-      node.attr('r', (t) -> 20)
-      node.attr('cx', (t) -> scaleX(t.id))
-      node.attr('cy', (t) -> 30)
-      nodes.attr('style', (t) -> "fill: #{color(t)}")
-          
+      # --- data join
+      nodes = svg.selectAll('.node').data(data)
+      # --- update
+      # --- enter
+      link = nodes.enter().append('g').append('a')
+        .attr('xlink:href', (t) -> "//#{url}/talk/#{t.id}")
+      link.append('circle')
+      link.append('text').text((t) -> t.id)
+      # --- enter & update
+      nodes.attr('class', 'node')
+      nodes.transition().duration(500)
+        .attr("transform", position)
+      nodes.select('circle')
+        .attr('r', (t) -> 20)
+        .attr('style', (t) -> "fill: #{color(t)}")
+        .attr('opacity', opacity)
+      # --- exit
+      nodes.exit().remove()
+                                                
     tick = ->
       for index, talk of talks
         age = talks[index].age += 1
@@ -165,23 +175,49 @@ $ ->
       index = idx for idx, value of talks when value.id == talk.id
       if index then $.extend(talks[index], talk) else talks.push talk
 
+
+    # --- handle messages
+
+    # Example
+    #
+    # { "app":"record",
+    #   "flashver":"MAC 13,0,0,214",
+    #   "swfurl":"https://voicerepublic.com/assets/Blackbox6.swf",
+    #   "tcurl":"rtmp://voicerepublic.com/record",
+    #   "pageurl":"https://voicerepublic.com/venues/239/talks/1044",
+    #   "addr":"78.52.163.157",
+    #   "clientid":"4675",
+    #   "call":"update_publish",
+    #   "time":"2496",
+    #   "timestamp":"2497378",
+    #   "name":"t1044-u695650",
+    #   "id":1044,
+    #   "age":0 }
     PrivatePub.subscribe "/notifications", (payload, channel) ->
+      console.log "#{channel}: #{JSON.stringify(payload)}"
       payload.id = parseInt(payload.name.match(/t(\d+)-/)[1])
       payload.age = 0
-
-      # console.log payload
-      console.log "Notification: #{payload.call}: #{payload.id}"
-
       return if payload.call == 'update_play'
-
       merge payload
       update talks
 
+    # Example
+    #
+    # 
+    PrivatePub.subscribe "/dj", (payload, channel) ->
+      console.log "#{channel}: #{JSON.stringify(payload)}"
+
+    # Example
+    #
+    # 
+    PrivatePub.subscribe "/event/talk", (payload, channel) ->
+      console.log "#{channel}: #{JSON.stringify(payload)}"
+
+    # Example
+    #
+    # 
     PrivatePub.subscribe "/monitoring", (payload, channel) ->
+      console.log "#{channel}: #{JSON.stringify(payload)}"
       talk = payload.talk
-
-      # console.log payload
-      console.log "Event: #{payload.event}: #{talk.id} #{talk.state}"
-
       merge talk
       update talks
