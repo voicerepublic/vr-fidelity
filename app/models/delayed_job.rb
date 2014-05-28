@@ -9,11 +9,11 @@ class Delayed::Job
   def display_handler
     case handler
     when /struct:ProcessOverride/
-      "Talk.find(#{payload_object.talk_id}).process_override!"
+      "Talk.find(#{payload_object.opts.id}).process_override!"
     when /struct:Postprocess/
-      "Talk.find(#{payload_object.talk_id}).postprocess!"
+      "Talk.find(#{payload_object.opts.id}).postprocess!"
     when /struct:Reprocess/
-      "Talk.find(#{payload_object.talk_id}).reprocess!"
+      "Talk.find(#{payload_object.opts.id}).reprocess!"
     when /object:Delayed::PerformableMethod\nobject: !ruby\/ActiveRecord/
       begin
         clazz = handler.match(/ActiveRecord:(.+)/).to_a.last
