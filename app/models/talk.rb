@@ -105,7 +105,7 @@ class Talk < ActiveRecord::Base
   end
 
   def schedule_processing_override
-    Delayed::Job.enqueue ProcessOverride.new(id), queue: 'audio'
+    Delayed::Job.enqueue ProcessOverride.new(id: id), queue: 'audio'
   end
 
   def related_talk_id_is_talk?

@@ -13,12 +13,12 @@ ActiveAdmin.register Talk do
   end
 
   member_action :postprocess, method: 'put' do
-    Delayed::Job.enqueue Postprocess.new(params[:id]), queue: 'audio'
+    Delayed::Job.enqueue Postprocess.new(id: params[:id]), queue: 'audio'
     redirect_to({ action: :show }, { notice: "Placed in queue for postprocessing." })
   end
 
   member_action :reprocess, method: 'put' do
-    Delayed::Job.enqueue Reprocess.new(params[:id]), queue: 'audio'
+    Delayed::Job.enqueue Reprocess.new(id: params[:id]), queue: 'audio'
     redirect_to({ action: :show }, { notice: "Placed in queue for reprocessing." })
   end
 
