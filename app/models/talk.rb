@@ -31,7 +31,7 @@ class Talk < ActiveRecord::Base
     norecording:  "No recording, no override available. (no recording)",
     failed:       "Recording available, but processing failed. (failed)"
   }
-  
+
   STATES = %w( prelive live postlive processing archived )
 
   # TODO create a better more specific pattern for urls
@@ -55,7 +55,7 @@ class Talk < ActiveRecord::Base
   delegate :user, to: :venue
 
   serialize :storage
-  
+
   image_accessor :image
 
   # poor man's auto scopes
@@ -96,7 +96,7 @@ class Talk < ActiveRecord::Base
     # s = sum_duration % 60
     # @flv_data = [sum_size, '%02d:%02d:%02d' % [h, m, s]]
   end
-  
+
   private
 
   def set_ends_at

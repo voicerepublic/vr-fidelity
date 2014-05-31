@@ -1,5 +1,21 @@
 ActiveAdmin.register Talk do
 
+  # BEGIN CSV Import
+  action_item :only => :index do
+    link_to 'Upload CSV', :action => 'upload_csv'
+  end
+
+  collection_action :upload_csv do
+    render "admin/csv/upload_csv"
+  end
+
+  collection_action :import_csv, :method => :post do
+    count = CsvDb.convert_save("talk", params[:dump][:file])
+    flash[:notice] = "#{count} Talk(s) imported successfully!"
+    redirect_to action: :index
+  end
+  # END CSV Import
+
   action_item only: :show do
     if talk.state == 'postlive'
       link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
@@ -128,7 +144,7 @@ ActiveAdmin.register Talk do
     end
     active_admin_comments
   end
-  
+
   form do |f|
     f.inputs do
       f.input :title
