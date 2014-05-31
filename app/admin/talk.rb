@@ -10,7 +10,7 @@ ActiveAdmin.register Talk do
   end
 
   collection_action :import_csv, :method => :post do
-    message = CsvDb.convert_save("talk", params[:dump][:file])
+    message = CsvDb.convert_save("talk", params[:dump][:file], { state: :prelive })
     if message[:success]
       flash[:notice] = "#{message[:success]} Talk(s) imported successfully!"
     end
