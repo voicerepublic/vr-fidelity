@@ -1,2 +1,2 @@
-"title","venue_id","starts_at","ends_at","record","teaser","description","duration","featured_from","related_talk_id"
-"test upload durch csv",6,"2015-05-26 17:39:00 +0200","2015-05-26 17:59:00 +0200","true","auch ein test durch csv uploda","<p>test upload</p>",20,,
+"title","venue_id","starts_at","duration","record","teaser","description","featured_from","related_talk_id"
+"test upload durch csv",6,"2015-05-26 17:39:00 +0200",20,"true","auch ein test durch csv uploda","<p>test upload</p>",,

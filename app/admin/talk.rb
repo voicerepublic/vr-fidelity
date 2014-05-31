@@ -10,8 +10,13 @@ ActiveAdmin.register Talk do
   end
 
   collection_action :import_csv, :method => :post do
-    count = CsvDb.convert_save("talk", params[:dump][:file])
-    flash[:notice] = "#{count} Talk(s) imported successfully!"
+    message = CsvDb.convert_save("talk", params[:dump][:file])
+    if message[:success]
+      flash[:notice] = "#{message[:success]} Talk(s) imported successfully!"
+    end
+    if message[:error]
+      flash[:error] = "An error occured: #{message[:error]}"
+    end
     redirect_to action: :index
   end
   # END CSV Import
