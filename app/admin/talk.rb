@@ -2,7 +2,7 @@ ActiveAdmin.register Talk do
 
   # BEGIN CSV Import
   action_item only: :index do
-    link_to 'Upload CSV', :action => 'upload_csv'
+    link_to 'Import CSV', :action => 'upload_csv'
   end
 
   collection_action :upload_csv do
@@ -11,8 +11,9 @@ ActiveAdmin.register Talk do
 
   collection_action :import_csv, method: :post do
     message = Talk.import(params[:dump][:file], { state: :prelive })
-    if message[:success]
-      flash[:notice] = "#{message[:success]} Talk(s) imported successfully!"
+    if message[:created] || message[:updated]
+      flash[:notice] = "#{message[:created]} talk(s) created, " +
+                       "#{message[:updated]} talk(s) updated."
     end
     if message[:error]
       flash[:error] = "An error occured: #{message[:error]}"
