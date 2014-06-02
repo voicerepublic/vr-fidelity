@@ -1,5 +1,26 @@
 ActiveAdmin.register Talk do
 
+  # BEGIN CSV Import
+  action_item :only => :index do
+    link_to 'Upload CSV', :action => 'upload_csv'
+  end
+
+  collection_action :upload_csv do
+    render "admin/csv/upload_csv"
+  end
+
+  collection_action :import_csv, :method => :post do
+    message = CsvDb.convert_save("talk", params[:dump][:file], { state: :prelive })
+    if message[:success]
+      flash[:notice] = "#{message[:success]} Talk(s) imported successfully!"
+    end
+    if message[:error]
+      flash[:error] = "An error occured: #{message[:error]}"
+    end
+    redirect_to action: :index
+  end
+  # END CSV Import
+
   action_item only: :show do
     if talk.state == 'postlive'
       link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
@@ -128,7 +149,7 @@ ActiveAdmin.register Talk do
     end
     active_admin_comments
   end
-  
+
   form do |f|
     f.inputs do
       f.input :title
@@ -169,13 +190,13 @@ ActiveAdmin.register Talk do
           as: :string,
           input_html: {
             class: 'picker',
-            value: f.object.started_at.strftime("%Y-%m-%d %H:%M:%S")
+            value: f.object.started_at.try(:strftime, "%Y-%m-%d %H:%M:%S")
           }
         f.input :ended_at,
           as: :string,
           input_html: {
             class: 'picker',
-            value: f.object.ended_at.strftime("%Y-%m-%d %H:%M:%S")
+            value: f.object.ended_at.try(:strftime, "%Y-%m-%d %H:%M:%S")
           }
       end
     end

@@ -1,0 +1,14 @@
+%h3 Validation
+%p
+  Please use <a href="/samples/talks.csv">this CSV file</a> as a template for imports
+
+= form_for :dump, :url=>{:action=>"import_csv"}, :html => { :multipart => true } do |f|
+  %table
+    %tr
+      %td
+        %label{:for => "dump_file"}
+          Select a CSV File :
+        %td
+          = f.file_field :file
+        %td
+          = submit_tag 'Upload'

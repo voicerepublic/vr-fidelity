@@ -5,6 +5,7 @@ gem 'pg'
 gem 'sass-rails', '~> 4.0.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
+gem 'haml-rails'
 gem 'therubyracer', platforms: :ruby
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
@@ -27,6 +28,7 @@ gem 'activeadmin', github: 'gregbell/active_admin'
 gem 'airbrake'
 gem 'rails_config'
 gem 'activeadmin-dragonfly', github: 'stefanoverna/activeadmin-dragonfly'
+gem 'acts-as-taggable-on', '3.0.1' # tag-system
 
 group :development do
   gem 'annotator'

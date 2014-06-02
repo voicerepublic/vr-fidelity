@@ -31,7 +31,7 @@ class Talk < ActiveRecord::Base
     norecording:  "No recording, no override available. (no recording)",
     failed:       "Recording available, but processing failed. (failed)"
   }
-  
+
   STATES = %w( prelive live postlive processing archived )
 
   # TODO create a better more specific pattern for urls
@@ -40,14 +40,21 @@ class Talk < ActiveRecord::Base
 
   belongs_to :venue, :inverse_of => :talks
 
-  validates :venue, :title, :starts_at, :ends_at, presence: true
+  acts_as_taggable
+  validates :venue, :title, :starts_at, :ends_at, :tag_list, presence: true
 
   validates :recording_override, format: { with: URL_PATTERN, message: URL_MESSAGE },
             if: ->(t) { t.recording_override? && t.recording_override_changed? }
 
   validate :related_talk_id_is_talk?, :on => :update
 
+  before_validation :set_starts_at
   before_validation :set_ends_at
+
+  validates :starts_at_date, format: { with: /\A\d{4}-\d\d-\d\d\z/,
+                                       message: "Invalid time" }
+  validates :starts_at_time, format: { with: /\A\d\d:\d\d\z/,
+                                       message: "Invalid time" }
 
   after_save :schedule_processing_override,
              if: ->(t) { t.recording_override? && t.recording_override_changed? }
@@ -55,7 +62,7 @@ class Talk < ActiveRecord::Base
   delegate :user, to: :venue
 
   serialize :storage
-  
+
   image_accessor :image
 
   # poor man's auto scopes
@@ -96,8 +103,16 @@ class Talk < ActiveRecord::Base
     # s = sum_duration % 60
     # @flv_data = [sum_size, '%02d:%02d:%02d' % [h, m, s]]
   end
-  
+
   private
+
+  # Assemble `starts_at` from `starts_at_date` and `starts_at_time`.
+  #
+  # Since the validity of `starts_at_date` and `starts_at_time` is ensured
+  # with regexes we are allowed to be optimistic about parsing here.
+  def set_starts_at
+    self.starts_at = Time.zone.parse([starts_at_date, starts_at_time] * ' ')
+  end
 
   def set_ends_at
     return unless starts_at
