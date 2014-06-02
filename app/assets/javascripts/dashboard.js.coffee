@@ -138,11 +138,26 @@ $ ->
     svg.attr("width", '100%').attr("height", maxY)
     maxX = svg[0][0].getBoundingClientRect().width
 
+    # ---
+
+    updateQueueSize = ->
+      svg.select('.queue').text(djAudioQueueSize)
+
+    svg.append('text')
+      .attr('class', 'queue')
+      .attr('x', 50)
+      .attr('y', 30)
+    updateQueueSize()
+
+    # ---
+
     update = (data) ->
       ids = (talk.id for talk in data)
-      scaleX = d3.scale.ordinal().domain(ids).rangePoints([0, maxX], 30)
+      scaleX = d3.scale.ordinal().domain(ids).rangePoints([0, maxX], ids.length)
+      states = ['prelive', 'live', 'postlive', 'processing', 'archived']
+      scaleY = d3.scale.ordinal().domain(states).rangePoints([0, maxY], states.length)
       position = (d) ->
-        "translate(#{scaleX(d.id)}, #{maxY/2})"
+        "translate(#{scaleX(d.id)}, #{scaleY(d.state || 'prelive')})"
 
       # --- data join
       nodes = svg.selectAll('.node').data(data)
@@ -151,7 +166,7 @@ $ ->
       link = nodes.enter().append('g').append('a')
         .attr('xlink:href', (t) -> "//#{url}/talk/#{t.id}")
       link.append('circle')
-      link.append('text').text((t) -> t.id)
+      link.append('text').text((t) -> "#{t.id}")
       # --- enter & update
       nodes.attr('class', 'node')
       nodes.transition().duration(500)
@@ -174,7 +189,6 @@ $ ->
     merge = (talk) ->
       index = idx for idx, value of talks when value.id == talk.id
       if index then $.extend(talks[index], talk) else talks.push talk
-
 
     # --- handle messages
 
@@ -203,9 +217,33 @@ $ ->
 
     # Example
     #
-    # 
+    # { "opts": { "id":1055 },
+    #   "event": {
+    #     "job": {
+    #       "id":5098,
+    #       "priority":20,
+    #       "attempts":0,
+    #       "handler":"--- !ruby/struct:Postprocess\nopts:\n  :id: 1055\n",
+    #       "last_error":null,
+    #       "run_at":"2014-05-29T15:25:08.667+02:00",
+    #       "locked_at":"2014-05-29T15:25:09.437+02:00",
+    #       "failed_at":null,
+    #       "locked_by":
+    #       "delayed_job.audio-0 host:voicerepublic-production pid:23560",
+    #       "queue":"audio",
+    #       "created_at":"2014-05-29T15:25:08.668+02:00",
+    #       "updated_at":"2014-05-29T15:25:08.668+02:00"
+    #     },
+    #     "signal":"after"
+    #   }
+    # }
     PrivatePub.subscribe "/dj", (payload, channel) ->
       console.log "#{channel}: #{JSON.stringify(payload)}"
+      if payload.event.job.queue == 'audio'
+        switch payload.event.signal
+          when 'after' then window.djAudioQueueSize--
+          when 'enqueue' then window.djAudioQueueSize++
+        updateQueueSize()
 
     # Example
     #
@@ -215,9 +253,39 @@ $ ->
 
     # Example
     #
-    # 
+    # { "event":"Archive",
+    #   "talk":{
+    #     "id":1054,
+    #     "title":"Lost & Found by Vitra",
+    #     "venue_id":242,
+    #     "starts_at":"2014-05-29T15:15:00.000+02:00",
+    #     "ends_at":"2014-05-29T15:45:00.000+02:00",
+    #     "ended_at":"2014-05-29T15:23:46.319+02:00",
+    #     "record":true,
+    #     "recording":"2014/05/29/1054",
+    #     "created_at":"2014-05-27T19:28:03.680+02:00",
+    #     "updated_at":"2014-05-29T15:24:24.061+02:00",
+    #     "teaser":"Talk by Flowers for Slovakia: ...",
+    #     "description":"<p>Open Talks Key Topic: ...</p>
+    #     "duration":30,
+    #     "image_uid":"2014/05/27/6osctbdwpa_DMY_Talks_pic1.png",
+    #     "session":{"7":{"id":7,"name":"Phil Hofmann","role":"participant",...
+    #
+    # { "event":"Processing",
+    #   "talk":{
+    #     "id":1054,
+    #     "run":"ogg",
+    #     "index":9,
+    #     "total":10
+    #   }
+    # }
     PrivatePub.subscribe "/monitoring", (payload, channel) ->
       console.log "#{channel}: #{JSON.stringify(payload)}"
       talk = payload.talk
+      switch payload.event
+        when 'StartTalk' then talk.state = 'live'
+        when 'EndTalk'   then talk.state = 'postlive'
+        when 'Process'   then talk.state = 'processing'
+        when 'Archive'   then talk.state = 'archived'
       merge talk
       update talks

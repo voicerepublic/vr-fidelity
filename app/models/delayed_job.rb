@@ -1,5 +1,7 @@
 class Delayed::Job
 
+  scope :queued, -> { where(attempts: 0) }
+  
   scope :failed, -> { where.not(failed_at: nil) }
 
   scope :audio, -> { where(queue: 'audio') }

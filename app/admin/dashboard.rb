@@ -5,9 +5,11 @@ ActiveAdmin.register_page "Dashboard" do
   title = 'WITH GREAT POWER COMES GREAT RESPONSIBILITY'
   content title: title do
 
+    # TODO refactor this into a json api
     div do
       script do
-        raw 'window.talks = ' + Talk.live.map(&:attributes).to_json
+        raw 'window.talks = ' + Talk.live.map(&:attributes).to_json + ';' +
+          'window.djAudioQueueSize = ' + Delayed::Job.audio.queued.count.to_s
       end
     end
 
