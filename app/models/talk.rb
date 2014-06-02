@@ -50,7 +50,8 @@ class Talk < ActiveRecord::Base
 
   before_validation :set_starts_at
   before_validation :set_ends_at
-
+  before_save :nilfify_grade
+  
   validates :starts_at_date, format: { with: /\A\d{4}-\d\d-\d\d\z/,
                                        message: "Invalid time" }
   validates :starts_at_time, format: { with: /\A\d\d:\d\d\z/,
@@ -131,4 +132,9 @@ class Talk < ActiveRecord::Base
       errors.add(:related_talk_id, "is not a proper talk id")
     end
   end
+
+  def nilify_grade
+    self.grade = nil if grade.blank?
+  end
+  
 end
