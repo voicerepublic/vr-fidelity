@@ -92,7 +92,8 @@ ActiveAdmin.register Talk do
           [
             "data = #{talk.storage.values.to_json}",
             "startedAt = #{talk.started_at.to_i}",
-            "endedAt = #{talk.ended_at.to_i}"
+            "endedAt = #{talk.ended_at.to_i}",
+            "override = #{talk.recording_override?}"
           ].join(";\n").html_safe
         end
       end
