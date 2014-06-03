@@ -109,32 +109,42 @@ $ ->
     start = d3.min(t0)
     end = d3.max(tn)
 
+    # extract users
+    for d, i in data
+      data[i].user = d.key.match(/t\d+-u(\d+)-\d+.flv/)[1]
+    users = data.map (d) -> d.user
+    users = d3.set(users).values() # unique
+
     # setup svg
-    maxY = 37
+    maxY = 5 + 10 * users.length + 5 + 5 + 10 + 2
     svg = d3.select('#visual').append('svg')
     svg.attr("width", '100%').attr("height", maxY)
     maxX = svg[0][0].getBoundingClientRect().width
 
     scaleX = d3.scale.linear().domain([start, end]).range([0, maxX])
+    scaleY = d3.scale.ordinal().domain(users).rangePoints([0, 10 * users.length])
 
     # draw window
     svg.append('rect')
       .attr('class', 'window')
       .attr('x', scaleX(startedAt))
-      .attr('y', 0)
+      .attr('y', 5)
       .attr('width', scaleX(endedAt) - scaleX(startedAt))
-      .attr('height', 20)
-      .attr('style', 'fill: #e8e8e8')
+      .attr('height', 5 + 10 * users.length + 5)
+      .attr('style', 'fill: lightgrey')
 
     widthF = (d) ->
       scaleX(parseInt(d.start) + parseInt(d.seconds)) - scaleX(parseInt(d.start))
+
+    scaleC = d3.scale.category10().domain(users)
+    colorF = (d) -> 'fill: ' + scaleC(d.user)
 
     # draw overview
     svg.selectAll('.overview').data(data)
       .enter().append('rect')
       .attr('class', 'overview')
-      .attr('style', (d) -> "fill: green")
-      .attr('y', 5)
+      .attr('style', colorF)
+      .attr('y', (d) -> 5 + scaleY(d.user))
       .attr('x', (d) -> scaleX(d.start))
       .attr('height', 10)
       .attr('width', widthF)
