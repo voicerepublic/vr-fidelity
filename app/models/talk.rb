@@ -24,6 +24,8 @@
 # * venue_id [integer] - belongs to :venue
 class Talk < ActiveRecord::Base
 
+  extend ::CsvImport
+  
   GRADES = {
     ok:           "Everything ok. Quality acceptable. (ok)",
     override:     "Manually overriden, quailty is good. (override)",
@@ -41,8 +43,9 @@ class Talk < ActiveRecord::Base
   belongs_to :venue, :inverse_of => :talks
 
   acts_as_taggable
-  validates :venue, :title, :starts_at, :ends_at, :tag_list, presence: true
-
+  validates :venue, :title, :starts_at, :ends_at, :tag_list, :uri, presence: true
+  validates :uri, uniqueness: true
+  
   validates :recording_override, format: { with: URL_PATTERN, message: URL_MESSAGE },
             if: ->(t) { t.recording_override? && t.recording_override_changed? }
 
@@ -56,7 +59,7 @@ class Talk < ActiveRecord::Base
                                        message: "Invalid time" }
   validates :starts_at_time, format: { with: /\A\d\d:\d\d\z/,
                                        message: "Invalid time" }
-
+  
   after_save :schedule_processing_override,
              if: ->(t) { t.recording_override? && t.recording_override_changed? }
 
