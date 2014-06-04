@@ -98,36 +98,79 @@ opacity = (talk) ->
 $ ->
 
   if $('#visual').length
+    # filter to entries which have a start
     data = window.data.filter (d) -> d.start?
+
+    # find min and max
     t0 = (parseInt(d.start) for i, d of data)
     tn = (parseInt(d.start)+parseInt(d.seconds) for i, d of data)
+    t0.push(startedAt)
+    tn.push(endedAt)
     start = d3.min(t0)
     end = d3.max(tn)
 
-    maxY = 15
+    # extract users
+    for d, i in data
+      data[i].user = d.key.match(/t\d+-u(\d+)-\d+.flv/)[1]
+    users = data.map (d) -> d.user
+    users = d3.set(users).values() # unique
+
+    # setup svg
+    maxY = 5 + 10 * users.length + 5 + 5 + 10 + 2
     svg = d3.select('#visual').append('svg')
     svg.attr("width", '100%').attr("height", maxY)
     maxX = svg[0][0].getBoundingClientRect().width
+
     scaleX = d3.scale.linear().domain([start, end]).range([0, maxX])
+    scaleY = d3.scale.ordinal().domain(users).rangePoints([0, 10 * users.length])
 
-    mark = (x) ->
-      line = svg.append('line')
-      line.attr('x1', x).attr('x2', x)
-      line.attr('y1', 0).attr('y2', 15)
-      line.attr('stroke', 'black').attr('stroke-width', 2)
+    # draw window
+    svg.append('rect')
+      .attr('class', 'window')
+      .attr('x', scaleX(startedAt))
+      .attr('y', 5)
+      .attr('width', scaleX(endedAt) - scaleX(startedAt))
+      .attr('height', 5 + 10 * users.length + 5)
+      .attr('style', 'fill: lightgrey')
 
-    mark(scaleX(startedAt))
-    mark(scaleX(endedAt))
-
-    nodes = svg.selectAll('rect').data(data)
-    nodes = nodes.enter().append('rect')
-    nodes.attr('style', (d) -> "fill: green")
-    nodes.attr('y', 5)
-    nodes.attr 'x', (d) -> scaleX(d.start)
-    nodes.attr('height', 10)
-    nodes.attr 'width', (d) ->
+    widthF = (d) ->
       scaleX(parseInt(d.start) + parseInt(d.seconds)) - scaleX(parseInt(d.start))
 
+    scaleC = d3.scale.category10().domain(users)
+    colorF = (d) -> 'fill: ' + scaleC(d.user)
+
+    # draw overview
+    svg.selectAll('.overview').data(data)
+      .enter().append('rect')
+      .attr('class', 'overview')
+      .attr('style', colorF)
+      .attr('y', (d) -> 5 + scaleY(d.user))
+      .attr('x', (d) -> scaleX(d.start))
+      .attr('height', 10)
+      .attr('width', widthF)
+
+    scaleX = d3.scale.linear().domain([startedAt, endedAt]).range([0, maxX])
+    widthF = (d) ->
+      scaleX(parseInt(d.start) + parseInt(d.seconds)) - scaleX(parseInt(d.start))
+
+    # draw detail
+    svg.selectAll('.detail').data(data)
+      .enter().append('rect')
+      .attr('class', 'detail')
+      .attr('style', 'fill: green')
+      .attr('y', 25)
+      .attr 'x', (d) -> scaleX(d.start)
+      .attr('height', 10)
+      .attr('width', widthF)
+
+    if window.override
+      svg.append('text')
+        .attr('x', maxX-225)
+        .attr('y', maxY-2)
+        .attr('style', 'fill: red')
+        .attr('font-size', '42px')
+        .text('OVERRIDE')
+        
   if $('#notifications').length
 
     url = window.location.host

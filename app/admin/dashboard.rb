@@ -9,7 +9,8 @@ ActiveAdmin.register_page "Dashboard" do
     div do
       script do
         raw 'window.talks = ' + Talk.live.map(&:attributes).to_json + ';' +
-          'window.djAudioQueueSize = ' + Delayed::Job.audio.queued.count.to_s
+          'window.djAudioQueueSize = ' + Delayed::Job.audio.queued.count.to_s + ';' +
+          'window.postliveCount = ' + Talk.postlive.count.to_s
       end
     end
 
