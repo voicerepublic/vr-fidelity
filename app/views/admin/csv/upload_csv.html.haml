@@ -1,12 +1,15 @@
 %h3 Validation
 %p
-  Please use <a href="/samples/talks.csv">this CSV file</a> as a template for imports
+  Please use <a href="/samples/talks.csv">this CSV file</a> as a template for imports.
+%p
+  %em uri
+  is an important column: If you change it a new entry will be created. If you keep it, any existing entry will be updated.
 
-= form_for :dump, :url=>{:action=>"import_csv"}, :html => { :multipart => true } do |f|
+= form_for :dump, url: { action: "import_csv" }, html: { multipart: true } do |f|
   %table
     %tr
       %td
-        %label{:for => "dump_file"}
+        %label{ for: "dump_file" }
           Select a CSV File :
         %td
           = f.file_field :file
