@@ -53,7 +53,7 @@ class Talk < ActiveRecord::Base
 
   before_validation :set_starts_at
   before_validation :set_ends_at
-  before_save :nilfify_grade
+  before_save :nilify_grade
   
   validates :starts_at_date, format: { with: /\A\d{4}-\d\d-\d\d\z/,
                                        message: "Invalid time" }
