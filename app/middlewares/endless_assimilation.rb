@@ -9,7 +9,8 @@ class EndlessAssimilation < Struct.new(:app, :opts)
     return app.call(env) unless md = env['PATH_INFO'].match(PATTERN)
 
     data = JSON.parse(env['rack.input'].gets)
-    Rails.logger.info(data.to_yaml)
+    job = Assimilate.new(data)
+    Delayed::Job.enqueue job, queue: 'ci'
     
     [ 200, {}, [] ]
   end
