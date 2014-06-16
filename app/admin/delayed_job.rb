@@ -53,5 +53,6 @@ ActiveAdmin.register Delayed::Job, as: "Job" do
   scope :audio
   scope :trigger
   scope :mail
+  scope :ci
 
 end

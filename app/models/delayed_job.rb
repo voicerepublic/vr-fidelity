@@ -7,9 +7,14 @@ class Delayed::Job
   scope :audio, -> { where(queue: 'audio') }
   scope :trigger, -> { where(queue: 'trigger') }
   scope :mail, -> { where(queue: 'mail') }
+  scope :ci, -> { where(queue: 'ci') }
 
   def display_handler
     case handler
+    when /struct:Assimilate/
+      ref = payload_object.opts['ref']
+      user = payload_object.opts['pusher']['name']
+      "#{user}: #{ref}"
     when /struct:ProcessOverride/
       "Talk.find(#{payload_object.opts.try(:[], :id)}).process_override!"
     when /struct:Postprocess/
