@@ -22,7 +22,8 @@ ActiveAdmin.register_page "Dashboard" do
       namespaces = [
         "/monitoring", # generic monitoring namespace (depr.)
         "/dj",         # hooks in MonitoredJob
-        "/event/talk"  # state changes of talks
+        "/event/talk", # state changes of talks
+        "/stat"        # rtmp stats
       ]        
       (namespaces.map { |ns| subscribe_to(ns) } * "\n").html_safe
     end

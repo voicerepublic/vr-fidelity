@@ -348,3 +348,7 @@ $ ->
         when 'Archive'   then talk.state = 'archived'
       merge talk
       update talks
+
+    # 
+    PrivatePub.subscribe "/stat", (payload, channel) ->
+      console.log "#{channel}: #{JSON.stringify(payload)}"
