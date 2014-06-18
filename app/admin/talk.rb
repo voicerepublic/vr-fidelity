@@ -114,6 +114,7 @@ ActiveAdmin.register Talk do
       row :title
       row :teaser
       row :description
+      row :language
       row :related_talk_id
       row :record
       row :started_at
@@ -171,6 +172,7 @@ ActiveAdmin.register Talk do
       f.input :duration # FIXME make it a select box with discrete values
       f.input :venue
       f.input :teaser
+      f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
       f.input :record
       f.input :recording_override,
