@@ -1,11 +1,6 @@
 $ ->    
   return unless $('.index.admin_dashboard').length
 
-  # Extending Array's prototype
-  unless Array::filter
-    Array::filter = (callback) ->
-      e for e in this when callback(e)
-  
   maxY = 300
 
   color = (talk) ->
@@ -28,13 +23,13 @@ $ ->
     1
 
   # initialize with no data
-  data = { talks: [] }
+  data = { talks: [], streams: [] }
   
   # initialize once with seed data
   $.get '/admin/dashboard/seed', (d) ->
-    data = d
+    $.extend data, d
     updateQueueSize()
-    update data.talks
+    updateTalks()
     
   url = window.location.host
   url = url.replace('3001', '3000') # development
@@ -57,7 +52,11 @@ $ ->
 
   # ---
 
-  update = (talks) ->
+  updateStreams = ->
+    ;
+
+  updateTalks = ->
+    talks = data.talks
     ids = (talk.id for talk in talks)
     scaleX = d3.scale.ordinal().domain(ids).rangePoints([0, maxX], ids.length)
     states = ['prelive', 'live', 'postlive', 'processing', 'archived']
@@ -88,19 +87,15 @@ $ ->
     for index, talk of data.talks
       age = data.talks[index].age += 1
       data.talks[index].call = 'over_due' if age > 61
-    update data.talks
+    updateTalks()
           
   setInterval tick, 500
-
-  merge = (talk) ->
-    index = idx for idx, value of data.talks when value.id == talk.id
-    if index then $.extend(data.talks[index], talk) else data.talks.push talk
 
   # --- setup providers
 
   provider.rtmpNotify (talk) ->
-    merge talk
-    update data.talks
+    data.talks.merge talk
+    updateTalks()
 
   provider.dj (signal) ->
     switch signal
@@ -109,12 +104,13 @@ $ ->
     updateQueueSize()
 
   provider.monitoring (talk) ->
-    merge talk
-    update data.talks
+    data.talks.merge talk
+    updateTalks()
 
   provider.eventTalk (payload) ->
     ;
 
   provider.rtmpStat (streams) ->
     for stream_id, stream of streams
-      ;
+      data.streams.merge stream, stream_id
+    updateStreams()

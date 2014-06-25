@@ -10,7 +10,7 @@
 #= require private_pub
 #= require talks
 #
+#= require dashboard/array
 #= require dashboard/provider
 #= require_tree ./dashboard/provider
 #= require dashboard/index
-
