@@ -2,28 +2,24 @@ ActiveAdmin.register_page "Dashboard" do
 
   menu priority: 1, label: proc{ I18n.t("active_admin.dashboard") }
 
+  page_action :seed do
+    render json: {
+      talks:            Talk.live.map(&:attributes),
+      djAudioQueueSize: Delayed::Job.audio.queued.count,
+      postliveCount:    Talk.postlive.count
+    }
+  end
+
   title = 'WITH GREAT POWER COMES GREAT RESPONSIBILITY'
   content title: title do
 
-    # TODO refactor this into a json api
-    div do
-      script do
-        raw 'window.talks = ' + Talk.live.map(&:attributes).to_json + ';' +
-          'window.djAudioQueueSize = ' + Delayed::Job.audio.queued.count.to_s + ';' +
-          'window.postliveCount = ' + Talk.postlive.count.to_s
-      end
-    end
-
-    div id: 'notifications', style: 'margin: 30px' do
-        subscribe_to("/notifications")       # notifications from rtmpd
-    end
-    
     div id: 'livedashboard', style: 'margin: 30px' do
       namespaces = [
-        "/monitoring", # generic monitoring namespace (depr.)
-        "/dj",         # hooks in MonitoredJob
-        "/event/talk", # state changes of talks
-        "/stat"        # rtmp stats
+        "/notifications", # rtmp notify
+        "/monitoring",    # generic monitoring namespace (depr.)
+        "/dj",            # hooks in MonitoredJob
+        "/event/talk",    # state changes of talks
+        "/stat"           # rtmp stats
       ]        
       (namespaces.map { |ns| subscribe_to(ns) } * "\n").html_safe
     end

@@ -187,20 +187,29 @@ $ ->
         .attr('font-size', '42px')
         .text('OVERRIDE')
         
-  if $('#notifications').length
+  if $('#livedashboard').length
 
+    # initialize with no data
+    data = { talks: [] }
+    
+    # initialize once with seed data
+    $.get '/admin/dashboard/seed', (d) ->
+      data = d
+      updateQueueSize()
+      update data.talks
+      
     url = window.location.host
-    url = url.replace('3001', '3000')
-    url = url.replace(':444', '')
+    url = url.replace('3001', '3000') # development
+    url = url.replace(':444', '') # production
 
-    svg = d3.select('#notifications').append("svg")
+    svg = d3.select('#livedashboard').append("svg")
     svg.attr("width", '100%').attr("height", maxY)
     maxX = svg[0][0].getBoundingClientRect().width
 
     # ---
 
     updateQueueSize = ->
-      svg.select('.queue').text(djAudioQueueSize)
+      svg.select('.queue').text(data.djAudioQueueSize)
 
     svg.append('text')
       .attr('class', 'queue')
@@ -210,8 +219,8 @@ $ ->
 
     # ---
 
-    update = (data) ->
-      ids = (talk.id for talk in data)
+    update = (talks) ->
+      ids = (talk.id for talk in talks)
       scaleX = d3.scale.ordinal().domain(ids).rangePoints([0, maxX], ids.length)
       states = ['prelive', 'live', 'postlive', 'processing', 'archived']
       scaleY = d3.scale.ordinal().domain(states).rangePoints([0, maxY], states.length)
@@ -219,7 +228,7 @@ $ ->
         "translate(#{scaleX(d.id)}, #{scaleY(d.state || 'prelive')})"
 
       # --- data join
-      nodes = svg.selectAll('.node').data(data)
+      nodes = svg.selectAll('.node').data(talks)
       # --- update
       # --- enter
       link = nodes.enter().append('g').append('a')
@@ -238,16 +247,16 @@ $ ->
       nodes.exit().remove()
                                                 
     tick = ->
-      for index, talk of talks
-        age = talks[index].age += 1
-        talks[index].call = 'over_due' if age > 61
-      update talks
+      for index, talk of data.talks
+        age = data.talks[index].age += 1
+        data.talks[index].call = 'over_due' if age > 61
+      update data.talks
             
     setInterval tick, 500
 
     merge = (talk) ->
-      index = idx for idx, value of talks when value.id == talk.id
-      if index then $.extend(talks[index], talk) else talks.push talk
+      index = idx for idx, value of data.talks when value.id == talk.id
+      if index then $.extend(data.talks[index], talk) else data.talks.push talk
 
     # --- handle messages
 
@@ -272,7 +281,7 @@ $ ->
       payload.age = 0
       return if payload.call == 'update_play'
       merge payload
-      update talks
+      update data.talks
 
     # Example
     #
@@ -300,8 +309,8 @@ $ ->
       console.log "#{channel}: #{JSON.stringify(payload)}"
       if payload.event.job.queue == 'audio'
         switch payload.event.signal
-          when 'after' then window.djAudioQueueSize--
-          when 'enqueue' then window.djAudioQueueSize++
+          when 'after' then data.djAudioQueueSize--
+          when 'enqueue' then data.djAudioQueueSize++
         updateQueueSize()
 
     # Example
@@ -347,7 +356,7 @@ $ ->
         when 'Process'   then talk.state = 'processing'
         when 'Archive'   then talk.state = 'archived'
       merge talk
-      update talks
+      update data.talks
 
     # 
     PrivatePub.subscribe "/stat", (payload, channel) ->
