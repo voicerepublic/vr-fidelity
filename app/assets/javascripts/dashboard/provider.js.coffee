@@ -1,0 +1,2 @@
+# namespace provider
+window.provider = {}
