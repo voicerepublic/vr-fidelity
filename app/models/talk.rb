@@ -108,6 +108,11 @@ class Talk < ActiveRecord::Base
     # @flv_data = [sum_size, '%02d:%02d:%02d' % [h, m, s]]
   end
 
+  # TODO provide a list of expected streams (host + guests)
+  def streams
+    []
+  end
+
   private
 
   # Assemble `starts_at` from `starts_at_date` and `starts_at_time`.

@@ -6,7 +6,8 @@ ActiveAdmin.register_page "Dashboard" do
     render json: {
       talks:            Talk.live.map(&:attributes),
       djAudioQueueSize: Delayed::Job.audio.queued.count,
-      postliveCount:    Talk.postlive.count
+      postliveCount:    Talk.postlive.count,
+      streams:          Talk.live.map(&:streams).flatten
     }
   end
 
