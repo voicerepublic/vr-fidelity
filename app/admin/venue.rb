@@ -1,5 +1,7 @@
 ActiveAdmin.register Venue do
-  permit_params :id, :title, :teaser, :description, :user, :options
+
+  permit_params :title, :teaser, :description, :options, :image,
+                :retained_image, :remove_image, flags: []
 
   index do
     selectable_column
@@ -17,6 +19,30 @@ ActiveAdmin.register Venue do
     actions
   end
 
+  show do |v|
+    attributes_table do
+      row :id
+      row :uri
+      row :slug
+      row :user
+      row :title
+      row :teaser
+      row :description do
+        raw v.description
+      end
+      row :flags do
+        badges = Venue::FLAGS.map do |f|
+          state = v.flags.include?(f.to_sym) ? ' active' : ''
+          content_tag :span, f.to_s.humanize,
+                      class: "badge" + state
+        end
+        raw badges * ' '
+      end
+      row :created_at
+      row :updated_at
+    end
+  end
+  
   form do |f|
     f.inputs do
       f.input :title
@@ -24,24 +50,13 @@ ActiveAdmin.register Venue do
       f.input :description
       #f.input :user
       f.input :options, input_html: { rows: 6 },
-      :hint => "<b>These options are supported:</b><br/>
-                no_auto_postprocessing: true/false<br/>
-                no_auto_end_talk: true/false<br/>
-                no_email: true/false<br/>
-                suppress_chat: true/false<br/>
-                <b>Example configuration:</b>
-                <pre>
-                ---
-                no_auto_end_talk: true
-                no_email: true
-                loopback: true
-                </pre>".html_safe
+              hint: "Boolean flags will be set/overriden by the checkboxes below."
+      f.input :flags, as: :check_boxes, collection: Venue::FLAGS,
+              member_label: :humanize,
+              hint: "Please consult the event handbook for details on these options."
       f.input :image, as: :dragonfly
     end
     f.actions
   end
 
-  permit_params :title, :teaser, :description, :options, :image,
-                :retained_image, :remove_image
- 
 end
