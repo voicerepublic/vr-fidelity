@@ -174,7 +174,7 @@ ActiveAdmin.register Talk do
       f.input :teaser
       f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
-      f.input :collect, label: "Record"
+      f.input :record
       f.input :recording_override,
               hint: 'Paste a URL to import a manually'+
               ' processed file, e.g. a dropbox URL.'
