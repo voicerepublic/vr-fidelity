@@ -212,6 +212,7 @@ ActiveAdmin.register Talk do
                     featured_from
                     duration
                     venue_id
+                    language
                     teaser
                     description
                     record
