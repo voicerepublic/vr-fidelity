@@ -227,6 +227,8 @@ ActiveAdmin.register Talk do
                     retained_image
                     remove_image
                     grade
+                    format
+                    speakers
                     recording_override ).map(&:to_sym)
 
 end
