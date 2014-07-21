@@ -77,7 +77,7 @@ $ ->
     nodes.transition().duration(500)
       .attr("transform", position)
     nodes.select('circle')
-      .attr('r', (t) -> 20)
+      .attr('r', 20)
       .attr('style', (t) -> "fill: #{color(t)}")
       .attr('opacity', opacity)
     # --- exit

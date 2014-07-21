@@ -21,9 +21,9 @@
 #   }
 # }
 dj = (callback) ->
-PrivatePub.subscribe "/dj", (payload, channel) ->
-  console.log "#{channel}: #{JSON.stringify(payload)}"
-  return unless payload.event.job.queue == 'audio'
-  callback payload.event.signal
+  PrivatePub.subscribe "/dj", (payload, channel) ->
+    console.log "#{channel}: #{JSON.stringify(payload)}"
+    return unless payload.event.job.queue == 'audio'
+    callback payload.event.signal
 
 window.provider.dj = dj
