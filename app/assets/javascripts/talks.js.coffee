@@ -33,11 +33,9 @@ $ ->
   switchLevel = ->
     if level == 'overview'
       level = 'detail'
-      console.log "switch to #{level}"
       scaleX.domain([startedAt, endedAt])
     else
       level = 'overview'
-      console.log "switch to #{level}"
       scaleX.domain([start, end])
     update()
 
@@ -50,8 +48,9 @@ $ ->
 
   update = ->
     # draw window
-    svg.selectAll('.window').data([{start: startedAt, end: endedAt}])
-      .enter().append('rect')
+    sel = svg.selectAll('.window').data([{start: startedAt, end: endedAt}])
+    sel.enter().append('rect')
+    sel.transition().duration(1000)
       .attr('class', 'window')
       .attr('x', (d) -> scaleX(d.start))
       .attr('y', 5)
@@ -60,8 +59,9 @@ $ ->
       .attr('style', 'fill: lightgrey')
   
     # draw overview
-    svg.selectAll('.overview').data(data)
-      .enter().append('rect')
+    sel = svg.selectAll('.overview').data(data)
+    sel.enter().append('rect')
+    sel.transition().duration(1000)
       .attr('class', 'overview')
       .attr('style', colorF)
       .attr('y', (d) -> 5 + scaleY(d.user))
