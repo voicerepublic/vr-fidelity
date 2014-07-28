@@ -1,4 +1,5 @@
-// original version
+// patched versio of private_pub.js that comes with private_pub gem
+// remember to update this file when updateing private_pub gem!
 
 function buildPrivatePub(doc) {
   var self = {
@@ -33,6 +34,22 @@ function buildPrivatePub(doc) {
     },
 
     fayeExtension: {
+
+      // patched to support FayeTtl
+      incoming: function(message, callback) {
+        if(message.channel == '/meta/subscribe') {
+          var subscription = message.subscription;
+          var func = self.subscriptionCallbacks[subscription];
+          if(message.ext && message.ext.cached) {
+            message.ext.cached.forEach(function(data) {
+              func(data.data, subscription, data.timestamp);
+            });
+          }
+        }
+        callback(message);
+      },
+      // end of patch
+
       outgoing: function(message, callback) {
         if (message.channel == "/meta/subscribe") {
           // Attach the signature and timestamp to subscription messages
