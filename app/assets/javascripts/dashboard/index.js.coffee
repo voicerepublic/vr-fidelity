@@ -91,6 +91,11 @@ $ ->
 
   scaleY = d3.scale.ordinal()
     .rangePoints([0, maxY])
+
+  bwInColor = (d) ->
+    return 'green' if d.value > 20000
+    return 'orange' if d.value > 0
+    'red'
       
   updateStreams = ->
     now     = new Date
@@ -114,7 +119,15 @@ $ ->
       .attr('y', (d) -> scaleY(d.stream_id))
       .attr('width', (d) -> timeScaleX(d.end_time) - timeScaleX(d.start_time))
       .attr('height', 10)
-      
+      .attr('fill', bwInColor)
+
+    streams = svg.selectAll('.stream').data(data.streams)
+    streams.enter().append('text')
+      .attr('class', 'stream')
+      .attr('x', (d) -> maxX/2 + 5)
+    streams.transition().duration(750)
+      .attr('y', (d) -> scaleY(d.id) + 4)
+      .text((d) -> "#{d.id} #{d.bw_in.slice(-1)[0].value} Kb/s (#{d.codec}) #{d.nclients}")
       
   setInterval updateStreams, 1000
 
@@ -127,7 +140,7 @@ $ ->
     states = ['prelive', 'live', 'postlive', 'processing', 'archived']
     scaleY = d3.scale.ordinal().domain(states).rangePoints([0, maxY], states.length)
     position = (d) ->
-      "translate(#{scaleX(d.id)}, #{scaleY(d.state || 'prelive')})"
+      "translate(#{scaleX(d.id)}, #{scaleY(d.state || 'prelive')+100})"
 
     # --- data join
     nodes = svg.selectAll('.node').data(talks)
