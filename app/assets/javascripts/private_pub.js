@@ -1,5 +1,5 @@
-// patched versio of private_pub.js that comes with private_pub gem
-// remember to update this file when updateing private_pub gem!
+// patched version of private_pub.js that comes with private_pub gem
+// remember to update this file when updating private_pub gem!
 
 function buildPrivatePub(doc) {
   var self = {
