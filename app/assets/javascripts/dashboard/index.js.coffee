@@ -51,7 +51,60 @@ $ ->
   updateQueueSize()
 
   # ---
+  # time scale updates every second
 
+  now     = new Date
+  tplus4  = new Date(now.getTime() + 4 * 60 * 60 * 1000)
+  tplus1  = new Date(now.getTime() + 1 * 60 * 60 * 1000)
+  tminus1 = new Date(now.getTime() - 1 * 60 * 60 * 1000)
+  tminus4 = new Date(now.getTime() - 4 * 60 * 60 * 1000)
+  
+  timeScaleX = d3.time.scale()
+    .domain([tminus4, tminus1, tplus1, tplus4])
+    .rangeRound([0, maxX/6, maxX/6*5, maxX])
+  
+  timeFormatter = d3.time.format('%H:%M')
+  
+  axisX = d3.svg.axis().scale(timeScaleX)
+    .tickFormat(timeFormatter)
+  
+  svg.append('g').attr('class', 'axis').call(axisX)
+  
+  drawMarker = (x) ->
+    svg.append('line')
+      .attr('x1', x).attr('x2', x)
+      .attr('y1', 0).attr('y2', maxY)
+      .attr('class', 'marker')
+  
+  drawMarker Math.round(maxX/6)
+  drawMarker Math.round(maxX/6*5)
+  drawMarker Math.round(maxX/2)
+  
+  preciseTimeFormatter = d3.time.format('%H:%M:%S')
+  
+  svg.append('text')
+    .attr('class', 'now')
+    .attr('text-anchor', 'middle')
+    .attr('x', maxX/2)
+    .attr('y', maxY - 10)
+    .text(preciseTimeFormatter(now))
+  
+  updateStream = ->
+    now     = new Date
+    tplus4  = new Date(now.getTime() + 4 * 60 * 60 * 1000)
+    tplus1  = new Date(now.getTime() + 1 * 60 * 60 * 1000)
+    tminus1 = new Date(now.getTime() - 1 * 60 * 60 * 1000)
+    tminus4 = new Date(now.getTime() - 4 * 60 * 60 * 1000)
+  
+    svg.select('.now').text(preciseTimeFormatter(now))
+  
+    timeScaleX.domain([tminus4, tminus1, tplus1, tplus4])
+    svg.select('.axis').call(axisX)
+  
+  setInterval updateStream, 1000
+
+  # ---
+  
   updateStreams = ->
     ;
 

@@ -58,8 +58,18 @@ html, body {
         }
         .queue {
             fill: blue;
-            font-size: 400%;
+            font-size: 200%;
             font-weight: bold;
         }
+
+        line, .domain {
+            stroke-width: 1px;
+            fill: none;
+            stroke: black;
+        }
+        .marker {
+            stroke: lightgrey;
+        }
+        background-color: papayawhip;
     }
 }
