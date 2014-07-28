@@ -23,7 +23,7 @@ $ ->
     1
 
   # initialize with no data
-  data = { talks: [], streams: [] }
+  data = { talks: [], streams: [], fragments: [] }
   
   # initialize once with seed data
   $.get '/admin/dashboard/seed', (d) ->
@@ -88,8 +88,11 @@ $ ->
     .attr('x', maxX/2)
     .attr('y', maxY - 10)
     .text(preciseTimeFormatter(now))
-  
-  updateStream = ->
+
+  scaleY = d3.scale.ordinal()
+    .rangePoints([0, maxY])
+      
+  updateStreams = ->
     now     = new Date
     tplus4  = new Date(now.getTime() + 4 * 60 * 60 * 1000)
     tplus1  = new Date(now.getTime() + 1 * 60 * 60 * 1000)
@@ -100,14 +103,23 @@ $ ->
   
     timeScaleX.domain([tminus4, tminus1, tplus1, tplus4])
     svg.select('.axis').call(axisX)
-  
-  setInterval updateStream, 1000
+
+    scaleY.domain(data.streams.map (d) -> d.id)
+
+    fragments = svg.selectAll('.fragment').data(data.fragments)
+    fragments.enter().append('rect').attr('class', 'fragment')
+      .attr('width', 0).attr('x', maxX/2)
+    fragments.transition().duration(750)
+      .attr('x', (d) -> timeScaleX(d.start_time))
+      .attr('y', (d) -> scaleY(d.stream_id))
+      .attr('width', (d) -> timeScaleX(d.end_time) - timeScaleX(d.start_time))
+      .attr('height', 10)
+      
+      
+  setInterval updateStreams, 1000
 
   # ---
   
-  updateStreams = ->
-    ;
-
   updateTalks = ->
     talks = data.talks
     ids = (talk.id for talk in talks)
@@ -163,7 +175,47 @@ $ ->
   provider.eventTalk (payload) ->
     ;
 
-  provider.rtmpStat (streams) ->
+
+
+  # streams:
+  #   - id: t687-t1
+  #     nclients: "1"
+  #     app_name: record
+  #     codec: null
+  #     talk_id: '687'
+  #     user_id: '1'
+  #     bw_in:
+  #       - start_time: Mon Jul 28 2014 16:22:57 GMT+0200 (CEST)
+  #         end_time:
+  #         value: '1'
+  #       - start_time: Mon Jul 28 2014 16:23:57 GMT+0200 (CEST)
+  #         end_time:
+  #         value: '1'
+
+  provider.rtmpStat (streams, timestamp) ->
+    lookup = {}
+    lookup[stream.id] = stream for stream in data.streams
     for stream_id, stream of streams
-      data.streams.merge stream, stream_id
-    updateStreams()
+      # console.log "STREAM: #{timestamp} #{stream_id} #{JSON.stringify(stream)}"
+      start_time = timestamp
+      end_time = timestamp + 4000
+      if finding = lookup[stream_id]
+        indexOfLast = finding.bw_in.length - 1
+        if finding.bw_in[indexOfLast].value == stream.bw_in
+          console.log "EXTENDING FRAGMENT"
+          finding.bw_in[indexOfLast].end_time = end_time
+        else
+          console.log "NEW FRAGMENT"
+          value = stream.bw_in
+          finding.bw_in.push { start_time, end_time, value, stream_id }
+      else
+        console.log "NEW STREAM"
+        stream.id = stream_id
+        value = stream.bw_in
+        stream.bw_in = [ { start_time, end_time, value, stream_id } ]
+        data.streams.push stream
+    data.fragments = d3.merge(data.streams.map((s) -> s.bw_in))
+
+    #console.log("FRAGMENTS: "+JSON.stringify(data.fragments))
+    #console.log(JSON.stringify(data.streams))
+    

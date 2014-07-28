@@ -8,12 +8,13 @@
 # 
 rtmpStat = (callback) ->
   PrivatePub.subscribe "/stat", (payload, channel, timestamp) ->
-    timestamp ||= new Date
-    console.log "#{channel}: #{timestamp} #{JSON.stringify(payload)}"
+    timestamp = timestamp * 1000 unless timestamp == undefined
+    timestamp ||= new Date().getTime()
+    # console.log "#{channel}: #{timestamp} #{JSON.stringify(payload)}"
     for id, stream of payload
       [ _, talk, user ] = id.match(/^t(\d+)-u(\d+)$/)
       payload[id].talk_id = talk
       payload[id].user_id = user
-    callback payload
+    callback payload, timestamp
 
 window.provider.rtmpStat = rtmpStat
