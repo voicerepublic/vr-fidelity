@@ -23,7 +23,7 @@ $ ->
     1
 
   # initialize with no data
-  data = { talks: [], streams: [], fragments: [] }
+  data = { talks: [], streams: [], fragments: [], events: [] }
   
   # initialize once with seed data
   $.get '/admin/dashboard/seed', (d) ->
@@ -99,7 +99,14 @@ $ ->
 
   descendingNclients = (a, b) ->
     d3.descending a.nclients, b.nclients
-          
+
+  eventColor = (event) ->
+    return 'green' if event.call == 'publish'
+    return 'red'   if event.call == 'publish_done'
+    'blue'
+
+  animDuration = 500
+
   updateStreams = ->
     now     = new Date
     tplus4  = new Date(now.getTime() + 4 * 60 * 60 * 1000)
@@ -114,24 +121,37 @@ $ ->
 
     scaleY.domain(data.streams.sort(descendingNclients).map (d) -> d.id)
 
+    # draw fragments
     fragments = svg.selectAll('.fragment').data(data.fragments)
     fragments.enter().append('rect').attr('class', 'fragment')
       .attr('width', 0).attr('x', maxX/2)
-    fragments.transition().duration(750)
+    fragments.transition().duration(animDuration)
       .attr('x', (d) -> timeScaleX(d.start_time))
       .attr('y', (d) -> scaleY(d.stream_id))
       .attr('width', (d) -> timeScaleX(d.end_time) - timeScaleX(d.start_time))
       .attr('height', 10)
       .attr('fill', bwInColor)
 
+    # draw streams
     streams = svg.selectAll('.stream').data(data.streams)
     streams.enter().append('text')
       .attr('class', 'stream')
       .attr('x', (d) -> maxX/2 + 5)
-    streams.transition().duration(750)
+    streams.transition().duration(animDuration)
       .attr('y', (d) -> scaleY(d.id) + 4)
-      .text((d) -> "#{d.id} #{d.bw_in.slice(-1)[0].value} Kb/s (#{d.codec}) #{d.nclients}")
-      
+      .text((d) -> "#{d.id} #{d.bw_in.slice(-1)[0].value} Kb/s " +
+        "(#{d.codec}) #{d.nclients}")
+
+    # draw events
+    events = svg.selectAll('.event').data(data.events)
+    events.enter().append('path')
+      .attr('class', 'event')
+      .attr('d', 'M0 0 L-3 -5 L3 -5 Z')
+      .attr('fill', eventColor)
+    events.transition().duration(animDuration)
+      .attr('transform', (d) -> "translate(#{timeScaleX(d.timestamp)}," +
+        "#{scaleY(d.stream_id)})")
+                  
   setInterval updateStreams, 1000
 
   # ---
@@ -174,9 +194,18 @@ $ ->
 
   # --- setup providers
 
-  provider.rtmpNotify (talk) ->
+  provider.rtmpNotify (talk, timestamp) ->
+    #console.log JSON.stringify(talk)
     data.talks.merge talk
     updateTalks()
+
+    return if talk.call == 'update_publish'
+    # we track publish_done instead which is more generic
+    return if talk.call == 'record_done' 
+
+    stream_id = talk.name
+    call = talk.call
+    data.events.push { timestamp, stream_id, call }
 
   provider.dj (signal) ->
     switch signal
