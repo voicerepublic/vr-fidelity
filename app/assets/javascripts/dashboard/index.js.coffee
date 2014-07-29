@@ -96,7 +96,10 @@ $ ->
     return 'green' if d.value > 20000
     return 'orange' if d.value > 0
     'red'
-      
+
+  descendingNclients = (a, b) ->
+    d3.descending a.nclients, b.nclients
+          
   updateStreams = ->
     now     = new Date
     tplus4  = new Date(now.getTime() + 4 * 60 * 60 * 1000)
@@ -109,7 +112,7 @@ $ ->
     timeScaleX.domain([tminus4, tminus1, tplus1, tplus4])
     svg.select('.axis').call(axisX)
 
-    scaleY.domain(data.streams.map (d) -> d.id)
+    scaleY.domain(data.streams.sort(descendingNclients).map (d) -> d.id)
 
     fragments = svg.selectAll('.fragment').data(data.fragments)
     fragments.enter().append('rect').attr('class', 'fragment')
@@ -205,30 +208,39 @@ $ ->
   #         end_time:
   #         value: '1'
 
+  ascendingStartTime = (a, b) ->
+    d3.ascending a.start_time, b.start_time
+
   provider.rtmpStat (streams, timestamp) ->
+    delta = 4000
+    tolerance = 1000
     lookup = {}
     lookup[stream.id] = stream for stream in data.streams
     for stream_id, stream of streams
       # console.log "STREAM: #{timestamp} #{stream_id} #{JSON.stringify(stream)}"
       start_time = timestamp
-      end_time = timestamp + 4000
+      end_time = timestamp + delta
       if finding = lookup[stream_id]
         indexOfLast = finding.bw_in.length - 1
-        if finding.bw_in[indexOfLast].value == stream.bw_in
-          console.log "EXTENDING FRAGMENT"
+        diff = (end_time - finding.bw_in[indexOfLast].end_time)
+        same_bw = finding.bw_in[indexOfLast].value == stream.bw_in 
+        if same_bw and diff <= delta + tolerance
+          #console.log "EXTENDING FRAGMENT"
           finding.bw_in[indexOfLast].end_time = end_time
         else
-          console.log "NEW FRAGMENT"
+          #console.log "NEW FRAGMENT"
           value = stream.bw_in
           finding.bw_in.push { start_time, end_time, value, stream_id }
+        finding.nclients = stream.nclients
+        finding.codec = stream.codec
       else
-        console.log "NEW STREAM"
+        #console.log "NEW STREAM"
         stream.id = stream_id
         value = stream.bw_in
         stream.bw_in = [ { start_time, end_time, value, stream_id } ]
         data.streams.push stream
     data.fragments = d3.merge(data.streams.map((s) -> s.bw_in))
-
+    data.fragments = data.fragments.sort(ascendingStartTime)
     #console.log("FRAGMENTS: "+JSON.stringify(data.fragments))
     #console.log(JSON.stringify(data.streams))
     
