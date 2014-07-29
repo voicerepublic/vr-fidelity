@@ -15,12 +15,22 @@
 #   "age":0 }
 #
 rtmpNotify = (callback) -> 
-  PrivatePub.subscribe "/notifications", (payload, channel) ->
-    console.log "#{channel}: #{JSON.stringify(payload)}"
-    payload.id = parseInt(payload.name.match(/t(\d+)-/)[1])
-    payload.age = 0
+  PrivatePub.subscribe "/notifications", (payload, channel, timestamp) ->
+
+    timestamp = timestamp * 1000 unless timestamp == undefined
+    timestamp ||= new Date().getTime()
+            
+    # console.log "#{channel}: #{JSON.stringify(payload)}"
     return if payload.call == 'update_play'
-    callback payload
+
+    [ _, talk, user ] = payload.name.match(/^t(\d+)-u(\d+)$/)
+    payload.talk_id = talk
+    payload.user_id = user
+
+    payload.id = parseInt(talk)
+    payload.age = 0
+
+    callback payload, timestamp
 
 window.provider.rtmpNotify = rtmpNotify
 
