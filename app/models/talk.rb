@@ -81,6 +81,10 @@ class Talk < ActiveRecord::Base
   scope :nograde, -> { where(grade: nil) }
   scope :featured, -> { where.not(featured_from: nil) }
 
+  scope :in_dashboard, -> do
+    where('ends_at > ? AND starts_at < ?', 4.hours.ago, 4.hours.from_now)
+  end
+  
   def effective_duration # in seconds
     ended_at - started_at
   end

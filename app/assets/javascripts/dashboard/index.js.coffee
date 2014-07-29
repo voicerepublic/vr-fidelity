@@ -29,7 +29,7 @@ $ ->
   $.get '/admin/dashboard/seed', (d) ->
     $.extend data, d
     updateQueueSize()
-    updateTalks()
+    #updateTalks()
     
   url = window.location.host
   url = url.replace('3001', '3000') # development
@@ -90,7 +90,7 @@ $ ->
     .text(preciseTimeFormatter(now))
 
   scaleY = d3.scale.ordinal()
-    .rangePoints([0, maxY])
+    .rangePoints([0, maxY], 2)
 
   bwInColor = (d) ->
     return 'green' if d.value > 20000
@@ -121,6 +121,21 @@ $ ->
 
     scaleY.domain(data.streams.sort(descendingNclients).map (d) -> d.id)
 
+    # draw talks
+    talks = svg.selectAll('.talk').data(data.talks)
+    talks.enter().append('rect')
+      .attr('class', 'talk')
+      .attr('fill', '#ddd')
+      .attr('x', maxX/2)
+      .attr('width', 0)
+      #.each((d) -> console.log(JSON.stringify(d)))
+    talks.transition().duration(animDuration)
+      .attr('x', (d) -> timeScaleX(Date.parse(d.starts_at)))
+      .attr('width', (d) -> timeScaleX(Date.parse(d.ends_at)) -
+        timeScaleX(Date.parse(d.starts_at)))
+      .attr('y', maxY/2)
+      .attr('height', 20)
+
     # draw fragments
     fragments = svg.selectAll('.fragment').data(data.fragments)
     fragments.enter().append('rect').attr('class', 'fragment')
@@ -134,13 +149,18 @@ $ ->
 
     # draw streams
     streams = svg.selectAll('.stream').data(data.streams)
-    streams.enter().append('text')
-      .attr('class', 'stream')
-      .attr('x', (d) -> maxX/2 + 5)
+    streams.enter()
+      .append('g')
+        .attr('class', 'stream')
+        .attr('transform', (d) -> "translate(#{maxX/2+5}, #{scaleY(d.id)+4})")
+      .append('a')
+        .attr('xlink:href', (d) -> "//#{url}/talk/#{d.talk_id}")
+      .append('text')
     streams.transition().duration(animDuration)
-      .attr('y', (d) -> scaleY(d.id) + 4)
-      .text((d) -> "#{d.id} #{d.bw_in.slice(-1)[0].value} Kb/s " +
-        "(#{d.codec}) #{d.nclients}")
+      .attr('transform', (d) -> "translate(#{maxX/2+5}, #{scaleY(d.id)+4})")
+      .select('text')
+        .text((d) -> "#{d.id} #{d.bw_in.slice(-1)[0].value} Kb/s " +
+          "(#{d.codec}) #{d.nclients}")
 
     # draw events
     events = svg.selectAll('.event').data(data.events)
@@ -151,53 +171,54 @@ $ ->
     events.transition().duration(animDuration)
       .attr('transform', (d) -> "translate(#{timeScaleX(d.timestamp)}," +
         "#{scaleY(d.stream_id)})")
-                  
+
   setInterval updateStreams, 1000
+  #setTimeout updateStreams, 1000
 
   # ---
   
-  updateTalks = ->
-    talks = data.talks
-    ids = (talk.id for talk in talks)
-    scaleX = d3.scale.ordinal().domain(ids).rangePoints([0, maxX], ids.length)
-    states = ['prelive', 'live', 'postlive', 'processing', 'archived']
-    scaleY = d3.scale.ordinal().domain(states).rangePoints([0, maxY], states.length)
-    position = (d) ->
-      "translate(#{scaleX(d.id)}, #{scaleY(d.state || 'prelive')+100})"
-
-    # --- data join
-    nodes = svg.selectAll('.node').data(talks)
-    # --- update
-    # --- enter
-    link = nodes.enter().append('g').append('a')
-      .attr('xlink:href', (t) -> "//#{url}/talk/#{t.id}")
-    link.append('circle')
-    link.append('text').text((t) -> "#{t.id}")
-    # --- enter & update
-    nodes.attr('class', 'node')
-    nodes.transition().duration(500)
-      .attr("transform", position)
-    nodes.select('circle')
-      .attr('r', 20)
-      .attr('style', (t) -> "fill: #{color(t)}")
-      .attr('opacity', opacity)
-    # --- exit
-    nodes.exit().remove()
-                                              
-  tick = ->
-    for index, talk of data.talks
-      age = data.talks[index].age += 1
-      data.talks[index].call = 'over_due' if age > 61
-    updateTalks()
-          
-  setInterval tick, 500
+  # updateTalks = ->
+  #   talks = data.talks
+  #   ids = (talk.id for talk in talks)
+  #   scaleX = d3.scale.ordinal().domain(ids).rangePoints([0, maxX], ids.length)
+  #   states = ['prelive', 'live', 'postlive', 'processing', 'archived']
+  #   scaleY = d3.scale.ordinal().domain(states).rangePoints([0, maxY], states.length)
+  #   position = (d) ->
+  #     "translate(#{scaleX(d.id)}, #{scaleY(d.state || 'prelive')+100})"
+  # 
+  #   # --- data join
+  #   nodes = svg.selectAll('.node').data(talks)
+  #   # --- update
+  #   # --- enter
+  #   link = nodes.enter().append('g').append('a')
+  #     .attr('xlink:href', (t) -> "//#{url}/talk/#{t.id}")
+  #   link.append('circle')
+  #   link.append('text').text((t) -> "#{t.id}")
+  #   # --- enter & update
+  #   nodes.attr('class', 'node')
+  #   nodes.transition().duration(500)
+  #     .attr("transform", position)
+  #   nodes.select('circle')
+  #     .attr('r', 20)
+  #     .attr('style', (t) -> "fill: #{color(t)}")
+  #     .attr('opacity', opacity)
+  #   # --- exit
+  #   nodes.exit().remove()
+  #                                             
+  # tick = ->
+  #   for index, talk of data.talks
+  #     age = data.talks[index].age += 1
+  #     data.talks[index].call = 'over_due' if age > 61
+  #   updateTalks()
+  #         
+  # setInterval tick, 500
 
   # --- setup providers
 
   provider.rtmpNotify (talk, timestamp) ->
     #console.log JSON.stringify(talk)
-    data.talks.merge talk
-    updateTalks()
+    #data.talks.merge talk
+    #updateTalks()
 
     return if talk.call == 'update_publish'
     # we track publish_done instead which is more generic
@@ -205,7 +226,8 @@ $ ->
 
     stream_id = talk.name
     call = talk.call
-    data.events.push { timestamp, stream_id, call }
+    pos = 'top'
+    data.events.push { timestamp, stream_id, call, pos }
 
   provider.dj (signal) ->
     switch signal
@@ -215,7 +237,7 @@ $ ->
 
   provider.monitoring (talk) ->
     data.talks.merge talk
-    updateTalks()
+  #  updateTalks()
 
   provider.eventTalk (payload) ->
     ;
