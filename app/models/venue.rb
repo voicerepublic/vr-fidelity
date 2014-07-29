@@ -21,6 +21,7 @@ class Venue < ActiveRecord::Base
   FLAGS = %w( no_auto_postprocessing
               no_auto_end_talk
               no_email
+              start_button
               suppress_chat
               loopback ).sort
   

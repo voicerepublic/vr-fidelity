@@ -76,7 +76,7 @@ ActiveAdmin.register Talk do
         l talk.featured_from, format: :iso unless talk.featured_from.nil?
       end
     end
-    column :record
+    column :collect, label: "Record"
     column :venue
     column :state
     column :grade do |talk|
@@ -117,7 +117,9 @@ ActiveAdmin.register Talk do
       row :description
       row :language
       row :related_talk_id
-      row :record
+      row 'record' do
+        talk.collect
+      end
       row :started_at
       row :format
       row :speakers
@@ -177,7 +179,7 @@ ActiveAdmin.register Talk do
       f.input :teaser
       f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
-      f.input :record
+      f.input :collect, label: "Record"
       f.input :format
       f.input :speakers
       f.input :recording_override,
@@ -220,7 +222,7 @@ ActiveAdmin.register Talk do
                     language
                     teaser
                     description
-                    record
+                    collect
                     started_at
                     ended_at
                     image
