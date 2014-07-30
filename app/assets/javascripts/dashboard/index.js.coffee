@@ -154,9 +154,6 @@ $ ->
     'red'
 
   # --- misc helper functions
-  descendingNclients = (a, b) ->
-    d3.descending a.nclients, b.nclients
-
   eventColor = (event) ->
     return 'green' if event.call == 'publish'
     return 'red'   if event.call == 'publish_done'
