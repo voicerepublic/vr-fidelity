@@ -77,8 +77,76 @@ $ ->
     .text(preciseTimeFormatter(now))
 
   # --- y scale
-  scaleY = d3.scale.ordinal()
-    .rangePoints([0, maxY], 2)
+  # scaleY is a function that takes an id and returns the y
+  scaleY = (d) -> data.param[d]?.y || 0
+
+  elementHeight = (d) -> data.param[d]?.height || 20
+
+  calculateParam = ->
+
+    reduceStreams = (r, s) ->
+      r[s.talk_id] ||= {}
+      r[s.talk_id].streams ||= {}
+      r[s.talk_id].streams[s.id] ||= {}
+      r[s.talk_id].streams[s.id].nclients = s.nclients
+      r
+    talks = data.streams.reduce reduceStreams, {}
+
+    # sum nclients
+    for id, talk of talks
+      talk.nclients = 0
+      for i, s of talk.streams
+        talk.nclients += s.nclients
+
+    # descending sort order function generator
+    descending = (property) ->
+      (a, b) ->
+        if property?
+          a = a[property]
+          b = b[property]
+        return 1 if a < b
+        return -1 if a > b
+        0
+
+    # set position by ranking
+    rankedTalks = []
+    for id, talk of talks
+      rankedTalks.push [id, talk.nclients]
+      rankedStreams = []
+      for i, s of talk.streams
+        rankedStreams.push [i, s.nclients]
+      rankedStreams = rankedStreams.sort descending(1)
+      for value, index in rankedStreams
+        talk.streams[value[0]].position = index
+    rankedTalks = rankedTalks.sort descending(1)
+    for value, index in rankedTalks
+      talks[value[0]].position = index
+
+    # set y by walking data structure
+    offset = 25
+    gap = 5
+    y = offset
+    for id, talk of talks
+      talk.y = y
+      talk.height = gap
+      y += gap
+      for i, stream of talk.streams
+        stream.y = y
+        stream.height = 10
+        total = stream.height + gap
+        talk.height += total
+        y += total
+      y += gap
+
+    # reduce to lookup hash
+    result = {}
+    for id, talk of talks
+      result[id] = { y: talk.y, height: talk.height }
+      for i, stream of talk.streams
+        result[i] = { y: stream.y, height: stream.height }
+
+    # return result
+    result
 
   bwInColor = (d) ->
     return 'green' if d.value > 20000
@@ -117,7 +185,7 @@ $ ->
     svg.select('.now').text(preciseTimeFormatter(now))
 
     # --- recalculate y scale
-    scaleY.domain(data.streams.sort(descendingNclients).map (d) -> d.id)
+    data.param = calculateParam()
 
     # --- draw talks
     talks = svg.select('.talks').selectAll('.talk').data(data.talks)
@@ -131,8 +199,8 @@ $ ->
       .attr('x', (d) -> timeScaleX(Date.parse(d.starts_at)))
       .attr('width', (d) -> timeScaleX(Date.parse(d.ends_at)) -
         timeScaleX(Date.parse(d.starts_at)))
-      .attr('y', maxY/2)
-      .attr('height', 20)
+      .attr('y', (d) -> scaleY(d.id))
+      .attr('height', (d) -> elementHeight(d.id))
 
     # --- draw fragments
     fragments = svg.select('.fragments').selectAll('.fragment').data(data.fragments)
@@ -142,7 +210,7 @@ $ ->
       .attr('x', (d) -> timeScaleX(d.start_time))
       .attr('y', (d) -> scaleY(d.stream_id))
       .attr('width', (d) -> timeScaleX(d.end_time) - timeScaleX(d.start_time))
-      .attr('height', 10)
+      .attr('height', (d) -> elementHeight(d.stream_id))
       .attr('fill', bwInColor)
 
     # --- draw streams
@@ -152,6 +220,7 @@ $ ->
         .attr('class', 'stream')
         .attr('transform', (d) -> "translate(#{maxX/2+5}, #{scaleY(d.id)+4})")
       .append('a')
+        # TODO fix link issue
         .attr('xlink:href', (d) -> "//#{url}/talk/#{d.talk_id}")
       .append('text')
     streams.transition().duration(animDuration)
@@ -195,8 +264,13 @@ $ ->
       when 'enqueue' then data.djAudioQueueSize++
     updateQueueSize()
 
-  provider.monitoring (talk) ->
-    data.talks.merge talk
+  provider.monitoring (datum, timestamp) ->
+    data.talks.merge datum
+
+    #pos = 'bottom'
+    #talk_id = datum.talk.id
+    #call = datum.event
+    #data.events.push { timestamp, talk_id, call, pos }
 
   provider.eventTalk (payload) ->
     ;
