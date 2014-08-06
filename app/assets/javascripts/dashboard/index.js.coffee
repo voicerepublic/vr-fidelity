@@ -148,9 +148,10 @@ $ ->
     # return result
     result
 
-  bwInColor = (d) ->
-    return 'green' if d.value > 20000
-    return 'orange' if d.value > 0
+  # state must be a color since it is also used to fill
+  bwInState = (value) ->
+    return 'green' if value > 20000
+    return 'orange' if value > 0
     'red'
 
   # --- misc helper functions
@@ -208,7 +209,7 @@ $ ->
       .attr('y', (d) -> scaleY(d.stream_id))
       .attr('width', (d) -> timeScaleX(d.end_time) - timeScaleX(d.start_time))
       .attr('height', (d) -> elementHeight(d.stream_id))
-      .attr('fill', bwInColor)
+      .attr('fill', (d) -> d.state)
 
     # --- draw streams
     streams = svg.select('.streams').selectAll('.stream').data(data.streams)
@@ -223,8 +224,8 @@ $ ->
     streams.transition().duration(animDuration)
       .attr('transform', (d) -> "translate(#{maxX/2+5}, #{scaleY(d.id)+4})")
       .select('text')
-        .text((d) -> "#{d.id} #{d.bw_in.slice(-1)[0].value} Kb/s " +
-          "(#{d.codec}) #{d.nclients}")
+        .text((d) -> "#{d.id} · #{d.nclients} · " +
+          "#{Math.round(d.bw_in/1024)} Kb/s #{d.codec}")
 
     # --- draw events
     events = svg.selectAll('.event').data(data.events)
@@ -300,27 +301,28 @@ $ ->
       start_time = timestamp
       end_time = timestamp + delta
       if finding = lookup[stream_id]
-        indexOfLast = finding.bw_in.length - 1
-        diff = (end_time - finding.bw_in[indexOfLast].end_time)
-        same_bw = finding.bw_in[indexOfLast].value == stream.bw_in 
+        indexOfLast = finding.fragments.length - 1
+        diff = (end_time - finding.fragments[indexOfLast].end_time)
+        same_bw = finding.fragments[indexOfLast].state == bwInState(stream.bw_in)
         if same_bw and diff <= delta + tolerance
           # console.log "EXTENDING FRAGMENT"
-          finding.bw_in[indexOfLast].end_time = end_time
+          finding.fragments[indexOfLast].end_time = end_time
         else
           # console.log "NEW FRAGMENT"
-          value = stream.bw_in
+          state = bwInState(stream.bw_in)
           random = Math.random()
-          finding.bw_in.push { start_time, end_time, value, stream_id, random }
+          finding.fragments.push { start_time, end_time, state, stream_id, random }
         finding.nclients = stream.nclients
         finding.codec = stream.codec
+        finding.bw_in = stream.bw_in
       else
         # console.log "NEW STREAM"
         stream.id = stream_id
-        value = stream.bw_in
+        state = bwInState(stream.bw_in)
         random = Math.random()
-        stream.bw_in = [ { start_time, end_time, value, stream_id, random } ]
+        stream.fragments = [ { start_time, end_time, state, stream_id, random } ]
         data.streams.push stream
-    data.fragments = d3.merge(data.streams.map((s) -> s.bw_in))
+    data.fragments = d3.merge(data.streams.map((s) -> s.fragments))
     data.fragments = data.fragments.sort(ascendingStartTime)
     # console.log("FRAGMENTS: "+JSON.stringify(data.fragments))
     # console.log(JSON.stringify(data.streams))
