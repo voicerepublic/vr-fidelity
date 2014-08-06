@@ -112,12 +112,12 @@ $ ->
     rankedTalks = []
     for id, talk of talks
       rankedTalks.push [id, talk.nclients]
-      rankedStreams = []
-      for i, s of talk.streams
-        rankedStreams.push [i, s.nclients]
-      rankedStreams = rankedStreams.sort descending(1)
-      for value, index in rankedStreams
-        talk.streams[value[0]].position = index
+      #rankedStreams = []
+      #for i, s of talk.streams
+      #  rankedStreams.push [i, s.nclients]
+      #rankedStreams = rankedStreams.sort descending(1)
+      #for value, index in rankedStreams
+      #  talk.streams[value[0]].position = index
     rankedTalks = rankedTalks.sort descending(1)
     for value, index in rankedTalks
       talks[value[0]].position = index
@@ -126,17 +126,19 @@ $ ->
     offset = 25
     gap = 5
     y = offset
-    for id, talk of talks
-      talk.y = y
-      talk.height = gap
-      y += gap
-      for i, stream of talk.streams
-        stream.y = y
-        stream.height = 10
-        total = stream.height + gap
-        talk.height += total
-        y += total
-      y += gap
+    for rank in [0..Object.keys(talks).length]
+      for id, talk of talks
+        if talk.position == rank
+          talk.y = y
+          talk.height = gap
+          y += gap
+          for i, stream of talk.streams
+            stream.y = y
+            stream.height = 10
+            total = stream.height + gap
+            talk.height += total
+            y += total
+          y += gap
 
     # reduce to lookup hash
     result = {}
@@ -224,8 +226,8 @@ $ ->
     streams.transition().duration(animDuration)
       .attr('transform', (d) -> "translate(#{maxX/2+5}, #{scaleY(d.id)+4})")
       .select('text')
-        .text((d) -> "#{d.id} · #{d.nclients} · " +
-          "#{Math.round(d.bw_in/1024)} Kb/s #{d.codec}")
+        .text((d) -> "#{d.nclients} · " +
+          "#{Math.round(d.bw_in/1024)} Kb/s #{d.codec} · #{d.id}")
 
     # --- draw events
     events = svg.selectAll('.event').data(data.events)
