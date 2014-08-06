@@ -72,6 +72,9 @@ html, body {
         }
         .stream text {
             text-anchor: start;
+            &.bandwidth {
+                text-anchor: end;
+            }
         }
         background-color: papayawhip;
     }

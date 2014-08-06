@@ -215,19 +215,23 @@ $ ->
 
     # --- draw streams
     streams = svg.select('.streams').selectAll('.stream').data(data.streams)
-    streams.enter()
+    enter = streams.enter()
       .append('g')
         .attr('class', 'stream')
         .attr('transform', (d) -> "translate(#{maxX/2+5}, #{scaleY(d.id)+4})")
       .append('a')
         # TODO fix link issue
         .attr('xlink:href', (d) -> "//#{url}/talk/#{d.talk_id}")
-      .append('text')
-    streams.transition().duration(animDuration)
+    enter.append('text').attr('x',   0).attr('class', 'nclients')
+    enter.append('text').attr('x',  70).attr('class', 'bandwidth')
+    enter.append('text').attr('x',  90).attr('class', 'codec')
+    enter.append('text').attr('x', 145).attr('class', 'id')
+    update = streams.transition().duration(animDuration)
       .attr('transform', (d) -> "translate(#{maxX/2+5}, #{scaleY(d.id)+4})")
-      .select('text')
-        .text((d) -> "#{d.nclients} · " +
-          "#{Math.round(d.bw_in/1024)} Kb/s #{d.codec} · #{d.id}")
+    update.select('.nclients').text((d) -> d.nclients)
+    update.select('.bandwidth').text((d) -> "#{Math.round(d.bw_in/1024)} Kb/s")
+    update.select('.codec').text((d) -> d.codec)
+    update.select('.id').text((d) -> d.id)
 
     # --- draw events
     events = svg.selectAll('.event').data(data.events)
