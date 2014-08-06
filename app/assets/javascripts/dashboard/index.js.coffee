@@ -274,7 +274,7 @@ $ ->
 
   # --- helper functions
   ascendingStartTime = (a, b) ->
-    d3.ascending a.start_time, b.start_time
+    d3.ascending a.start_time+a.random, b.start_time+b.random
 
   # streams:
   #   - id: t687-t1
@@ -309,14 +309,16 @@ $ ->
         else
           # console.log "NEW FRAGMENT"
           value = stream.bw_in
-          finding.bw_in.push { start_time, end_time, value, stream_id }
+          random = Math.random()
+          finding.bw_in.push { start_time, end_time, value, stream_id, random }
         finding.nclients = stream.nclients
         finding.codec = stream.codec
       else
         # console.log "NEW STREAM"
         stream.id = stream_id
         value = stream.bw_in
-        stream.bw_in = [ { start_time, end_time, value, stream_id } ]
+        random = Math.random()
+        stream.bw_in = [ { start_time, end_time, value, stream_id, random } ]
         data.streams.push stream
     data.fragments = d3.merge(data.streams.map((s) -> s.bw_in))
     data.fragments = data.fragments.sort(ascendingStartTime)
