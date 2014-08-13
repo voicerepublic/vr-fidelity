@@ -58,6 +58,7 @@ ActiveAdmin.register Talk do
             sub(':444', '').sub(':3001', ':3000')
       link_to talk.uri, url, target: '_blank'
     end
+    column :format
     column :starts_at, sortable: :starts_at do |talk|
       span style: 'white-space: pre' do
         l talk.starts_at, format: :iso
@@ -75,7 +76,7 @@ ActiveAdmin.register Talk do
         l talk.featured_from, format: :iso unless talk.featured_from.nil?
       end
     end
-    column :record
+    column :collect, label: "Record"
     column :venue
     column :state
     column :grade do |talk|
@@ -116,8 +117,12 @@ ActiveAdmin.register Talk do
       row :description
       row :language
       row :related_talk_id
-      row :record
+      row 'record' do
+        talk.collect
+      end
       row :started_at
+      row :format
+      row :speakers
       if %w(postlive processing archived).include?(talk.state)
         row :grade
         row :ended_at
@@ -174,7 +179,9 @@ ActiveAdmin.register Talk do
       f.input :teaser
       f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
-      f.input :record
+      f.input :collect, label: "Record"
+      f.input :format
+      f.input :speakers
       f.input :recording_override,
               hint: 'Paste a URL to import a manually'+
               ' processed file, e.g. a dropbox URL.'
@@ -215,7 +222,7 @@ ActiveAdmin.register Talk do
                     language
                     teaser
                     description
-                    record
+                    collect
                     started_at
                     ended_at
                     image
@@ -223,6 +230,8 @@ ActiveAdmin.register Talk do
                     retained_image
                     remove_image
                     grade
+                    format
+                    speakers
                     recording_override ).map(&:to_sym)
 
 end
