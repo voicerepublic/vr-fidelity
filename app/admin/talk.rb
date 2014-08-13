@@ -58,7 +58,6 @@ ActiveAdmin.register Talk do
             sub(':444', '').sub(':3001', ':3000')
       link_to talk.uri, url, target: '_blank'
     end
-    column :format
     column :starts_at, sortable: :starts_at do |talk|
       span style: 'white-space: pre' do
         l talk.starts_at, format: :iso
