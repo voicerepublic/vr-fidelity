@@ -179,7 +179,6 @@ ActiveAdmin.register Talk do
       f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
       f.input :collect, label: "Record"
-      f.input :format
       f.input :speakers
       f.input :recording_override,
               hint: 'Paste a URL to import a manually'+
