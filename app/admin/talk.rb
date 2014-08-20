@@ -119,6 +119,16 @@ ActiveAdmin.register Talk do
       row 'record' do
         talk.collect
       end
+      row 'download' do
+        url = "//#{request.host_with_port}/vrmedia/#{talk.id}-clean.mp3".
+              sub(':444', '').sub(':3001', ':3000')
+        link_to 'mp3', url, target: '_blank'
+      end
+      row 'download' do
+        url = "//#{request.host_with_port}/vrmedia/#{talk.id}-clean.ogg".
+              sub(':444', '').sub(':3001', ':3000')
+        link_to 'ogg', url, target: '_blank'
+      end
       row :started_at
       row :format
       row :speakers
