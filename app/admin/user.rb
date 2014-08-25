@@ -2,7 +2,7 @@ ActiveAdmin.register User do
 
   scope :nonguests
   scope :guests
-  
+
   index do
     selectable_column
     column :id
@@ -35,12 +35,13 @@ ActiveAdmin.register User do
       f.input :firstname
       f.input :lastname
       f.input :email
+      f.input :about
       f.input :avatar, as: :dragonfly
     end
     f.actions
   end
 
   permit_params :firstname, :lastname, :email, :avatar,
-                :retained_avatar, :remove_avatar
+                :retained_avatar, :remove_avatar, :about
 
 end
