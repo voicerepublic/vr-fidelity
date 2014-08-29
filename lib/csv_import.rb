@@ -8,12 +8,13 @@ module CsvImport
     # validation
     objs, errors = [], {}
     csv.each_with_index do |row, i|
-      obj = find_or_initialize_by(uri: row.to_hash['uri'])
+      row_hash = convert_to_hash(row)
+      obj = find_or_initialize_by(uri: row_hash['uri'])
       default_columns.each do |col, val|
         obj.send("#{col}=", val) if obj.send(col).blank?
       end
       begin
-        obj.attributes = obj.attributes.merge(row.to_hash)
+        obj.attributes = obj.attributes.merge(row_hash)
         errors[i+1] = obj.errors.full_messages unless obj.valid?
         objs << obj
       rescue Exception => e
@@ -42,6 +43,14 @@ module CsvImport
       obj.save!
     end
     return result
+  end
+
+  private
+
+  # Basically it does row.to_hash
+  # But: It also strips the keys (sanitizing the input CSV headers)
+  def convert_to_hash(row)
+    row.to_hash.map { |k, v| { k.strip => v } }.reduce Hash.new, :merge
   end
 
 end
