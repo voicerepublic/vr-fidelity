@@ -23,13 +23,13 @@ ActiveAdmin.register Talk do
   # END CSV Import
 
   action_item only: :show do
-    if talk.state == 'postlive'
+    if talk.state == 'postlive' && talk.recording_override.nil?
       link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
     end
   end
 
   action_item only: :show do
-    if talk.state == 'archived'
+    if talk.state == 'archived' && talk.recording_override.nil?
       link_to 'Reprocess', reprocess_admin_talk_path(talk), method: 'put'
     end
   end
@@ -118,6 +118,16 @@ ActiveAdmin.register Talk do
       row :related_talk_id
       row 'record' do
         talk.collect
+      end
+      row 'download' do
+        url = "//#{request.host_with_port}/vrmedia/#{talk.id}-clean.mp3".
+              sub(':444', '').sub(':3001', ':3000')
+        link_to 'mp3', url, target: '_blank'
+      end
+      row 'download' do
+        url = "//#{request.host_with_port}/vrmedia/#{talk.id}-clean.ogg".
+              sub(':444', '').sub(':3001', ':3000')
+        link_to 'ogg', url, target: '_blank'
       end
       row :started_at
       row :format
