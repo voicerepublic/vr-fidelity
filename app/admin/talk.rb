@@ -23,13 +23,13 @@ ActiveAdmin.register Talk do
   # END CSV Import
 
   action_item only: :show do
-    if talk.state == 'postlive' && talk.recording_override.empty?
+    if talk.state == 'postlive' && talk.recording_override.blank?
       link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
     end
   end
 
   action_item only: :show do
-    if talk.state == 'archived' && talk.recording_override.empty?
+    if talk.state == 'archived' && talk.recording_override.blank?
       link_to 'Reprocess', reprocess_admin_talk_path(talk), method: 'put'
     end
   end
