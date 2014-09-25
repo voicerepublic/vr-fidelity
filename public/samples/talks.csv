@@ -1,2 +1,2 @@
-uri,title,venue_id,starts_at_date,starts_at_time,duration,collect,teaser,description,featured_from,related_talk_id,tag_list,speakers
-sc-123,test upload durch csv,6,2015-05-26,17:39,20,true,teaser description,<p>test upload</p>,,,"tag1,tag2","Martin Meyer, Fabio Bernasconi"
+uri,title,venue_id,starts_at_date,starts_at_time,duration,collect,teaser,description,featured_from,related_talk_id,tag_list,speakers,language
+sc-123,test upload durch csv,6,2015-05-26,17:39,20,true,teaser description,<p>test upload</p>,,,"tag1,tag2","Martin Meyer, Fabio Bernasconi",en
