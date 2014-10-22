@@ -71,14 +71,14 @@ While
 
 ## The Gory Details
 
-Fidelity expects a file `metadata.yml`. This file should contain the
-following:
+Fidelity expects a file `metadata.yml` in the current working
+directory. This file should contain the following:
 
     ---
-    id: <id>
-    talk_start: <timestamp>
-    talk_stop: <timestamp>
-    cut_conf:
+    :id: <id>
+    :talk_start: <timestamp>
+    :talk_stop: <timestamp>
+    :cut_conf:
       - start: <offset>
         end: <offset>
       - start: <offset>
@@ -87,3 +87,5 @@ following:
 
 Timestamps are down to seconds (not milliseconds!). Offsets are down
 to milliseconds and are relative to the beginning.
+
+`cut_conf` may be nil or an empty Array.
