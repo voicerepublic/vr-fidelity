@@ -7,7 +7,7 @@
 Welcome to Fidelity
 ===================
 
-Fidelity will run audio strategies comprised to a plethora of other
+Fidelity will run audio strategies comprised of a plethora of other
 audio tools.
 
 
