@@ -8,7 +8,10 @@ require 'fidelity/strategy_runner'
 require 'fidelity/chain_runner'
 
 module Fidelity
-  # Your code goes here...
+
+  METADATA_FILENAME = 'metadata.yml'
+  LOG_FILENAME = 'fidelity.log'
+
 end
 
 # make sure dependencies are installed
@@ -16,8 +19,5 @@ constants = Fidelity::Strategy.constants.map { |c| Fidelity::Strategy.const_get(
 classes = constants.select { |c| c.is_a?(Class) }
 executables = classes.map { |strategy| strategy.required_executables }.flatten.uniq
 executables.each do |e|
-  if %x[which #{e}].chomp.empty?
-    warn "could not find executable '#{e}'"
-    exit
-  end
+  raise "Could not find executable '#{e}'" if %x[which #{e}].chomp.empty?
 end

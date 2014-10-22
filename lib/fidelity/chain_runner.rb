@@ -2,14 +2,22 @@ require 'yaml'
 require 'logger'
 
 # Runs chains of strategies by running StrategyRunner one at a time.
+#
+# You can inherit from this class to use the callbacks
+#
+# * before_chain
+# * before_strategy(index, name)
+# * after_strategy(index, name)
+# * after_chain
+#
 module Fidelity
   class ChainRunner < Struct.new(:chain)
 
     attr_accessor :metadata
 
-    def run
+    def run(logger=nil)
       before_chain
-      metadata[:logger] = logger
+      metadata[:logger] = logger || new_logger
       # TODO get rid of transitional code
       config = Config.new('.', metadata[:id], metadata)
       strategy_runner = StrategyRunner.new(config)
@@ -40,13 +48,14 @@ module Fidelity
     end
 
     def metadata
-      path = File.expand_path('metadata.yml', Dir.pwd)
+      path = File.expand_path(Fidelity::METADATA_FILENAME, Dir.pwd)
       raise "Could not find file #{path}" unless File.exist?(path)
       @metadata ||= YAML.load(File.read(path))
     end
 
-    def logger
-      @logger ||= Logger.new('processing.log')
+    def new_logger
+      Logger.new(Fidelity::LOG_FILENAME)
     end
+
   end
 end

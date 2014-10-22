@@ -1,14 +1,14 @@
 module Fidelity
-  class Exec < Struct.new(:args)
+  class Exec < Struct.new(:args, :logger)
 
     class << self
-      def run(*args)
-        new(args).run
+      def run(args, logger)
+        new(args, logger).run
       end
     end
 
     def run
-      # TODO
+      ChainRunner.new(args).run(logger)
     end
 
   end
