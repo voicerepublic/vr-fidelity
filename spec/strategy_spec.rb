@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Fidelity::Strategy do
 
   it 'does not blow up when config for cut is omitted' do
-    audio_fixture('spec/support/fixtures/talk_a', '1.wav') do |path|
+    audio_fixture('spec/fixtures/talk_a', '1.wav') do |path|
       setting = Fidelity::Config.new(path)
       Fidelity::Strategy::Cut.call(setting)
 
@@ -15,7 +15,7 @@ describe Fidelity::Strategy do
   end
 
   it 'nicely cuts by edit_config' do
-    audio_fixture('spec/support/fixtures/talk_a', '1.wav') do |path|
+    audio_fixture('spec/fixtures/talk_a', '1.wav') do |path|
       # setup
       opts = { cut_conf: [ { 'start' => 1, 'end' => 2 },
                            { 'start' => 3, 'end' => 4 } ] }
@@ -38,7 +38,7 @@ describe Fidelity::Strategy do
   end
 
   it 'prepares (running the precursor)' do
-    audio_fixture('spec/support/fixtures/complex', '*.flv') do |path|
+    audio_fixture('spec/fixtures/complex', '*.flv') do |path|
       setting = Fidelity::Config.new(path)
       results = Fidelity::Strategy::Precursor.call(setting)
 
@@ -51,7 +51,7 @@ describe Fidelity::Strategy do
   it 'merges' do
     pending 'sampling rate issue'
     # we need the wav fragments and the flvs (to reconstruct the journal)
-    audio_fixture('spec/support/fixtures/complex', 't1-u*') do |path|
+    audio_fixture('spec/fixtures/complex', 't1-u*') do |path|
       setting = Fidelity::Config.new(path)
       result = Fidelity::Strategy::KluuuMerge.call(setting)
 
@@ -62,7 +62,7 @@ describe Fidelity::Strategy do
 
   it 'merges by user' do
     # we need the wav fragments and the flvs (to reconstruct the journal)
-    audio_fixture('spec/support/fixtures/complex', 't1-u*') do |path|
+    audio_fixture('spec/fixtures/complex', 't1-u*') do |path|
       setting = Fidelity::Config.new(path)
       results = Fidelity::Strategy::UserMerge.call(setting)
 
@@ -74,7 +74,7 @@ describe Fidelity::Strategy do
 
   it 'merges by user then whole talk' do
     # we need the wav fragments and the flvs (to reconstruct the journal)
-    audio_fixture('spec/support/fixtures/complex', 't1-u*') do |path|
+    audio_fixture('spec/fixtures/complex', 't1-u*') do |path|
       setting = Fidelity::Config.new(path)
       Fidelity::Strategy::UserMerge.call(setting)
       result = Fidelity::Strategy::TalkMerge.call(setting)
@@ -86,7 +86,7 @@ describe Fidelity::Strategy do
 
   it 'trims' do
     # we need the wav and the journal
-    audio_fixture('spec/support/fixtures/complex', '*') do |path|
+    audio_fixture('spec/fixtures/complex', '*') do |path|
       setting = Fidelity::Config.new(path)
       file_start = setting.journal['record_done'].first.last.to_i
       setting.opts = {
@@ -105,7 +105,7 @@ describe Fidelity::Strategy do
   end
 
   it 'transcodes to m4a' do
-    audio_fixture('spec/support/fixtures/complex', '1.wav') do |path|
+    audio_fixture('spec/fixtures/complex', '1.wav') do |path|
       setting = Fidelity::Config.new(path)
       result = Fidelity::Strategy::M4a.call(setting)
 
@@ -115,7 +115,7 @@ describe Fidelity::Strategy do
   end
 
   # it 'nicely merges streams' do
-  #   fixture = 'spec/support/fixtures/talk_a'
+  #   fixture = 'spec/fixtures/talk_a'
   #   audio_fixture(fixture, 1) do |base, dir, name|
   #     # j = TalkAudio.new(base).journal
   #     # Audio::Merger.run(base, j)
@@ -132,7 +132,7 @@ describe Fidelity::Strategy do
   # end
   #
   # it 'merges streams synchronously' do
-  #   fixture = 'spec/support/fixtures/complex'
+  #   fixture = 'spec/fixtures/complex'
   #   audio_fixture(fixture, 't1-u*.flv') do |path|
   #     s = Fidelity::Config.new(path)
   #     Audio::Strategy::Precursor.call(s)
@@ -150,7 +150,7 @@ describe Fidelity::Strategy do
   # end
   #
   # it 'nicly transcodes wav files' do
-  #   # path, name = 'spec/support/fixtures/transcode0', 1
+  #   # path, name = 'spec/fixtures/transcode0', 1
   #   # Dir.mktmpdir do |dir|
   #   #   FileUtils.cp(Dir.glob("#{path}/*.wav"), dir)
   #   #   Audio::Transcoder.run("#{dir}/#{name}")
