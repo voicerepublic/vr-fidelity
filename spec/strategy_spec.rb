@@ -44,19 +44,18 @@ describe Fidelity::Strategy do
 
       files = results.map { |f| [ path, f ] * '/' }
       all_exist = files.inject(true) { |r, f| r && File.exist?(f) }
-      expect(all_exist).to be_true
+      assert { all_exist }
     end
   end
 
-  it 'merges' do
-    pending 'sampling rate issue'
+  it 'merges (via kluuu merge)' do
     # we need the wav fragments and the flvs (to reconstruct the journal)
     audio_fixture('spec/fixtures/complex', 't1-u*') do |path|
       setting = Fidelity::Config.new(path)
       result = Fidelity::Strategy::KluuuMerge.call(setting)
 
       file = [path, result] * '/'
-      expect(File.exist?(file)).to be_true
+      assert { File.exist?(file) }
     end
   end
 
@@ -68,7 +67,7 @@ describe Fidelity::Strategy do
 
       files = results.map { |f| [ path, f ] * '/' }
       all_exist = files.inject(true) { |r, f| r && File.exist?(f) }
-      expect(all_exist).to be_true
+      assert { all_exist }
     end
   end
 
@@ -80,7 +79,7 @@ describe Fidelity::Strategy do
       result = Fidelity::Strategy::TalkMerge.call(setting)
 
       file = [path, result] * '/'
-      expect(File.exist?(file)).to be_true
+      assert { File.exist?(file) }
     end
   end
 
@@ -97,7 +96,7 @@ describe Fidelity::Strategy do
       result = Fidelity::Strategy::Trim.call(setting)
 
       file = [path, result] * '/'
-      expect(File.exist?(file)).to be_true
+      assert { File.exist?(file) }
       cmd = "soxi -D #{file}"
       duration = %x[ #{cmd} ].to_f.round
       expect(duration).to eq(3)
@@ -110,7 +109,7 @@ describe Fidelity::Strategy do
       result = Fidelity::Strategy::M4a.call(setting)
 
       file = [path, result] * '/'
-      expect(File.exist?(file)).to be_true
+      assert { File.exist?(file) }
     end
   end
 
