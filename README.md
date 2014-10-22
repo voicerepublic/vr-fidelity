@@ -39,11 +39,53 @@ Fidelity operates on the current working directory. It will read the
 
 ### CLI
 
-    fidelity <strategy> [strategy ...]
+    fidelity run <metadatafile>
 
-Where `strategy` is one of
 
-* precursor
+### Code
+
+    Fidelity::Exec.run(path, logger)
+
+While
+
+* `path` - a path to metadata file
+* `logger` - optional, if given should be an instance of Logger
+
+
+## The Gory Details
+
+Fidelity expects a file `metadata.yml` in the current working
+directory. This file should contain the following:
+
+    ---
+    :id: <id>
+    :chain:
+      - precursor
+      - kluuu_merge
+      - m4a
+      - ogg
+      - mp3
+      - ...
+    :talk_start: <timestamp>
+    :talk_stop: <timestamp>
+    :cut_conf:
+      - start: <offset>
+        end: <offset>
+      - start: <offset>
+        end: <offset>
+      - ...
+
+Where...
+
+* Timestamps are down to seconds (not milliseconds!).
+* Offsets are down to milliseconds and are relative to the beginning.
+* `cut_conf` may be nil or an empty Array.
+* `chain` is a list of strategy names
+
+
+## Available Strategies
+
+* [precursor](lib/fidelity/strategy/precursor.rb)
 * normalize
 * kluuu_merge
 * user_merge
@@ -57,35 +99,3 @@ Where `strategy` is one of
 * move_clean
 * jinglize
 * auphonic
-
-
-### Code
-
-    Fidelity::Exec.run(strategies, logger)
-
-While
-
-* `strategies` - an Array of names
-* `logger` - optional, if given should be an instance of Logger
-
-
-## The Gory Details
-
-Fidelity expects a file `metadata.yml` in the current working
-directory. This file should contain the following:
-
-    ---
-    :id: <id>
-    :talk_start: <timestamp>
-    :talk_stop: <timestamp>
-    :cut_conf:
-      - start: <offset>
-        end: <offset>
-      - start: <offset>
-        end: <offset>
-      - ...
-
-Timestamps are down to seconds (not milliseconds!). Offsets are down
-to milliseconds and are relative to the beginning.
-
-`cut_conf` may be nil or an empty Array.
