@@ -8,10 +8,7 @@ require 'fidelity/strategy_runner'
 require 'fidelity/chain_runner'
 
 module Fidelity
-
-  METADATA_FILENAME = 'metadata.yml'
   LOG_FILENAME = 'fidelity.log'
-
 end
 
 # make sure dependencies are installed

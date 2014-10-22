@@ -3,12 +3,13 @@ module Fidelity
 
     class << self
       def run(args, logger=nil)
-        new(args).run(logger)
+        file = args.unshift
+        new(file).run(logger)
       end
     end
 
     def run(logger)
-      ChainRunner.new(args).run(logger)
+      ChainRunner.new(file).run(logger)
     end
 
   end

@@ -11,7 +11,7 @@ require 'logger'
 # * after_chain
 #
 module Fidelity
-  class ChainRunner < Struct.new(:chain)
+  class ChainRunner < Struct.new(:metadatafile)
 
     attr_accessor :metadata
 
@@ -21,7 +21,7 @@ module Fidelity
       # TODO get rid of transitional code
       config = Config.new('.', metadata[:id], metadata)
       strategy_runner = StrategyRunner.new(config)
-      chain.each_with_index do |name, index|
+      metadata[:chain].each_with_index do |name, index|
         before_strategy(index, name)
         strategy_runner.run(name)
         after_strategy(index, name)
@@ -48,9 +48,10 @@ module Fidelity
     end
 
     def metadata
-      path = File.expand_path(Fidelity::METADATA_FILENAME, Dir.pwd)
+      return @metadata unless @metadata.nil?
+      path = File.expand_path(metadatafile, Dir.pwd)
       raise "Could not find file #{path}" unless File.exist?(path)
-      @metadata ||= YAML.load(File.read(path))
+      @metadata = YAML.load(File.read(path))
     end
 
     def new_logger
