@@ -1,6 +1,9 @@
-require "fidelity/version"
-require "fidelity/exec"
-require "fidelity/strategy"
+$:.unshift File.dirname(__FILE__)
+
+require 'fidelity/version'
+require 'fidelity/exec'
+require 'fidelity/strategy'
+require 'fidelity/config'
 
 module Fidelity
   # Your code goes here...

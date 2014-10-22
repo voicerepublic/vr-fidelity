@@ -1,3 +1,6 @@
+require 'forwardable'
+require 'cmd_runner'
+
 # Each strategy defines a method `run`, which usually relies on the
 # presence of one or more input files to produce one or more output
 # files. If `input` (for a single file) or `inputs` (for a list of

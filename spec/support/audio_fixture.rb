@@ -1,3 +1,5 @@
+require 'tmpdir'
+
 module AudioFixtureHelper
   def audio_fixture(path, glob='*')
     Dir.mktmpdir do |temp|
@@ -10,5 +12,5 @@ module AudioFixtureHelper
 end
 
 RSpec.configure do |config|
-  config.include AudioFixtureHelper, type: :model
+  config.include AudioFixtureHelper
 end
