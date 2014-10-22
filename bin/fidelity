@@ -6,6 +6,7 @@ begin
   require File.expand_path(File.join(%w(.. .. lib fidelity)), __FILE__)
   Fidelity::Exec.run(ARGV, Logger.new(STDOUT))
 rescue Exception => e
+  raise e if ENV['DEBUG']
   warn e.message
   exit 1
 end
