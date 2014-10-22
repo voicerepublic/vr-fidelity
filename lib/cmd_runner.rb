@@ -19,7 +19,6 @@ module CmdRunner
 
   def run_cmd(method, *args)
     cmd = send(method, *args)
-    logfile.info cmd unless logfile.nil?
     %x[#{cmd}]
   end
 
