@@ -98,8 +98,8 @@ module Fidelity
     def check_journal!
       unless File.exist?(journal_path)
         write_fake_journal!
-        ## FIXME dependency on Rails.logger
-        #Rails.logger.info "Journal #{journal_path} not found, " +
+        ## FIXME dependency on Rails[:logger]
+        #Rails[:logger].info "Journal #{journal_path} not found, " +
         #                  "reconstructed."
       end
     end

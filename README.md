@@ -58,3 +58,23 @@ Fidelity operates on the current working directory. It will read the
 ### Code
 
     Fidelity::Exec.run(args)
+
+
+## The Gory Details
+
+Fidelity expects a file `metadata.yml`. This file should contain the
+following:
+
+    ---
+    id: <id>
+    talk_start: <timestamp>
+    talk_stop: <timestamp>
+    cut_conf:
+      - start: <offset>
+        end: <offset>
+      - start: <offset>
+        end: <offset>
+      - ...
+
+Timestamps are down to seconds (not milliseconds!). Offsets are down
+to milliseconds and are relative to the beginning.

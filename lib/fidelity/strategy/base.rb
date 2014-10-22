@@ -25,7 +25,7 @@ module Fidelity
           result = nil
           path = setting.path
           instance = new(setting)
-          instance.logfile.puts "# run #{self.name}"
+          instance.logfile.info "# run #{self.name}"
 
           precond = instance.inputs.inject(true) { |r, i| r && File.exist?(i) }
           raise "preconditions not met for #{name} " +
@@ -65,7 +65,7 @@ module Fidelity
       end
 
       def logfile
-        opts[:logfile] || File.open('/dev/null', 'a')
+        opts[:logger] || Logger.new('/dev/null')
       end
 
     end

@@ -4,6 +4,8 @@ require 'fidelity/version'
 require 'fidelity/exec'
 require 'fidelity/strategy'
 require 'fidelity/config'
+require 'fidelity/strategy_runner'
+require 'fidelity/chain_runner'
 
 module Fidelity
   # Your code goes here...
