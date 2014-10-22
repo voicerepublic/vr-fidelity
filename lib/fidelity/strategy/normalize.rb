@@ -4,6 +4,12 @@ module Fidelity
   module Strategy
     class Normalize < Base
 
+      class << self
+        def required_executables
+          %w( sox mv )
+        end
+      end
+
       def inputs
         fragments.map { |f| f.first.sub('.flv', '.wav') }
       end

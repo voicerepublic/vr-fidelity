@@ -4,6 +4,12 @@ module Fidelity
   module Strategy
     class Mp3 < Base
 
+      class << self
+        def required_executables
+          %w( lame )
+        end
+      end
+
       def input
         "#{name}.wav"
       end

@@ -8,6 +8,12 @@ module Fidelity
   module Strategy
     class Jinglize < Base
 
+      class << self
+        def required_executables
+          %w( sox mv )
+        end
+      end
+
       def input
         "#{name}.wav"
       end

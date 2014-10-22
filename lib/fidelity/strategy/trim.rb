@@ -4,6 +4,12 @@ module Fidelity
   module Strategy
     class Trim < Base
 
+      class << self
+        def required_executables
+          %w( sox )
+        end
+      end
+
       def input
         "#{name}.wav"
       end

@@ -4,6 +4,12 @@ module Fidelity
   module Strategy
     class Precursor < Base
 
+      class << self
+        def required_executables
+          %w( avconv )
+        end
+      end
+
       def inputs
         journal['record_done'].map(&:first)
       end

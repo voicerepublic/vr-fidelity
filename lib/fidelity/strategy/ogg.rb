@@ -4,6 +4,12 @@ module Fidelity
   module Strategy
     class Ogg < Base
 
+      class << self
+        def required_executables
+          %w( oggenc )
+        end
+      end
+
       def input
         "#{name}.wav"
       end

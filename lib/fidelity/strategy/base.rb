@@ -17,6 +17,10 @@ module Fidelity
       include CmdRunner
 
       class << self
+        def required_executables
+          []
+        end
+
         def call(setting)
           result = nil
           path = setting.path

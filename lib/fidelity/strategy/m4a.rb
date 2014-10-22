@@ -4,6 +4,12 @@ module Fidelity
   module Strategy
     class M4a < Base
 
+      class << self
+        def required_executables
+          %w( avconv )
+        end
+      end
+
       def input
         "#{name}.wav"
       end

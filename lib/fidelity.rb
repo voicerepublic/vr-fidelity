@@ -10,5 +10,12 @@ module Fidelity
 end
 
 # make sure dependencies are installed
-#
-# TODO go through strategies and see if the required executables can be found
+constants = Fidelity::Strategy.constants.map { |c| Fidelity::Strategy.const_get(c) }
+classes = constants.select { |c| c.is_a?(Class) }
+executables = classes.map { |strategy| strategy.required_executables }.flatten.uniq
+executables.each do |e|
+  if %x[which #{e}].chomp.empty?
+    warn "could not find executable '#{e}'"
+    exit
+  end
+end

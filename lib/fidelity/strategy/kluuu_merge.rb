@@ -8,6 +8,12 @@ module Fidelity
   module Strategy
     class KluuuMerge < Base
 
+      class << self
+        def required_executables
+          %w( sox )
+        end
+      end
+
       def inputs
         fragments.map { |f| f.first.sub('.flv', '.wav') }
       end
