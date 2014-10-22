@@ -33,10 +33,6 @@ Or install it yourself as:
 
 ## Usage
 
-Fidelity operates on the current working directory. It will read the
-`metadata.yml` file.
-
-
 ### CLI
 
     fidelity run <metadatafile>
@@ -54,8 +50,7 @@ While
 
 ## The Gory Details
 
-Fidelity expects a file `metadata.yml` in the current working
-directory. This file should contain the following:
+The metadata file should contain the following:
 
     ---
     :id: <id>
@@ -79,23 +74,23 @@ Where...
 
 * Timestamps are down to seconds (not milliseconds!).
 * Offsets are down to milliseconds and are relative to the beginning.
-* `cut_conf` may be nil or an empty Array.
+* `cut_conf` may be nil, an empty Array or omited entirely
 * `chain` is a list of strategy names
 
 
 ## Available Strategies
 
 * [precursor](lib/fidelity/strategy/precursor.rb)
-* normalize
-* kluuu_merge
-* user_merge
-* normalize_users
-* talk_merge
-* trim
-* cut
-* m4a
-* mp3
-* ogg
-* move_clean
-* jinglize
-* auphonic
+* [normalize](lib/fidelity/strategy/normalize.rb)
+* [kluuu_merge](lib/fidelity/strategy/kluuu_merge.rb)
+* [user_merge](lib/fidelity/strategy/user_merge.rb)
+* [normalize_users](lib/fidelity/strategy/normalize_users.rb)
+* [talk_merge](lib/fidelity/strategy/talk_merge.rb)
+* [trim](lib/fidelity/strategy/trim.rb)
+* [cut](lib/fidelity/strategy/cut.rb)
+* [m4a](lib/fidelity/strategy/m4a.rb)
+* [mp3](lib/fidelity/strategy/mp3.rb)
+* [ogg](lib/fidelity/strategy/ogg.rb)
+* [move_clean](lib/fidelity/strategy/move_clean.rb)
+* [jinglize](lib/fidelity/strategy/jinglize.rb)
+* [auphonic](lib/fidelity/strategy/auphonic.rb)
