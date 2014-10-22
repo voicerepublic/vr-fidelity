@@ -35,7 +35,7 @@ Or install it yourself as:
 
 ### CLI
 
-    fidelity run <metadatafile>
+    fidelity <metadatafile>
 
 
 ### Code
