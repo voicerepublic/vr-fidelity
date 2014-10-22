@@ -10,7 +10,7 @@ describe Fidelity::Strategy do
       # NOTE: if this fails, you might need to install 'libsox-fmt-mp3'
       precut  = %x[ soxi -D 1-precut.mp3 ].to_i
       postcut = %x[ soxi -D 1.wav ].to_i
-      expect(precut).to eq postcut
+      assert { precut == postcut }
     end
   end
 
@@ -27,13 +27,13 @@ describe Fidelity::Strategy do
       # by size
       precut  = File.size('1-precut.mp3')
       postcut = File.size('1.wav')
-      expect(precut).to be < postcut
+      assert { precut < postcut }
 
       # by duration
       # NOTE: if this fails, you might need to install 'libsox-fmt-mp3'
       precut  = %x[ soxi -D 1-precut.mp3 ]
       postcut = %x[ soxi -D 1.wav ]
-      expect(precut).to be > postcut
+      assert { precut > postcut }
     end
   end
 
@@ -99,7 +99,7 @@ describe Fidelity::Strategy do
       assert { File.exist?(file) }
       cmd = "soxi -D #{file}"
       duration = %x[ #{cmd} ].to_f.round
-      expect(duration).to eq(3)
+      assert { duration == 3 }
     end
   end
 
