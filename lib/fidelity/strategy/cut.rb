@@ -25,7 +25,7 @@ module Fidelity
       end
 
       def timecodes
-        return ['0', '-0'] if cut_conf.blank?
+        return ['0', '-0'] if cut_conf.nil?
         cut = cut_conf.map { |c| [c['start'], c['end']] }.flatten
         ["0"] + cut.map { |c| "=#{c}" } + ["-0"]
       end
