@@ -34,30 +34,39 @@ Or install it yourself as:
 ## Usage
 
 Fidelity operates on the current working directory. It will read the
-`fidelity.yml` file.
+`metadata.yml` file.
 
 
 ### CLI
 
-    fidelity precursor
-    fidelity normalize
-    fidelity kluuu_merge
-    fidelity user_merge
-    fidelity normalize_users
-    fidelity talk_merge
-    fidelity trim
-    fidelity cut
-    fidelity m4a
-    fidelity mp3
-    fidelity ogg
-    fidelity move_clean
-    fidelity jinglize
-    fidelity auphonic
+    fidelity <strategy> [strategy ...]
+
+Where `strategy` is one of
+
+* precursor
+* normalize
+* kluuu_merge
+* user_merge
+* normalize_users
+* talk_merge
+* trim
+* cut
+* m4a
+* mp3
+* ogg
+* move_clean
+* jinglize
+* auphonic
 
 
 ### Code
 
-    Fidelity::Exec.run(args)
+    Fidelity::Exec.run(strategies, logger)
+
+While
+
+* `strategies` - an Array of names
+* `logger` - optional, if given should be an instance of Logger
 
 
 ## The Gory Details
