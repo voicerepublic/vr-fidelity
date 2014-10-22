@@ -21,6 +21,7 @@ module Fidelity
       # TODO get rid of transitional code
       config = Config.new('.', metadata[:id], metadata)
       strategy_runner = StrategyRunner.new(config)
+      raise 'No chain defined.' if metadata[:chain].nil?
       metadata[:chain].each_with_index do |name, index|
         before_strategy(index, name)
         strategy_runner.run(name)
