@@ -10,6 +10,10 @@ require 'logger'
 # * after_strategy(index, name)
 # * after_chain
 #
+# Then call it like this
+#
+#     ChainRunner.new(metadatafile).run(Logger.new)
+#
 module Fidelity
   class ChainRunner < Struct.new(:metadatafile)
 
@@ -22,7 +26,7 @@ module Fidelity
       config = Config.new('.', metadata[:id], metadata)
       strategy_runner = StrategyRunner.new(config)
       raise 'No chain defined.' if metadata[:chain].nil?
-      metadata[:chain].each_with_index do |name, index|
+      chain.each_with_index do |name, index|
         before_strategy(index, name)
         strategy_runner.run(name)
         after_strategy(index, name)
@@ -46,6 +50,10 @@ module Fidelity
 
     def after_chain
       # noop
+    end
+
+    def chain
+      metadata[:chain]
     end
 
     def metadata
