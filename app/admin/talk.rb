@@ -14,11 +14,12 @@ ActiveAdmin.register Talk do
     if message[:created] || message[:updated]
       flash[:notice] = "#{message[:created]} talk(s) created, " +
                        "#{message[:updated]} talk(s) updated."
+      redirect_to action: :index
     end
     if message[:error]
-      flash[:error] = "An error occured: #{message[:error]}"
+      @errors = message[:error]
+      render 'admin/csv/upload_csv'
     end
-    redirect_to action: :index
   end
   # END CSV Import
 

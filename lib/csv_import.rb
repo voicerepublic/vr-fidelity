@@ -23,13 +23,7 @@ module CsvImport
     end
     # render error if validation failed
     unless errors.empty?
-      error_text = ''
-      errors.each do |line, errs|
-        error_text +=
-          "Errors in line #{line}: " +
-          errs.map { |e| "#{e}. " }.join
-      end
-      return { error: error_text }
+      return { error: errors }
     end
     # render error if check uniqueness of uri fails
     if objs.map(&:uri).uniq.size != objs.size
