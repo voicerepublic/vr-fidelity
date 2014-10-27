@@ -40,7 +40,7 @@ class Talk < ActiveRecord::Base
   URL_PATTERN = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
   URL_MESSAGE = "if changed, must be a valid URL, i.e. matching #{URL_PATTERN}"
 
-  belongs_to :venue, :inverse_of => :talks
+  belongs_to :venue, inverse_of: :talks
 
   acts_as_taggable
 
@@ -61,6 +61,14 @@ class Talk < ActiveRecord::Base
   after_save :generate_flyer!, if: :generate_flyer?
   after_save :schedule_processing_override,
              if: ->(t) { t.recording_override? && t.recording_override_changed? }
+
+  validate :venue_id do
+    begin
+      Venue.find(venue_id)
+    rescue
+      errors[:venue_id] = "with id #{venue_id} not found"
+    end
+  end
 
   delegate :user, to: :venue
 
