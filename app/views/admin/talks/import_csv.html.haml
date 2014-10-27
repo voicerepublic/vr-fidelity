@@ -1,3 +1,14 @@
+- if @errors
+  .error
+    %h3== Please fix the following validation errors
+    %ul
+      - @errors.each do |line, errors|
+        %li
+          == Errors in line #{line}
+          %ul
+            - errors.each do |error|
+              %li= error
+
 %h3 Validation
 %p
   Please use <a href="/samples/talks.csv">this CSV file</a> as a template for imports.

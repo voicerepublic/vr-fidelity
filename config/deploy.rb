@@ -31,7 +31,7 @@ set :deploy_to, '/home/backend/app'
 # set :pty, true
 
 # Default value for :linked_files is []
-set :linked_files, %w{config/database.yml config/private_pub.yml}
+set :linked_files, %w{config/database.yml config/private_pub.yml config/settings.local.yml}
 
 # Default value for linked_dirs is []
 #set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
@@ -43,7 +43,21 @@ set :linked_dirs, %w{log tmp/pids public/system}
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
+set :me, %x[whoami;hostname].split.join('@')
+
 namespace :deploy do
+
+  task :slack_started do
+    slack "#{fetch(:me)} STARTED a deployment of "+
+          "#{fetch(:application)} (#{fetch(:branch)}) to #{fetch(:stage)}"
+  end
+  after :started, :slack_started
+
+  task :slack_finished do
+    slack "#{fetch(:me)} FINISHED a deployment of "+
+          "#{fetch(:application)} (#{fetch(:branch)}) to #{fetch(:stage)}"
+  end
+  after :finished, :slack_finished
 
   desc 'Restart application'
   task :restart do
@@ -65,4 +79,20 @@ namespace :deploy do
     end
   end
 
+end
+
+require 'json'
+
+def slack(message)
+  url = "https://voicerepublic.slack.com/services/hooks/incoming-webhook"+
+        "?token=VtybT1KujQ6EKstsIEjfZ4AX"
+  payload = {
+    channel: '#voicerepublic_tech',
+    username: 'capistrano',
+    text: message,
+    icon_emoji: ':floppy_disk:'
+  }
+  json = JSON.unparse(payload)
+  cmd = "curl -X POST --data-urlencode 'payload=#{json}' '#{url}' 2>&1"
+  %x[ #{cmd} ]
 end

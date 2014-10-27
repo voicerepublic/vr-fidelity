@@ -25,7 +25,7 @@
 class Talk < ActiveRecord::Base
 
   extend ::CsvImport
-  
+
   GRADES = {
     ok:           "Everything ok. Quality acceptable. (ok)",
     override:     "Manually overriden, quailty is good. (override)",
@@ -40,28 +40,35 @@ class Talk < ActiveRecord::Base
   URL_PATTERN = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
   URL_MESSAGE = "if changed, must be a valid URL, i.e. matching #{URL_PATTERN}"
 
-  belongs_to :venue, :inverse_of => :talks
+  belongs_to :venue, inverse_of: :talks
 
   acts_as_taggable
-  validates :venue, :title, :starts_at, :ends_at, :tag_list, :uri, presence: true
-  validates :uri, uniqueness: true
-  
-  validates :recording_override, format: { with: URL_PATTERN, message: URL_MESSAGE },
-            if: ->(t) { t.recording_override? && t.recording_override_changed? }
-
-  validate :related_talk_id_is_talk?, :on => :update
 
   before_validation :set_starts_at
   before_validation :set_ends_at
-  before_save :nilify_grade
-  
+
+  validates :venue, :title, :starts_at, :ends_at, :tag_list, :uri, presence: true
+  validates :uri, uniqueness: true
+  validates :recording_override, format: { with: URL_PATTERN, message: URL_MESSAGE },
+            if: ->(t) { t.recording_override? && t.recording_override_changed? }
   validates :starts_at_date, format: { with: /\A\d{4}-\d\d-\d\d\z/,
                                        message: "Invalid time" }
   validates :starts_at_time, format: { with: /\A\d\d:\d\d\z/,
                                        message: "Invalid time" }
-  
+  validate :related_talk_id_is_talk?, on: :update
+
+  before_save :nilify_grade
+  after_save :generate_flyer!, if: :generate_flyer?
   after_save :schedule_processing_override,
              if: ->(t) { t.recording_override? && t.recording_override_changed? }
+
+  validate :venue_id do
+    begin
+      Venue.find(venue_id)
+    rescue
+      errors[:venue_id] = "with id #{venue_id} not found"
+    end
+  end
 
   delegate :user, to: :venue
 
@@ -84,7 +91,7 @@ class Talk < ActiveRecord::Base
   scope :in_dashboard, -> do
     where('ends_at > ? AND starts_at < ?', 4.hours.ago, 4.hours.from_now)
   end
-  
+
   def effective_duration # in seconds
     ended_at - started_at
   end
@@ -148,5 +155,16 @@ class Talk < ActiveRecord::Base
   def nilify_grade
     self.grade = nil if grade.blank?
   end
-  
+
+  ############################################################
+  # from here, shared code with the main app
+
+  def generate_flyer?
+    starts_at_changed? or title_changed?
+  end
+
+  def generate_flyer!
+    Delayed::Job.enqueue GenerateFlyer.new(id: id), queue: 'audio'
+  end
+
 end

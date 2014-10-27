@@ -2,34 +2,30 @@ ActiveAdmin.register Talk do
 
   # BEGIN CSV Import
   action_item only: :index do
-    link_to 'Import CSV', :action => 'upload_csv'
+    link_to 'Import CSV', action: 'import_csv'
   end
 
-  collection_action :upload_csv do
-    render "admin/csv/upload_csv"
-  end
-
-  collection_action :import_csv, method: :post do
-    message = Talk.import(params[:dump][:file], { state: :prelive })
-    if message[:created] || message[:updated]
-      flash[:notice] = "#{message[:created]} talk(s) created, " +
-                       "#{message[:updated]} talk(s) updated."
+  collection_action :import_csv, method: [:get, :post] do
+    if params[:dump]
+      message = Talk.import(params[:dump][:file], { state: :prelive })
+      if message[:created] or message[:updated]
+        flash[:notice] = "#{message[:created]} talk(s) created, " +
+                         "#{message[:updated]} talk(s) updated."
+        redirect_to action: :index
+      end
+      @errors = message[:error]
     end
-    if message[:error]
-      flash[:error] = "An error occured: #{message[:error]}"
-    end
-    redirect_to action: :index
   end
   # END CSV Import
 
   action_item only: :show do
-    if talk.state == 'postlive' && talk.recording_override.to_s.empty?
+    if talk.state == 'postlive' && talk.recording_override.blank?
       link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
     end
   end
 
   action_item only: :show do
-    if talk.state == 'archived' && talk.recording_override.to_s.empty?
+    if talk.state == 'archived' && talk.recording_override.blank?
       link_to 'Reprocess', reprocess_admin_talk_path(talk), method: 'put'
     end
   end
