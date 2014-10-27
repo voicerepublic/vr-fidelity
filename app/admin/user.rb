@@ -30,6 +30,33 @@ ActiveAdmin.register User do
     actions
   end
 
+  show do |user|
+    attributes_table do
+      row :id
+      row :slug
+      row :firstname
+      row :lastname
+      row :email
+      row :timezone
+      row :summary do
+        raw user.summary
+      end
+      row :about do
+        raw user.about
+      end
+    end
+    panel "User's Venues" do
+      ul do
+        user.venues.each do |venue|
+          li do
+            link_to venue.title, [:admin, venue]
+          end
+        end
+      end
+    end
+    active_admin_comments
+  end
+
   form do |f|
     f.inputs do
       f.input :firstname

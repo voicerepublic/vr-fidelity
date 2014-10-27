@@ -41,8 +41,18 @@ ActiveAdmin.register Venue do
       row :created_at
       row :updated_at
     end
+    panel "Talks in this Venue" do
+      ul do
+        v.talks.each do |talk|
+          li do
+            link_to talk.title, [:admin, talk]
+          end
+        end
+      end
+    end
+    active_admin_comments
   end
-  
+
   form do |f|
     f.inputs do
       f.input :title
