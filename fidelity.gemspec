@@ -8,10 +8,10 @@ Gem::Specification.new do |spec|
   spec.version       = Fidelity::VERSION
   spec.authors       = ["phil"]
   spec.email         = ["phil@branch14.org"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
-  spec.license       = "MIT"
+  spec.description   = %q{Fidelity will run audio strategies comprised of a plethora of other audio tools}
+  spec.summary       = %q{orchestrates audio processing tools}
+  spec.homepage      = "http://github.com/munen/fidelity"
+  spec.license       = "proprietary"
 
   spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -23,5 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "wrong"
 
+  spec.add_dependency 'term-ansicolor'
   spec.add_dependency 'auphonic'
+  spec.add_dependency 'fileutils_logger'
 end

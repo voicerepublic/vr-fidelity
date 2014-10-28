@@ -19,7 +19,14 @@ module CmdRunner
 
   def run_cmd(method, *args)
     cmd = send(method, *args)
-    cmd.split(';').each { |c| logger.debug("> #{c.strip}") }
+
+    # log if a logger is present
+    if respond_to?(:logger)
+      cmd.split(';').each do |c|
+        logger.debug("> #{c.strip}")
+      end
+    end
+
     %x[#{cmd}]
   end
 
