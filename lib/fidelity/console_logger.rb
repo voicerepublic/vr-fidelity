@@ -3,9 +3,13 @@ require 'term/ansicolor'
 module Fidelity
   class ConsoleLogger
 
+    METHODS = %w( debug info warn error fatal unknown )
+
     include Term::ANSIColor
 
-    def method_missing(method, arg)
+    def method_missing(method, *args)
+      return super unless METHODS.include?(method.to_s)
+      arg = args.shift
       prefix, suffix = nil, [reset, "\n"]
       case method
       when :debug then prefix = '    '
@@ -18,14 +22,14 @@ module Fidelity
       else
         raise "unknown severity level #{method}"
       end
-      lines = [arg].flatten.map { |s| s.split("\n") }.flatten
-      lines.each do |line|
+      arg.split("\n").each do |line|
         subfix = nil
         case line[0]
-        when '>' then subfix = cyan
-        when '<' then subfix = brown
+        when '>' then subfix = yellow
+        when '<' then subfix = cyan
         end
-        print *([prefix, subfix, line, suffix].flatten)
+        parts = [prefix, subfix, line, suffix].flatten
+        print *parts
       end
     end
 

@@ -1,5 +1,3 @@
-require 'fileutils'
-
 # Moves the current result files into a 'clean' namespace. But keeps a
 # copy of the resulting wav file.
 #
@@ -24,9 +22,9 @@ module Fidelity
 
       def run
         inputs.each_with_index do |file, index|
-          FileUtils.mv(file, inputs_new_name[index], verbose: true)
+          fu.mv(file, inputs_new_name[index])
         end
-        FileUtils.cp("#{name}-#{INFIX}.wav", resulting_wav_file, verbose: true)
+        fu.cp("#{name}-#{INFIX}.wav", resulting_wav_file)
         outputs
       end
 

@@ -1,5 +1,6 @@
 require 'forwardable'
 require 'cmd_runner'
+require 'fileutils_logger'
 
 # Each strategy defines a method `run`, which usually relies on the
 # presence of one or more input files to produce one or more output
@@ -27,14 +28,14 @@ module Fidelity
           instance = new(setting)
           instance.logger.info "run #{self.name}"
 
-          instance.logger.debug "INPUT: #{instance.inputs.to_yaml }"
+          instance.logger.debug "<< #{instance.inputs * ', '}"
           precond = instance.inputs.inject(true) { |r, i| r && File.exist?(i) }
           raise "preconditions not met for #{name} " +
                 "in #{path}: #{instance.inputs  * ', '}" unless precond
 
           result = instance.run
 
-          instance.logger.debug "OUTPUT: #{instance.outputs.to_yaml}"
+          instance.logger.debug ">> #{instance.outputs * ', '}"
           postcond = instance.outputs.inject(true) { |r, i| r && File.exist?(i) }
           raise "postconditions not met for #{name} " +
                 "in #{path}: #{instance.outputs * ', '}" unless postcond
@@ -68,6 +69,10 @@ module Fidelity
 
       def logger
         opts[:logger] || Logger.new('/dev/null')
+      end
+
+      def fu
+        @fu ||= FileUtils.with_logger(logger, :debug)
       end
 
     end

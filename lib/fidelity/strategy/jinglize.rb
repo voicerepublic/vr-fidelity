@@ -28,7 +28,7 @@ module Fidelity
       end
 
       def run
-        FileUtils.mv(input, backup)
+        fu.mv(input, backup)
         unify backup
         merge_with_jingles
         outputs
