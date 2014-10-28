@@ -4,7 +4,7 @@ require 'logger'
 
 begin
   require File.expand_path(File.join(%w(.. .. lib fidelity)), __FILE__)
-  Fidelity::Exec.run(ARGV, Logger.new(STDOUT))
+  Fidelity::Exec.run(ARGV)
 rescue Exception => e
   raise e if ENV['DEBUG']
   warn e.message

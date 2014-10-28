@@ -52,9 +52,8 @@ module Fidelity
       end
 
       def jingles
-        # FIXME: expecting rails env
-        [ Rails.root.join('lib/audio/files/vr_start.wav'),
-          Rails.root.join('lib/audio/files/vr_stop.wav') ]
+        [ opts[:jingle_in],
+          opts[:jingle_out] ]
       end
 
     end

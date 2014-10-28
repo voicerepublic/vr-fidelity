@@ -37,10 +37,12 @@ Or install it yourself as:
 
     fidelity <metadatafile>
 
+(This is subject to change. And will most likely become something like `fidelity run <metadatafile>`; in order to support more versatile usage.)
+
 
 ### Code
 
-    Fidelity::Exec.run(path, logger)
+    Fidelity::ChainRunner.new(path).run(logger)
 
 While
 

@@ -1,3 +1,5 @@
+require 'fileutils'
+
 # Moves the current result files into a 'clean' namespace. But keeps a
 # copy of the resulting wav file.
 #

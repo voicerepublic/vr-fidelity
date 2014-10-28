@@ -23,13 +23,16 @@ module Fidelity
       before_chain
       metadata[:logger] = logger || new_logger
       # TODO get rid of transitional code
-      config = Config.new('.', metadata[:id], metadata)
+      path = File.dirname(metadatafile)
+      config = Config.new(path, metadata[:id], metadata)
       strategy_runner = StrategyRunner.new(config)
       raise 'No chain defined.' if metadata[:chain].nil?
-      chain.each_with_index do |name, index|
-        before_strategy(index, name)
-        strategy_runner.run(name)
-        after_strategy(index, name)
+      Dir.chdir(path) do
+        chain.each_with_index do |name, index|
+          before_strategy(index, name)
+          strategy_runner.run(name)
+          after_strategy(index, name)
+        end
       end
       after_chain
     end
