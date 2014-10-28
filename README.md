@@ -102,3 +102,4 @@ Where...
 
 * further improve debugging and logging
 * [cocaine](/thoughtbot/cocaine) seems like a decent option
+* use [slop](/leejarvis/slop) or [docopt](/docopt/docopt.rb)
