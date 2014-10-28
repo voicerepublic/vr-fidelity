@@ -33,7 +33,8 @@ module Fidelity
     # adjust formatting based on first char of line
     def subfix
       @subfix ||= {
-        '%' => cyan
+        '%' => cyan,
+        '!' => [ black, on_magenta ]
       }
     end
 
