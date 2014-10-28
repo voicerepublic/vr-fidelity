@@ -19,6 +19,7 @@ module CmdRunner
 
   def run_cmd(method, *args)
     cmd = send(method, *args)
+    cmd.split(';').each { |c| logger.debug("> #{c.strip}") }
     %x[#{cmd}]
   end
 

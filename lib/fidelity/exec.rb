@@ -1,14 +1,12 @@
+require 'fidelity/console_logger'
+
 module Fidelity
   class Exec < Struct.new(:file)
 
     class << self
       def run(args)
         file = args.shift
-        logger = Logger.new(STDOUT)
-        logger.formatter = ->(sev, time, name, msg) do
-          "#{msg}\n"
-        end
-        new(file).run(logger)
+        new(file).run(ConsoleLogger.new)
       end
     end
 

@@ -25,14 +25,16 @@ module Fidelity
           result = nil
           path = setting.path
           instance = new(setting)
-          instance.logfile.info "# run #{self.name}"
+          instance.logger.info "run #{self.name}"
 
+          instance.logger.debug "INPUT: #{instance.inputs.to_yaml }"
           precond = instance.inputs.inject(true) { |r, i| r && File.exist?(i) }
           raise "preconditions not met for #{name} " +
                 "in #{path}: #{instance.inputs  * ', '}" unless precond
 
           result = instance.run
 
+          instance.logger.debug "OUTPUT: #{instance.outputs.to_yaml}"
           postcond = instance.outputs.inject(true) { |r, i| r && File.exist?(i) }
           raise "postconditions not met for #{name} " +
                 "in #{path}: #{instance.outputs * ', '}" unless postcond
@@ -64,7 +66,7 @@ module Fidelity
         [ output ].compact
       end
 
-      def logfile
+      def logger
         opts[:logger] || Logger.new('/dev/null')
       end
 
