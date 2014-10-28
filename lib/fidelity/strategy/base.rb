@@ -28,14 +28,14 @@ module Fidelity
           instance = new(setting)
           instance.logger.info "run #{self.name}"
 
-          instance.logger.debug "<< #{instance.inputs * ', '}"
+          #instance.logger.debug "<< #{instance.inputs * ', '}"
           precond = instance.inputs.inject(true) { |r, i| r && File.exist?(i) }
           raise "preconditions not met for #{name} " +
                 "in #{path}: #{instance.inputs  * ', '}" unless precond
 
           result = instance.run
 
-          instance.logger.debug ">> #{instance.outputs * ', '}"
+          #instance.logger.debug ">> #{instance.outputs * ', '}"
           postcond = instance.outputs.inject(true) { |r, i| r && File.exist?(i) }
           raise "postconditions not met for #{name} " +
                 "in #{path}: #{instance.outputs * ', '}" unless postcond
@@ -72,7 +72,13 @@ module Fidelity
       end
 
       def fu
-        @fu ||= FileUtils.with_logger(logger, :debug)
+        @fu ||= FileUtils.with_logger(LoggerWrapper.new(logger), :debug)
+      end
+
+      class LoggerWrapper < Struct.new(:logger)
+        def debug(msg)
+          logger.debug("% #{msg}")
+        end
       end
 
     end

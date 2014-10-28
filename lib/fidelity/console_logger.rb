@@ -14,9 +14,9 @@ module Fidelity
       case method
       when :debug then prefix = '    '
       when :info  then prefix = ["\n", green, '--> ']
-      when :warn  then prefix = [orange, 'warn:']
-      when :error then prefix = red
-      when :fatal then prefix = [red, bold]
+      when :warn  then prefix = ['    ', red]
+      when :error then prefix = [red, bold]
+      when :fatal then prefix = [black, on_red]
       when :unknown
         # noop
       else
@@ -25,8 +25,7 @@ module Fidelity
       arg.split("\n").each do |line|
         subfix = nil
         case line[0]
-        when '>' then subfix = yellow
-        when '<' then subfix = cyan
+        when '%' then subfix = cyan
         end
         parts = [prefix, subfix, line, suffix].flatten
         print *parts

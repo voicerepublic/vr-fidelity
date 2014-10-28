@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "wrong"
 
   spec.add_dependency 'term-ansicolor'
-  spec.add_dependency 'auphonic'
   spec.add_dependency 'fileutils_logger'
+  spec.add_dependency 'open4'
+  spec.add_dependency 'auphonic'
 end

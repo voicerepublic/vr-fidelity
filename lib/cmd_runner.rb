@@ -1,3 +1,5 @@
+require "open4"
+
 # Example Usage
 #
 #     class A
@@ -21,9 +23,18 @@ module CmdRunner
     cmd = send(method, *args)
 
     # log if a logger is present
-    logger.debug(cmd) if respond_to?(:logger)
+    logger.debug("% #{cmd}") if respond_to?(:logger)
 
-    %x[#{cmd}]
+    pid, stdin, stdout, stderr = Open4::popen4(cmd)
+
+    stdout_output = stdout.read
+
+    if respond_to?(:logger)
+      logger.debug(stdout_output)
+      logger.warn(stderr.read)
+    end
+
+    stdout_output
   end
 
   def method_missing(method, *args)
