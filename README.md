@@ -96,3 +96,9 @@ Where...
 * [move_clean](lib/fidelity/strategy/move_clean.rb)
 * [jinglize](lib/fidelity/strategy/jinglize.rb)
 * [auphonic](lib/fidelity/strategy/auphonic.rb)
+
+
+## TODO
+
+* further improve debugging and logging
+* [cocaine](/thoughtbot/cocaine) seems like a decent option
