@@ -15,6 +15,12 @@ ActiveAdmin.register Talk do
   filter :speakers
   filter :language, as: :select, collection: %w(en de fr it es)
 
+  controller do
+    def scoped_collection
+      Talk.includes(:venue)
+    end
+  end
+
   # BEGIN CSV Import
   action_item only: :index do
     link_to 'Import CSV', action: 'import_csv'
