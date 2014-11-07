@@ -13,7 +13,7 @@ audio tools.
 
 ## Run Tests
 
-    rspec spec
+    rspec
 
 
 ## Debugging
@@ -56,6 +56,9 @@ While
 
 * `path` - a path to manifest file
 * `logger` - optional, if given should be an instance of Logger
+
+In most cases you will want to subclass the ChainRunner to make use of
+its callbacks.
 
 
 ## The Gory Details
