@@ -1,5 +1,18 @@
 ActiveAdmin.register Venue do
 
+  filter :id
+  filter :uri
+  filter :slug
+  filter :title
+  filter :teaser
+  filter :description
+
+  controller do
+    def scoped_collection
+      Venue.includes(:user)
+    end
+  end
+
   permit_params :title, :teaser, :description, :options, :image,
                 :retained_image, :remove_image, flags: []
 

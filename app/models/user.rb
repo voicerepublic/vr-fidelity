@@ -35,10 +35,9 @@ class User < ActiveRecord::Base
   #has_many :talks, through: :venues
 
   scope :nonguests, -> { where(guest: nil) }
-  scope :guests, -> { where(guest: true) }
 
   image_accessor :avatar
-  
+
   def full_name
     [firstname, lastname].compact * ' '
   end
