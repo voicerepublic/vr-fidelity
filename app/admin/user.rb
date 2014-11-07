@@ -1,7 +1,10 @@
 ActiveAdmin.register User do
 
-  scope :nonguests
-  scope :guests
+  controller do
+    def scoped_collection
+      User.nonguests
+    end
+  end
 
   filter :id
   filter :uid
