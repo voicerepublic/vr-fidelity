@@ -16,6 +16,14 @@ audio tools.
     rspec spec
 
 
+## Debugging
+
+When running fidelity from the commandline, prepend this to enable
+full stack traces on errors:
+
+    DEBUG=1 fidelity ...
+
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -35,9 +43,9 @@ Or install it yourself as:
 
 ### CLI
 
-    fidelity <metadatafile>
+    fidelity run <manifestfile>
 
-(This is subject to change. And will most likely become something like `fidelity run <metadatafile>`; in order to support more versatile usage.)
+    fidelity analyze <manifestfile>
 
 
 ### Code
@@ -46,13 +54,13 @@ Or install it yourself as:
 
 While
 
-* `path` - a path to metadata file
+* `path` - a path to manifest file
 * `logger` - optional, if given should be an instance of Logger
 
 
 ## The Gory Details
 
-The metadata file should contain the following:
+The manifest file should contain the following:
 
     ---
     :id: <id>
@@ -101,5 +109,4 @@ Where...
 ## TODO
 
 * further improve debugging and logging
-* [cocaine](/thoughtbot/cocaine) seems like a decent option
 * use [slop](/leejarvis/slop) or [docopt](/docopt/docopt.rb)

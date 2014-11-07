@@ -6,6 +6,7 @@ require 'fidelity/strategy'
 require 'fidelity/config'
 require 'fidelity/strategy_runner'
 require 'fidelity/chain_runner'
+require 'fidelity/analyzer'
 
 module Fidelity
   LOG_FILENAME = 'fidelity.log'
