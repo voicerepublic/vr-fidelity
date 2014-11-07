@@ -1,5 +1,12 @@
 ActiveAdmin.register Venue do
 
+  filter :id
+  filter :uri
+  filter :slug
+  filter :title
+  filter :teaser
+  filter :description
+
   permit_params :title, :teaser, :description, :options, :image,
                 :retained_image, :remove_image, flags: []
 
