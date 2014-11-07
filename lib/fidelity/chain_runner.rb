@@ -12,21 +12,19 @@ require 'logger'
 #
 # Then call it like this
 #
-#     ChainRunner.new(metadatafile).run(Logger.new)
+#     ChainRunner.new(manifestfile).run(Logger.new)
 #
 module Fidelity
-  class ChainRunner < Struct.new(:metadatafile)
-
-    attr_accessor :metadata
+  class ChainRunner < Struct.new(:manifestfile)
 
     def run(logger=nil)
       before_chain
-      metadata[:logger] = logger || new_logger
+      manifest[:logger] = logger || new_logger
       # TODO get rid of transitional code
-      path = File.dirname(metadatafile)
-      config = Config.new(path, metadata[:id], metadata)
+      path = File.dirname(manifestfile)
+      config = Config.new(path, manifest[:id], manifest)
       strategy_runner = StrategyRunner.new(config)
-      raise 'No chain defined.' if metadata[:chain].nil?
+      raise 'No chain defined.' if manifest[:chain].nil?
       Dir.chdir(path) do
         chain.each_with_index do |name, index|
           before_strategy(index, name)
@@ -56,14 +54,14 @@ module Fidelity
     end
 
     def chain
-      metadata[:chain]
+      manifest[:chain]
     end
 
-    def metadata
-      return @metadata unless @metadata.nil?
-      path = File.expand_path(metadatafile, Dir.pwd)
+    def manifest
+      return @manifest unless @manifest.nil?
+      path = File.expand_path(manifestfile, Dir.pwd)
       raise "Could not find file #{path}" unless File.exist?(path)
-      @metadata = YAML.load(File.read(path))
+      @manifest = YAML.load(File.read(path))
     end
 
     def new_logger
