@@ -3,6 +3,16 @@ ActiveAdmin.register User do
   scope :nonguests
   scope :guests
 
+  filter :id
+  filter :uid
+  filter :slug
+  filter :firstname
+  filter :lastname
+  filter :email
+  filter :provider
+  filter :timezone
+  filter :conference
+
   index do
     selectable_column
     column :id
