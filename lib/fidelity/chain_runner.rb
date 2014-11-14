@@ -25,6 +25,7 @@ module Fidelity
       config = Config.new(path, manifest[:id], manifest)
       strategy_runner = StrategyRunner.new(config)
       raise 'No chain defined.' if manifest[:chain].nil?
+      manifest[:logger].info "% cd #{path}"
       Dir.chdir(path) do
         chain.each_with_index do |name, index|
           before_strategy(index, name)

@@ -98,9 +98,8 @@ module Fidelity
     def check_journal!
       unless File.exist?(journal_path)
         write_fake_journal!
-        ## FIXME dependency on Rails[:logger]
-        #Rails[:logger].info "Journal #{journal_path} not found, " +
-        #                  "reconstructed."
+        opts[:logger].debug "! Journal #{journal_path} " +
+                            "not found, reconstructed."
       end
     end
 
@@ -112,7 +111,9 @@ module Fidelity
     #
     # reconstructs a missing journal on the basis of that knowledge
     def fake_journal
-      flvs = Dir.glob("#{path}/t#{name}-u*.flv").sort
+      pattern = "#{path}/t#{name}-u*.flv"
+      opts[:logger].debug "! searching for #{pattern}"
+      flvs = Dir.glob(pattern).sort
       result = flvs.map do |flv|
         next nil unless File.size(flv) > 0
         _, basename, timestamp = flv.match(/.*\/(.*?(\d+)\.flv)/).to_a
