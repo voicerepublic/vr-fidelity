@@ -8,10 +8,6 @@ require 'fidelity/strategy_runner'
 require 'fidelity/chain_runner'
 require 'fidelity/analyzer'
 
-module Fidelity
-  LOG_FILENAME = 'fidelity.log'
-end
-
 # make sure dependencies are installed
 constants = Fidelity::Strategy.constants.map { |c| Fidelity::Strategy.const_get(c) }
 classes = constants.select { |c| c.is_a?(Class) }

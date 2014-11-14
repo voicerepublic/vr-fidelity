@@ -24,7 +24,7 @@ module Fidelity
       path = File.dirname(manifestfile)
       config = Config.new(path, manifest[:id], manifest)
       strategy_runner = StrategyRunner.new(config)
-      raise 'No chain defined.' if manifest[:chain].nil?
+      raise 'No chain defined.' if chain.nil?
       manifest[:logger].info "% cd #{path}"
       Dir.chdir(path) do
         chain.each_with_index do |name, index|
@@ -55,6 +55,7 @@ module Fidelity
     end
 
     def chain
+      return manifest[:chain].split(/\s+/) if manifest[:chain].is_a?(String)
       manifest[:chain]
     end
 

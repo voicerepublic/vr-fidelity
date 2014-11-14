@@ -20,22 +20,28 @@ module CmdRunner
   private
 
   def run_cmd(method, *args)
-    cmd = send(method, *args)
+    cmds = send(method, *args)
 
-    # log if a logger is present
-    logger.debug("% #{cmd}") if respond_to?(:logger)
+    stdout_output = ''
 
-    pid, stdin, stdout, stderr = Open4::popen4(cmd)
+    cmds.split("\n").each do |cmd|
+      # log if a logger is present
+      logger.debug("% #{cmd}") if respond_to?(:logger)
 
-    stdout_output = stdout.read
+      pid, stdin, stdout, stderr = Open4::popen4(cmd)
 
-    if respond_to?(:logger)
-      logger.debug(stdout_output)
-      logger.warn(stderr.read)
+      stdout_output += stdout.read
+
+      if respond_to?(:logger)
+        logger.debug(stdout_output)
+        logger.warn(stderr.read)
+      end
     end
 
     stdout_output
   end
+
+
 
   def method_missing(method, *args)
     cmd_method = "#{method}_cmd"

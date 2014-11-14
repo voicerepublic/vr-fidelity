@@ -88,19 +88,23 @@ Where...
 * Timestamps are down to seconds (not milliseconds!).
 * Offsets are down to milliseconds and are relative to the beginning.
 * `cut_conf` may be nil, an empty Array or omited entirely
-* `chain` is a list of strategy names
+* `chain` is a list of strategy names, either as array or as space separated string
 
 
 ## Available Strategies
 
 * [precursor](lib/fidelity/strategy/precursor.rb)
-* [normalize](lib/fidelity/strategy/normalize.rb)
+* [normalize_fragments](lib/fidelity/strategy/normalize_fragments.rb)
 * [kluuu_merge](lib/fidelity/strategy/kluuu_merge.rb)
 * [user_merge](lib/fidelity/strategy/user_merge.rb)
 * [normalize_users](lib/fidelity/strategy/normalize_users.rb)
 * [talk_merge](lib/fidelity/strategy/talk_merge.rb)
 * [trim](lib/fidelity/strategy/trim.rb)
 * [cut](lib/fidelity/strategy/cut.rb)
+* [normalize](lib/fidelity/strategy/normalize.rb)
+* [compress](lib/fidelity/strategy/compress.rb)
+* [noise_gate](lib/fidelity/strategy/noise_gate.rb)
+* [squelch](lib/fidelity/strategy/squelch.rb)
 * [m4a](lib/fidelity/strategy/m4a.rb)
 * [mp3](lib/fidelity/strategy/mp3.rb)
 * [ogg](lib/fidelity/strategy/ogg.rb)
