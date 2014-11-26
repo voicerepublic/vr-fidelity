@@ -100,6 +100,7 @@ module Fidelity
         write_fake_journal!
         opts[:logger].debug "! Journal #{journal_path} " +
                             "not found, reconstructed."
+        opts[:logger].debug fake_journal
       end
     end
 
@@ -115,7 +116,11 @@ module Fidelity
       opts[:logger].debug "! searching for #{pattern}"
       flvs = Dir.glob(pattern).sort
       result = flvs.map do |flv|
+        # skip it if it is an empty file
         next nil unless File.size(flv) > 0
+        # skip it if it is a corrupt file
+        next nil unless duration_of_flv(flv) > 0
+
         _, basename, timestamp = flv.match(/.*\/(.*?(\d+)\.flv)/).to_a
         ['record_done', basename, timestamp] * ' '
       end
