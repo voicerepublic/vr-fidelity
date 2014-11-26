@@ -1,4 +1,4 @@
-require "open4"
+require 'systemu'
 
 # Example Usage
 #
@@ -22,26 +22,22 @@ module CmdRunner
   def run_cmd(method, *args)
     cmds = send(method, *args)
 
-    stdout_output = ''
+    stdout = '(no output)'
 
     cmds.split("\n").each do |cmd|
       # log if a logger is present
       logger.debug("% #{cmd}") if respond_to?(:logger)
 
-      pid, stdin, stdout, stderr = Open4::popen4(cmd)
-
-      stdout_output += stdout.read
+      status, stdout, stderr = systemu(cmd)
 
       if respond_to?(:logger)
-        logger.debug(stdout_output)
-        logger.warn(stderr.read)
+        logger.debug(stdout)
+        logger.warn(stderr)
       end
     end
 
-    stdout_output
+    stdout
   end
-
-
 
   def method_missing(method, *args)
     cmd_method = "#{method}_cmd"
