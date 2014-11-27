@@ -117,3 +117,9 @@ Where...
 
 * further improve debugging and logging
 * use [slop](/leejarvis/slop) or [docopt](/docopt/docopt.rb)
+
+## NOTES
+
+List durations of flv files, e.g.
+
+    ls -1 app/shared/recordings/t3338* | xargs -n 1 -irpl avconv -i rpl 2>&1 | grep Duration
