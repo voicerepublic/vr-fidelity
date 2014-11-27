@@ -53,6 +53,7 @@ module Fidelity
       cmd = "avconv -i #{path} 2>&1 | grep Duration"
       output = %x[#{cmd}]
       _, h, m, s = output.match(/(\d+):(\d\d):(\d\d)/).to_a.map(&:to_i)
+      return 0 unless _
       s + 60 * (m + 60 * h)
     end
 
