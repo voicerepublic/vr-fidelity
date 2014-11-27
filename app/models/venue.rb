@@ -22,9 +22,8 @@ class Venue < ActiveRecord::Base
               no_auto_end_talk
               no_email
               start_button
-              suppress_chat
-              loopback ).sort
-  
+              suppress_chat).sort
+
   belongs_to :user
   has_many :talks
 
@@ -33,12 +32,12 @@ class Venue < ActiveRecord::Base
   def flags
     YAML.load(options).reduce([]) { |r, f| f.last == true ? r.push(f.first) : r }
   end
-  
+
   def flags=(values)
-    values = values.select { |v| !v.blank? } 
+    values = values.select { |v| !v.blank? }
     other = FLAGS.reduce({}) { |r, f| r.merge f.to_sym => false }
     values.each { |v| other[v.to_sym] = true }
     self.options = YAML.dump(YAML.load(options).merge(other))
   end
-  
+
 end
