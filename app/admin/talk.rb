@@ -201,7 +201,7 @@ ActiveAdmin.register Talk do
                 f.object.featured_from.strftime("%Y-%m-%d %H:%M:%S")
               }
       f.input :duration # FIXME make it a select box with discrete values
-      f.input :venue
+      #f.input :venue # removed for speed, if needed use something like select2
       f.input :teaser
       f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
