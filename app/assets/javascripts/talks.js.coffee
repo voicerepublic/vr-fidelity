@@ -4,7 +4,7 @@ $ ->
   return unless $('.show.admin_talks').length
 
   # filter to entries which have a start
-  data = window.data.filter (d) -> d.start? and d.seconds > 0
+  data = window.data.filter (d) -> d.ext == '.flv' and d.start? and d.seconds > 0
 
   # find min and max
   t0 = (parseInt(d.start) for i, d of data)
@@ -57,7 +57,7 @@ $ ->
       .attr('width', (d) -> scaleX(d.end) - scaleX(d.start))
       .attr('height', height)
       .attr('style', 'fill: lightgrey')
-  
+
     # draw overview
     sel = svg.selectAll('.overview').data(data)
     sel.enter().append('rect')
@@ -91,4 +91,3 @@ $ ->
       .attr('style', 'fill: red')
       .attr('font-size', '42px')
       .text('OVERRIDE')
-        
