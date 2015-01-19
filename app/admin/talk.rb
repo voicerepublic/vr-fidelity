@@ -1,5 +1,7 @@
 ActiveAdmin.register Talk do
 
+  actions :all, except: [:destroy]
+
   filter :id
   filter :uri
   filter :slug
