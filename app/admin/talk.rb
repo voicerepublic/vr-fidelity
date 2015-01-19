@@ -40,6 +40,12 @@ ActiveAdmin.register Talk do
   # END CSV Import
 
   action_item only: :show do
+    if talk.state == 'live'
+      link_to 'End Talk', end_talk_admin_talk_path(talk), method: 'put'
+    end
+  end
+
+  action_item only: :show do
     if talk.state == 'postlive' && talk.recording_override.blank?
       link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
     end
@@ -49,6 +55,11 @@ ActiveAdmin.register Talk do
     if talk.state == 'archived' && talk.recording_override.blank?
       link_to 'Reprocess', reprocess_admin_talk_path(talk), method: 'put'
     end
+  end
+
+  member_action :end_talk, method: 'put' do
+    Delayed::Job.enqueue EndTalk.new(id: params[:id]), queue: 'trigger'
+    redirect_to({action: :show}, { notice: "The talk has been ended." })
   end
 
   member_action :postprocess, method: 'put' do
