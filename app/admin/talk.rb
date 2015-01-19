@@ -59,7 +59,7 @@ ActiveAdmin.register Talk do
 
   member_action :end_talk, method: 'put' do
     Delayed::Job.enqueue EndTalk.new(id: params[:id]), queue: 'trigger'
-    redirect_to({action: :show}, { notice: "The talk has been ended." })
+    redirect_to({action: :show}, { notice: "Placed in queue to end talk." })
   end
 
   member_action :postprocess, method: 'put' do
