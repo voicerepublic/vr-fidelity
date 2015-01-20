@@ -10,7 +10,7 @@ module Fidelity
 
       class << self
         def required_executables
-          %w( sox mv )
+          %w( sox soxi mv )
         end
       end
 
@@ -27,9 +27,21 @@ module Fidelity
         "#{name}-bak.wav"
       end
 
+      def identify_cmd(file)
+        "soxi #{file}"
+      end
+
+      def classify(file)
+        stdout = identify(file)
+        @channels = stdout.match(/^Channels\s*: (.*)$/)[1]
+        @sample_rate = stdout.match(/^Sample Rate\s*: (.*)$/)[1]
+      end
+
       def run
-        fu.mv(input, backup)
-        unify backup
+        classify input
+        fu.mv input, backup
+        prep_jingle jingles.first
+        prep_jingle jingles.last
         merge_with_jingles
         outputs
       end
@@ -38,17 +50,15 @@ module Fidelity
         [ input, backup ]
       end
 
-      def tmpfile
-        "#{name}-unified.wav"
-      end
-
-      def unify_cmd(file)
-        "sox #{file} -c 2 #{tmpfile} rate -L 44.1k; mv #{tmpfile} #{file}"
-      end
-
       def merge_with_jingles_cmd
-        start, stop = jingles
+        start = "prep-#{File.basename(jingles.first)}"
+        stop  = "prep-#{File.basename(jingles.last)}"
         "sox -V1 #{start} #{backup} #{stop} #{input}"
+      end
+
+      def prep_jingle_cmd(file)
+        base = File.basename(file)
+        "sox #{file} -c #{@channels} prep-#{base} rate -L #{@sample_rate}"
       end
 
       def jingles
