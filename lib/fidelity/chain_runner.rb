@@ -1,5 +1,5 @@
 require 'yaml'
-require 'logger'
+require 'null_logger'
 
 # Runs chains of strategies by running StrategyRunner one at a time.
 #
@@ -67,7 +67,7 @@ module Fidelity
     end
 
     def new_logger
-      Logger.new(Fidelity::LOG_FILENAME)
+      NullLogger.new
     end
 
   end

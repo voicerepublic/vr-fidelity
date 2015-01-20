@@ -1,3 +1,5 @@
+require 'null_logger'
+
 # Fidelity::Config objects are data objects, with some logic for reading
 # journals and coping with missing journals. Fidelity::Config is where the
 # glue goes that connects the business logic of the talk model
@@ -13,6 +15,8 @@ module Fidelity
       self.path = path
       self.name = name
       self.opts = opts
+
+      self.opts[:logger] ||= NullLogger.new
 
       # this is done on instanciation to be able to rely on `Dir.pwd`
       self.journal = read_journal
