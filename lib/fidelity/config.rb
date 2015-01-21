@@ -56,9 +56,9 @@ module Fidelity
     def duration_of_flv(path)
       cmd = "avconv -i #{path} 2>&1 | grep Duration"
       output = %x[#{cmd}]
-      _, h, m, s = output.match(/(\d+):(\d\d):(\d\d)/).to_a.map(&:to_i)
+      _, h, m, s = output.match(/(\d+):(\d\d):(\d\d)/).to_a
       return 0 unless _
-      s + 60 * (m + 60 * h)
+      s.to_i + 60 * (m.to_i + 60 * h.to_i)
     end
 
     # the content of the journal file might look like this:
