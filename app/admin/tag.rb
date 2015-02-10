@@ -1,23 +1,31 @@
 ActiveAdmin.register ActsAsTaggableOn::Tag, as: 'Tag' do
 
-  permit_params :name#, :category
+  permit_params :name, :category
 
   filter :name
+  filter :taggings_count, label: 'Occurences'
+  filter :category
 
-  # TODO eager load taggings
-  # TODO sort by taggings.count by default
+  config.sort_order = 'taggings_count_desc'
+
   index do
     selectable_column
     column :name
-    column :usages do |tag|
-      tag.taggings.count
+    column 'Occurences', :taggings_count
+    column :category, sortable: :category do |tag|
+      tag.category? ? status_tag("yes", :ok) : status_tag("no")
     end
-    # TODO column :category
     actions
   end
 
-  # TODO check what happens if we delete tags in BO
-  # what happens to the taggings?
+  # after update redirect to index
+  controller do
+    def update
+      update! do |format|
+        format.html { redirect_to admin_tags_path }
+      end
+    end
+  end
 
   # TODO NTH on show list entities tagged with
 
