@@ -3,13 +3,13 @@
   $(function () {
     new Highcharts.Chart({
       chart: { renderTo: 'chart' },
-      title: { text: '#{params[:id]}' },
+      title: { text: '' },
       xAxis: { type: 'datetime' },
       yAxis: {
         title: { text: '#{params[:id]}' }
       },
       series: [{
-        name: "#{params[:id]}",
+        name: "#{t('.'+params[:id])}",
         pointInterval: #{1.day * 1000},
         pointStart: #{90.days.ago.at_midnight.to_i * 1000},
         data: #{resource.map(&:value).reverse.inspect}
