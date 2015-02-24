@@ -30,13 +30,17 @@ ActiveAdmin.register Talk do
 
   collection_action :import_csv, method: [:get, :post] do
     if params[:dump]
-      message = Talk.import(params[:dump][:file], { state: :prelive })
-      if message[:created] or message[:updated]
-        flash[:notice] = "#{message[:created]} talk(s) created, " +
-                         "#{message[:updated]} talk(s) updated."
-        redirect_to action: :index
+      begin
+        message = Talk.import(params[:dump][:file], { state: :prelive })
+        if message[:created] or message[:updated]
+          flash[:notice] = "#{message[:created]} talk(s) created, " +
+                           "#{message[:updated]} talk(s) updated."
+          redirect_to action: :index
+        end
+        @errors = message[:error]
+      rescue Exception => e
+        flash[:error] = e.message
       end
-      @errors = message[:error]
     end
   end
   # END CSV Import
