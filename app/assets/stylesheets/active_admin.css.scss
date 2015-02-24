@@ -79,3 +79,25 @@ html, body {
         background-color: papayawhip;
     }
 }
+
+.admin_metrics {
+    .panel.figure {
+        text-align: center;
+        height: 75px;
+        padding-top: 25px;
+        margin-bottom: 0;
+        e {
+            display: block;
+            font-size: 320%;
+            margin-bottom: 12px;
+        }
+        a {
+            display: block;
+            color: #d0d0d0;
+        }
+    }
+
+    td {
+        width: 20%;
+    }
+}

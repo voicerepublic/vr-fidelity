@@ -1,0 +1,35 @@
+en:
+  active_admin:
+    resource:
+      index: &INDEX
+        talks_total: 'Talks total'
+        talks_featured_total: 'Featured talks'
+        talks_featured_currently_total: 'Currently featured talks'
+        talks_prelive_total: 'Upcoming talks'
+        talks_archived_total: 'Archived talks'
+        talks_tagged_with_category_total: 'Talks tagged with at least one category'
+        talks_tagged_with_category_percent: 'Talks tagged with at least one category'
+        plays_total: 'Plays total'
+        plays_per_talk_ratio: 'Average plays per talk'
+        users_total: 'Users total'
+        series_total: 'Series total'
+        series_nondefault_total: 'Series created by users'
+        tags_total: 'Tags total'
+        tags_categories_total: 'Categories total'
+        tags_categories_percent: 'of all tags are categories'
+        taggings_total: 'Taggings total (usage of tags)'
+        appearances_total: 'Invited guests'
+        messages_total: 'Messages total'
+        messages_per_talk: 'Average messages per talk'
+        reminders_total: 'Reminders (Listen Later) total'
+        reminders_users_total: 'Users using reminders'
+        socialshares_total: 'Social shares total'
+        socialshares_facebook_total: 'Facebook shares'
+        socialshares_twitter_total: 'Twitter shares'
+        socialshares_email_total: 'Email shares'
+        metrics_figures_total: 'Metrics'
+        metrics_datapoints_total: 'Metric datapoints'
+  admin:
+    metrics:
+      show:
+        <<: *INDEX
