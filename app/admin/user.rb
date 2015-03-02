@@ -2,6 +2,20 @@ ActiveAdmin.register User do
 
   actions :all, except: [:destroy]
 
+  action_item only: :show do
+    link_to t('.grant'), credits_admin_user_path(user)
+  end
+
+  member_action :credits, method: [:get, :post] do
+    if params[:grant] && qty = params[:grant][:quantity]
+      transaction = Transaction.create(source: current_admin_user,
+                                       details: params[:grant] )
+      transaction.delay(queue: 'trigger').process!
+      redirect_to [:admin, resource], notice: t('.granted_x_credits', count: qty.to_i)
+    end
+  end
+
+
   controller do
     def scoped_collection
       User.nonguests
