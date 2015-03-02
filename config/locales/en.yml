@@ -41,3 +41,7 @@ en:
           other: 'Granted %{count} credits. These will be available shortly.'
           one: 'Granted one credit. It will be available shortly.'
           zero: 'No credits granted!'
+  active_admin:
+    resource:
+      show:
+        grant: Grant Credits

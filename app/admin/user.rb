@@ -1,5 +1,7 @@
 ActiveAdmin.register User do
 
+  menu priority: 10
+
   actions :all, except: [:destroy]
 
   action_item only: :show do
@@ -41,7 +43,7 @@ ActiveAdmin.register User do
     column :firstname
     column :lastname
     column :email
-    column 'Venues' do |user|
+    column 'Series' do |user|
       user.venues.count
     end
     # column 'Talk Count' do |user|
@@ -99,7 +101,7 @@ ActiveAdmin.register User do
       end
     end
 
-    panel "User's Venues" do
+    panel "User's Series" do
       ul do
         user.venues.each do |venue|
           li do
