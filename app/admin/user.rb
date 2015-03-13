@@ -92,7 +92,7 @@ ActiveAdmin.register User do
             tr do
               td purchase.created_at
               td purchase.quantity
-              td number_to_currency(purchase.amount/100, unit: 'EUR')
+              td number_to_currency(purchase.total/100, unit: 'EUR')
             end
           end
         end
