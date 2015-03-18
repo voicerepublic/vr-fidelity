@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.0.2'
+gem 'rails', '4.0.13'
 gem 'pg'
-gem 'sass-rails', '~> 4.0.0'
+gem 'sass-rails', '~> 4.0.2'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
 gem 'haml-rails'
@@ -24,7 +24,7 @@ group :doc do
   gem 'sdoc', require: false
 end
 
-# gem 'bcrypt-ruby', '~> 3.1.2'
+# gem 'bcrypt', '~> 3.1.7'
 
 gem 'unicorn'
 gem 'activeadmin', github: 'gregbell/active_admin'
