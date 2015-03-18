@@ -109,6 +109,7 @@ GEM
     cookiejar (0.3.2)
     d3_rails (3.5.5)
       railties (>= 3.1.0)
+    database_cleaner (1.4.1)
     debug_inspector (0.0.2)
     delayed_job (4.0.6)
       activesupport (>= 3.0, < 5.0)
@@ -137,6 +138,11 @@ GEM
     erubis (2.7.0)
     eventmachine (1.0.7)
     execjs (2.4.0)
+    factory_girl (4.5.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.5.0)
+      factory_girl (~> 4.5.0)
+      railties (>= 3.0.0)
     faye (1.1.1)
       cookiejar (>= 0.3.0)
       em-http-request (>= 0.3.0)
@@ -355,9 +361,11 @@ DEPENDENCIES
   capistrano-rbenv (~> 2.0.1)
   coffee-rails (~> 4.1.0)
   d3_rails
+  database_cleaner
   delayed_job (~> 4.0.6)
   delayed_job_active_record (~> 4.0.3)
   devise
+  factory_girl_rails
   haml-rails
   highcharts-rails (~> 3.0.0)
   jbuilder (~> 2.0)
@@ -366,6 +374,7 @@ DEPENDENCIES
   pg
   private_pub
   pry-rails
+  rack-test
   rails (= 4.2.0)
   rails_config
   rspec-rails

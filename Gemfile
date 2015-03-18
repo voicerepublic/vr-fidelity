@@ -46,6 +46,10 @@ group :development, :test do
   gem 'pry-rails'
   gem 'byebug'
   #gem 'disable_assets_logger'
+
+  gem 'database_cleaner'
   gem 'rspec-rails'
-  gem 'spring-commands-rspec'
+  gem 'spring-commands-rspec' # TODO check if needed
+  gem 'rack-test'
+  gem 'factory_girl_rails'
 end
