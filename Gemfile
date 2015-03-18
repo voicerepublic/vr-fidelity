@@ -46,4 +46,6 @@ group :development, :test do
   gem 'pry-rails'
   gem 'byebug'
   #gem 'disable_assets_logger'
+  gem 'rspec-rails'
+  gem 'spring-commands-rspec'
 end

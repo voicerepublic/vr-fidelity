@@ -24,7 +24,7 @@ ActiveAdmin.register Talk do
   end
 
   # BEGIN CSV Import
-  action_item only: :index do
+  action_item :import, only: :index do
     link_to 'Import CSV', action: 'import_csv'
   end
 
@@ -45,19 +45,19 @@ ActiveAdmin.register Talk do
   end
   # END CSV Import
 
-  action_item only: :show do
+  action_item :end_talk, only: :show do
     if talk.state == 'live'
       link_to 'End Talk', end_talk_admin_talk_path(talk), method: 'put'
     end
   end
 
-  action_item only: :show do
+  action_item :postprocess, only: :show do
     if talk.state == 'postlive' && talk.recording_override.blank?
       link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
     end
   end
 
-  action_item only: :show do
+  action_item :reprocess, only: :show do
     if talk.state == 'archived' && talk.recording_override.blank?
       link_to 'Reprocess', reprocess_admin_talk_path(talk), method: 'put'
     end
