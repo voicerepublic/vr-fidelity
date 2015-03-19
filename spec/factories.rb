@@ -17,6 +17,7 @@ FactoryGirl.define do
   factory :metric do
   end
 
+  # TODO delete me, as soon as metrics are established
   factory :social_share do
   end
 
@@ -25,5 +26,16 @@ FactoryGirl.define do
 
   factory :venue do
   end
+
+  sequence(:uri) { |n| "uri-#{n}" }
+
+  # FIXME
+  # factory :talk do
+  #   uri
+  #   venue
+  #   title 'some title'
+  #   starts_at { Time.now }
+  #   tag_list 'some, tags'
+  # end
 
 end

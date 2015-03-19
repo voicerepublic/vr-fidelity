@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Admin::TalksController, type: :controller do
+RSpec.describe Admin::UsersController, type: :controller do
   login_admin_user
 
   it 'has an admin user logged in' do
@@ -12,10 +12,9 @@ RSpec.describe Admin::TalksController, type: :controller do
     expect(response).to be_a_success
   end
 
-  # FIXME
-  # it 'responds nicely' do
-  #   talk = create(:talk)
-  #   get :show, id: talk.id
-  #   expect(response).to be_a_success
-  # end
+  it 'responds nicely' do
+    user = create(:user)
+    get :show, id: user.id
+    expect(response).to be_a_success
+  end
 end
