@@ -14,7 +14,7 @@
 # definition into the server list. The second argument
 # something that quacks like a hash can be used to set
 # extended properties on the server.
-server 'staging.voicerepublic.ch', user: 'backend', roles: %w{web app db}
+server 'staging.voicerepublic.com', user: 'backend', roles: %w{web app db}
 set :branch, ENV['REVISION'] || 'integration'
 
 # you can set custom ssh options
