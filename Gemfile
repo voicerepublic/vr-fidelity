@@ -20,6 +20,9 @@ gem 'd3_rails'
 # see https://github.com/munen/voicerepublic_backoffice/commit/ca0b016e01481bd500
 gem 'private_pub'
 
+# optional
+gem 'active_skin'
+
 group :doc do
   gem 'sdoc', require: false
 end
