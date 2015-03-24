@@ -1,0 +1,4 @@
+---
+dependencies:
+  pre:
+    - sudo apt-get update; sudo apt-get install lame vorbis-tools
