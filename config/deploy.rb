@@ -2,8 +2,8 @@
 lock '3.1.0'
 
 set :rbenv_type, :user
-set :rbenv_ruby, '1.9.3-p448'
-set :rbenv_ruby_version, "1.9.3-p448"
+set :rbenv_ruby, '2.1.2'
+set :rbenv_ruby_version, "2.1.2"
 
 set :application, 'voicerepublic_backoffice'
 set :repo_url, 'git@github.com:munen/voicerepublic_backoffice.git'
