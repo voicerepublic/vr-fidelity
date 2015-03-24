@@ -1,5 +1,7 @@
 ActiveAdmin.register ActsAsTaggableOn::Tag, as: 'Tag' do
 
+  menu priority: 20
+
   permit_params :name, :category
 
   filter :name

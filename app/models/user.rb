@@ -32,9 +32,10 @@
 class User < ActiveRecord::Base
 
   has_many :venues
-  #has_many :talks, through: :venues
+  has_many :purchases, foreign_key: :owner_id
 
   scope :nonguests, -> { where(guest: nil) }
+  scope :paying, -> { where('purchases_count > 0') }
 
   image_accessor :avatar
 

@@ -1,5 +1,7 @@
 ActiveAdmin.register Talk do
 
+  menu priority: 12
+
   actions :all, except: [:destroy]
 
   filter :id

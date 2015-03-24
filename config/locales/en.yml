@@ -28,3 +28,20 @@ en:
     formats:
       iso:  '%Y-%m-%d %H:%M:%S'
       long: "%Y-%m-%d %H:%M:%S"
+  admin:
+    users:
+      credits:
+        user_has_x_credits:
+          other: 'This user has currently %{count} credits.'
+          one: 'This user has currently 1 credit.'
+          zero: 'This user has currently no credits. What a poor old chap!'
+        quantity: Quantity
+        grant: Grant
+        granted_x_credits:
+          other: 'Granted %{count} credits. These will be available shortly.'
+          one: 'Granted one credit. It will be available shortly.'
+          zero: 'No credits granted!'
+  active_admin:
+    resource:
+      show:
+        grant: Grant Credits
