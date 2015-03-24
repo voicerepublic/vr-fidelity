@@ -318,7 +318,7 @@ GEM
       colorize (>= 0.7.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
-    therubyracer (0.12.1)
+    therubyracer (0.12.0)
       libv8 (~> 3.16.14.0)
       ref
     thor (0.19.1)
@@ -384,7 +384,7 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   spring
   spring-commands-rspec
-  therubyracer
+  therubyracer (= 0.12.0)
   turbolinks
   uglifier (>= 1.3.0)
   unicorn
