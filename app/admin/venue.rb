@@ -1,5 +1,7 @@
 ActiveAdmin.register Venue do
 
+  menu label: 'Series', priority: 11
+
   actions :all, except: [:destroy]
 
   filter :id

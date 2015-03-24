@@ -1,6 +1,6 @@
 ActiveAdmin.register_page "Dashboard" do
 
-  menu priority: 1, label: proc{ I18n.t("active_admin.dashboard") }
+  menu priority: 0, label: proc{ I18n.t("active_admin.dashboard") }
 
   page_action :seed do
     render json: {
@@ -21,7 +21,7 @@ ActiveAdmin.register_page "Dashboard" do
         "/dj",            # hooks in MonitoredJob
         "/event/talk",    # state changes of talks
         "/stat"           # rtmp stats
-      ]        
+      ]
       (namespaces.map { |ns| subscribe_to(ns) } * "\n").html_safe
     end
 

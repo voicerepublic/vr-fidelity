@@ -23,6 +23,10 @@ gem 'devise'
 
 gem 'sdoc', '~> 0.4.0', group: :doc
 
+# optional
+gem 'active_skin'
+
+
 # gem 'bcrypt', '~> 3.1.7'
 
 gem 'unicorn'

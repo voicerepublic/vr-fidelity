@@ -4,6 +4,9 @@
 require Rails.root.join 'app', 'models', 'delayed_job'
 
 ActiveAdmin.register Delayed::Job, as: "Job" do
+
+  menu parent: "Admin"
+
   actions :all, :except => [:edit, :new]
 
   show do |job|

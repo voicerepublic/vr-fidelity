@@ -1,0 +1,14 @@
+
+= form_for :grant, url: credits_admin_user_path(resource) do |f|
+  = f.hidden_field :user_id, value: resource.id
+  %table
+    %tr
+      %td
+      %td= t('.user_has_x_credits', count: resource.credits)
+    %tr
+      %td
+        %label= t('.quantity')
+      %td= f.text_field :quantity, value: 1, style: 'width: 50px'
+    %tr
+      %td
+      %td= f.submit t('.grant')
