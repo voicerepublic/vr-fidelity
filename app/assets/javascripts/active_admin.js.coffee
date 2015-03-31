@@ -7,10 +7,10 @@
 #= require highcharts
 #= require highcharts/highcharts-more
 #= require d3
-#= require private_pub
+#= require faye-authentication
 #= require talks
 #
 #= require dashboard/array
+#= require dashboard/faye_ttl
 #= require dashboard/provider
-#= require_tree ./dashboard/provider
 #= require dashboard/index

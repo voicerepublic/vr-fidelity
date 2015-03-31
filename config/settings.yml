@@ -2,3 +2,6 @@ rtmp:
   archive_path:     ../dev/local/archive
   archive_raw_path: ../dev/local/archive_raw
   recordings_path:  ../dev/local/recordings
+faye:
+  server: http://localhost:9292/faye
+  secret_token: 7650981269q2871928631823791287e

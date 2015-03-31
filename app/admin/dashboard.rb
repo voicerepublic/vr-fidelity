@@ -15,14 +15,9 @@ ActiveAdmin.register_page "Dashboard" do
   content title: title do
 
     div id: 'livedashboard', style: 'margin: 30px' do
-      namespaces = [
-        "/notifications", # rtmp notify
-        "/monitoring",    # generic monitoring namespace (depr.)
-        "/dj",            # hooks in MonitoredJob
-        "/event/talk",    # state changes of talks
-        "/stat"           # rtmp stats
-      ]
-      (namespaces.map { |ns| subscribe_to(ns) } * "\n").html_safe
+      script do
+        "document.fayeUrl = '#{Settings.faye.server}';".html_safe
+      end
     end
 
     # div :class => "blank_slate_container", :id => "dashboard_default_message" do

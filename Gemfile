@@ -14,10 +14,7 @@ gem 'delayed_job', '~> 4.0.6'
 gem 'delayed_job_active_record', '~> 4.0.3'
 gem "highcharts-rails", "~> 3.0.0"
 gem 'd3_rails'
-# remember to update app/assets/javascripts/private_pub.js when
-# updating private_pub gem!
-# see https://github.com/munen/voicerepublic_backoffice/commit/ca0b016e01481bd500
-gem 'private_pub'
+gem 'faye-authentication', github: 'branch14/faye-authentication'
 gem 'devise'
 
 gem 'sdoc', '~> 0.4.0', group: :doc
