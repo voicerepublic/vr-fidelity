@@ -1,3 +1,5 @@
+require 'tempfile'
+
 # Merges the resulting wav with the start and stop jingle.
 #
 # The jingle files have to have a sample rate of 44.1k and 2 channels!
@@ -20,7 +22,7 @@ module Fidelity
 
       # checked as a precondition
       def inputs
-        [ input ] + jingles
+        [ input ]
       end
 
       def backup
@@ -40,9 +42,11 @@ module Fidelity
       def run
         classify input
         fu.mv input, backup
-        prep_jingle jingles.first
-        prep_jingle jingles.last
-        merge_with_jingles
+        start = jingle_file(jingles.first)
+        stop  = jingle_file(jingles.last)
+        merge_with_jingles start.path, stop.path
+        start.unlink
+        stop.unlink
         outputs
       end
 
@@ -50,15 +54,29 @@ module Fidelity
         [ input, backup ]
       end
 
-      def merge_with_jingles_cmd
-        start = "prep-#{File.basename(jingles.first)}"
-        stop  = "prep-#{File.basename(jingles.last)}"
-        "sox -V1 #{start} #{backup} #{stop} #{input}"
+      def jingle_file(file)
+        raw = Tempfile.new(%w(raw_jingle .wav))
+        fetch file, raw.path
+        cooked = Tempfile.new(%w(cooked_jingle .wav))
+        transcode raw.path, cooked.path
+        raw.unlink
+        cooked
       end
 
-      def prep_jingle_cmd(file)
-        base = File.basename(file)
-        "sox #{file} -c #{@channels} prep-#{base} rate -L #{@sample_rate}"
+      def fetch_cmd(source, destination)
+        if source.match(/^https?:/)
+          "wget -q -O #{destination} '#{source}'"
+        else
+          "cp #{source} #{destination}"
+        end
+      end
+
+      def transcode_cmd(source, destination)
+        "sox #{source} -c #{@channels} #{destination} rate -L #{@sample_rate}"
+      end
+
+      def merge_with_jingles_cmd(start, stop)
+        "sox -V1 #{start} #{backup} #{stop} #{input}"
       end
 
       def jingles
