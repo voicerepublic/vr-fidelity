@@ -17,13 +17,6 @@ ActiveAdmin.register User do
     end
   end
 
-
-  controller do
-    def scoped_collection
-      User.nonguests
-    end
-  end
-
   scope :paying
 
   filter :id

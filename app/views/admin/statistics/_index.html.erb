@@ -11,7 +11,7 @@
         name: "Users",
         pointInterval: <%= 1.day * 1000 %>,
         pointStart: <%= 4.weeks.ago.at_midnight.to_i * 1000 %>,
-        data: <%= (4.weeks.ago.to_date..Date.today).map { |date| User.where(guest: nil).where('created_at <= ?', date).count}.inspect %>
+        data: <%= (4.weeks.ago.to_date..Date.today).map { |date| User.where('created_at <= ?', date).count}.inspect %>
       }]
     });
   });
