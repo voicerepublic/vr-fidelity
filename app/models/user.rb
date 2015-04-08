@@ -9,7 +9,6 @@
 # * email [string, default="", not null]
 # * encrypted_password [string, default="", not null] - TODO: document me
 # * firstname [string] - TODO: document me
-# * guest [boolean] - TODO: document me
 # * header_uid [string] - TODO: document me
 # * image_content_type [string] - TODO: document me
 # * image_file_name [string] - TODO: document me
@@ -34,7 +33,6 @@ class User < ActiveRecord::Base
   has_many :venues
   has_many :purchases, foreign_key: :owner_id
 
-  scope :nonguests, -> { where(guest: nil) }
   scope :paying, -> { where('purchases_count > 0') }
 
   image_accessor :avatar
