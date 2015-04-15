@@ -16,6 +16,9 @@ gem "highcharts-rails", "~> 3.0.0"
 gem 'd3_rails'
 gem 'faye-authentication', github: 'branch14/faye-authentication'
 gem 'devise'
+# sprockets is locked so that it does not update by accident to v3 which will
+# crash capistrano deployment currently
+gem 'sprockets', '2.12.3'
 
 gem 'sdoc', '~> 0.4.0', group: :doc
 
@@ -30,7 +33,7 @@ gem 'activeadmin', github: 'activeadmin/activeadmin'
 gem 'airbrake'
 gem 'rails_config'
 gem 'activeadmin-dragonfly', github: 'stefanoverna/activeadmin-dragonfly'
-gem 'acts-as-taggable-on', '3.0.1' # tag-system
+gem 'acts-as-taggable-on'
 
 group :development do
   gem 'annotator'

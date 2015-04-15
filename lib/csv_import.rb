@@ -13,13 +13,9 @@ module CsvImport
       default_columns.each do |col, val|
         obj.send("#{col}=", val) if obj.send(col).blank?
       end
-      begin
-        obj.attributes = obj.attributes.merge(row_hash)
-        errors[i+1] = obj.errors.full_messages unless obj.valid?
-        objs << obj
-      rescue Exception => e
-        return { error: e.message }
-      end
+      obj.attributes = obj.attributes.merge(row_hash)
+      errors[i+1] = obj.errors.full_messages unless obj.valid?
+      objs << obj
     end
     # render error if validation failed
     unless errors.empty?
