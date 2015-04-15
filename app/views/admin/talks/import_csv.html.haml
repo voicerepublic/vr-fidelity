@@ -1,28 +1,66 @@
 - if @errors
-  .error
-    %h3== Please fix the following validation errors
-    %ul
-      - @errors.each do |line, errors|
-        %li
-          == Errors in line #{line}
-          %ul
-            - errors.each do |error|
-              %li= error
+  .panel(style='width: 600px')
+    %h3 Please fix the following validation errors
+    .panel_contents
+      %ul
+        - @errors.each do |line, errors|
+          %li
+            == Errors in line #{line}
+            %ul
+              - errors.each do |error|
+                %li= error
 
-%h3 Validation
-%p
-  Please use <a href="/samples/talks.csv">this CSV file</a> as a template for imports.
-%p
-  %em uri
-  is an important column: If you change it a new entry will be created. If you keep it, any existing entry will be updated.
+.panel(style='width: 600px')
+  %h3 Instructions
+  .panel_contents
+    %p
+      Please use
+      = link_to 'this CSV file', '/samples/talks.csv'
+      as a template for imports.
 
-= form_for :dump, url: { action: "import_csv" }, html: { multipart: true } do |f|
-  %table
-    %tr
-      %td
-        %label{ for: "dump_file" }
-          Select a CSV File :
-        %td
-          = f.file_field :file
-        %td
-          = submit_tag 'Upload'
+    %p
+      %b URI is an important column!
+
+      If you change it (or leave it blank) a new talk will be
+      created. If you keep it, any existing entry will be updated. As
+      URI, please choose a prefix (namespace) that uniquely qualifies
+      the event (e.g. 'rp14' for republica 2014, 'ab15' for amaze
+      berlin 2015) followed by a dash and a unique number (preferably
+      some identifier which is used by the customer). Good URIs:
+
+      %ul
+        %li rp14-1234
+        %li rp15-3023
+        %li ab15-1
+
+      (Don't use anything that may lead to naming collisions, such as a
+      prefix without a year, for an annual conference.)
+
+      The namespace 'vr' is reserved for all content originally created
+      on the VoiceRepublic site (as opposed to 'imported').
+
+.panel(style='width: 600px')
+  %h3 Notice on credits
+  .panel_contents
+    %p
+      Please note that
+
+      %b IMPORTS DO NOT DEDUCT CREDITS!
+
+      You need to adjust the user's credits manually. If you want to
+      deduct credits from a user's account you can do so by granting a
+      negative amount of credits.
+
+.panel(style='width: 600px')
+  %h3 Import
+  .panel_contents
+    = form_for :dump, url: { action: "import_csv" }, html: { multipart: true } do |f|
+      %table
+        %tr
+          %td
+            %label{ for: "dump_file" }
+              Select a CSV File :
+            %td
+              = f.file_field :file
+            %td
+              = submit_tag 'Upload'

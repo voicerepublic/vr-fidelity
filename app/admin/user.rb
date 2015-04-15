@@ -29,6 +29,7 @@ ActiveAdmin.register User do
   filter :timezone
   filter :conference
   filter :credits
+  filter :referrer
 
   index do
     selectable_column
@@ -73,6 +74,7 @@ ActiveAdmin.register User do
       row :about do
         raw user.about
       end
+      row :referrer
     end
 
     if user.purchases_count > 0
