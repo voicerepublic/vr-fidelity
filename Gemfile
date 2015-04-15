@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.2.0'
 gem 'pg'
+gem 'sass'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
@@ -30,7 +31,7 @@ gem 'activeadmin', github: 'activeadmin/activeadmin'
 gem 'airbrake'
 gem 'rails_config'
 gem 'activeadmin-dragonfly', github: 'stefanoverna/activeadmin-dragonfly'
-gem 'acts-as-taggable-on', '3.0.1' # tag-system
+gem 'acts-as-taggable-on'
 
 group :development do
   gem 'annotator'
