@@ -77,23 +77,8 @@ ActiveAdmin.register User do
       row :referrer
     end
 
-    if user.purchases_count > 0
-      panel "Payment History" do
-        table do
-          tr do
-            th 'Purchased At'
-            th 'Quantity'
-            th 'Price'
-          end
-          user.purchases.each do |purchase|
-            tr do
-              td purchase.created_at
-              td purchase.quantity
-              td number_to_currency(purchase.total/100, unit: 'EUR')
-            end
-          end
-        end
-      end
+    panel "Transaction History" do
+      render partial: 'transaction_history'
     end
 
     panel "User's Series" do

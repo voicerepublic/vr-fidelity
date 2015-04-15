@@ -1,0 +1,10 @@
+%table
+  %tr
+    %th Purchased At
+    %th Product
+    %th Price
+  - @user.purchases.each do |purchase|
+    %tr
+      %td= purchase.created_at
+      %td= purchase.product
+      %td= number_to_currency(purchase.total/100, unit: 'EUR')
