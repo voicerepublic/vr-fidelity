@@ -49,6 +49,11 @@ class Talk < ActiveRecord::Base
 
   validates :title, :starts_at, :ends_at, :tag_list, :uri, presence: true
   validates :uri, uniqueness: true
+
+  validates :title, length: { maximum: Settings.limit.string }
+  validates :teaser, length: { maximum: Settings.limit.string }
+  validates :description, length: { maximum: Settings.limit.text }
+
   validates :recording_override, format: { with: URL_PATTERN, message: URL_MESSAGE },
             if: ->(t) { t.recording_override? && t.recording_override_changed? }
   validates :starts_at_date, format: { with: /\A\d{4}-\d\d-\d\d\z/,
