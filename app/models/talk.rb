@@ -73,6 +73,8 @@ class Talk < ActiveRecord::Base
   delegate :user, to: :venue
 
   serialize :storage
+  serialize :listeners
+  serialize :social_links
 
   image_accessor :image
 
@@ -122,6 +124,13 @@ class Talk < ActiveRecord::Base
   # TODO provide a list of expected streams (host + guests)
   def streams
     []
+  end
+
+  def listeners_for_json
+    count = 0
+    listeners.values.sort.map do |time|
+      { time: time, count: count += 1 }
+    end
   end
 
   private
