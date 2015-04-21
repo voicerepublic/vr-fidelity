@@ -1,0 +1,6 @@
+- content_for :scripts do
+  = javascript_include_tag Settings.faye.server + '/client.js'
+  :javascript
+    document.fayeUrl = '#{Settings.faye.server}'
+
+#livedashboard(style='height: 100%')

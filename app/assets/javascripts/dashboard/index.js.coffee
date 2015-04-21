@@ -1,11 +1,11 @@
-$ ->    
-  return unless $('.index.admin_dashboard').length
+$ ->
+  return unless $('#livedashboard').length
 
   maxY = 333
 
   # --- initialize with no data
   data = { talks: [], streams: [], fragments: [], events: [] }
-  
+
   # --- initialize once with seed data
   $.get '/admin/dashboard/seed', (d) ->
     $.extend data, d
@@ -18,8 +18,10 @@ $ ->
 
   # --- setup svg
   svg = d3.select('#livedashboard').append("svg")
-  svg.attr("width", '100%').attr("height", maxY)
+  svg.attr("width", '100%').attr("height", '100%')
+
   maxX = svg[0][0].getBoundingClientRect().width
+  maxY = svg[0][0].getBoundingClientRect().height
 
   # --- setup svg layers
   svg.append('g').classed('talks',     true)
@@ -43,32 +45,32 @@ $ ->
   tplus1  = new Date(now.getTime() + 1 * 60 * 60 * 1000)
   tminus1 = new Date(now.getTime() - 1 * 60 * 60 * 1000)
   tminus4 = new Date(now.getTime() - 4 * 60 * 60 * 1000)
-  
+
   timeScaleX = d3.time.scale()
     .domain([tminus4, tminus1, tplus1, tplus4])
     .rangeRound([0, maxX/6, maxX/6*5, maxX])
-  
+
   timeFormatter = d3.time.format('%H:%M')
-  
+
   axisX = d3.svg.axis().scale(timeScaleX)
     .tickFormat(timeFormatter)
-  
+
   svg.append('g').attr('class', 'axis').call(axisX)
-  
+
   # --- set marker
   drawMarker = (x) ->
     svg.append('line')
       .attr('x1', x).attr('x2', x)
       .attr('y1', 0).attr('y2', maxY)
       .attr('class', 'marker')
-  
+
   drawMarker Math.round(maxX/6)
   drawMarker Math.round(maxX/6*5)
   drawMarker Math.round(maxX/2)
-  
+
   # --- clock
   preciseTimeFormatter = d3.time.format('%H:%M:%S')
-  
+
   svg.append('text')
     .attr('class', 'now')
     .attr('text-anchor', 'middle')
@@ -177,7 +179,7 @@ $ ->
     tplus1  = new Date(now.getTime() + 1 * 60 * 60 * 1000)
     tminus1 = new Date(now.getTime() - 1 * 60 * 60 * 1000)
     tminus4 = new Date(now.getTime() - 4 * 60 * 60 * 1000)
-  
+
     timeScaleX.domain([tminus4, tminus1, tplus1, tplus4])
     svg.select('.axis').call(axisX)
 
@@ -255,7 +257,7 @@ $ ->
     #console.log JSON.stringify(talk)
     return if talk.call == 'update_publish'
     # we track publish_done instead which is more generic
-    return if talk.call == 'record_done' 
+    return if talk.call == 'record_done'
 
     stream_id = talk.name
     call = talk.call
@@ -332,4 +334,3 @@ $ ->
     data.fragments = data.fragments.sort(ascendingStartTime)
     # console.log("FRAGMENTS: "+JSON.stringify(data.fragments))
     # console.log(JSON.stringify(data.streams))
-    
