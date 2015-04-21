@@ -15,7 +15,7 @@
 $skinActiveColor: #d50021;
 $skinHeaderBck: #292624;
 $panelHeaderBck: #292624;
-$skinLogo: url("logo.png") no-repeat 10px 2px;
+$skinLogo: image-url("logo.png") no-repeat 10px 2px;
 @import "active_skin";
 
 // Overriding any non-variable SASS must be done after the fact.
