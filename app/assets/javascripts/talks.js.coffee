@@ -91,3 +91,45 @@ $ ->
       .attr('style', 'fill: red')
       .attr('font-size', '42px')
       .text('OVERRIDE')
+
+
+  # TODO refactor out into it's own file social
+  social = d3.select('#social')
+  return unless social?
+  (-> # wrap in immediate function
+    margin = {top: 25, right: 5, bottom: 20, left: 25}
+
+    main = social.attr("width", '100%').append("g")
+      .attr("transform", "translate(#{margin.left},#{margin.top})")
+
+    maxX = social[0][0].getBoundingClientRect().width
+    maxY = social[0][0].getBoundingClientRect().height
+
+    width  = maxX - margin.left - margin.right
+    height = maxY - margin.top - margin.bottom
+
+    x = d3.time.scale().range([0, width])
+      .domain(d3.extent(listeners, (d) -> d.time))
+    y = d3.scale.linear().range([0, height])
+      .domain([d3.max(listeners, (d) -> d.count), 0])
+
+    sxAxis = d3.svg.axis().scale(x).orient("bottom").ticks(0)
+    syAxis = d3.svg.axis().scale(y).orient("left").ticks(1)
+
+    valueline = d3.svg.line()
+      .x((d) -> x(d.time))
+      .y((d) -> y(d.count))
+
+    main.append("path")
+      .attr("class", "line")
+      .attr("d", valueline(listeners));
+
+    main.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0,#{height})")
+      .call(sxAxis)
+
+    main.append("g")
+      .attr("class", "y axis")
+      .call(syAxis)
+  )() # call immediate function

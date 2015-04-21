@@ -122,6 +122,19 @@ ActiveAdmin.register Talk do
     actions
   end
 
+  sidebar :social, only: :show, if: ->{ talk.state == 'archived' } do
+    svg id: 'social'
+    script "listeners = #{talk.listeners_for_json.to_json}".html_safe
+    talk.speakers
+    ul do
+      talk.social_links.each do |link|
+        li do
+          link_to link, link
+        end
+      end
+    end
+  end
+
   show do
     if %w(postlive processing archived).include?(talk.state)
       div id: 'visual' do
