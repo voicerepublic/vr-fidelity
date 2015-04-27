@@ -65,7 +65,7 @@ module Fidelity
 
       def fetch_cmd(source, destination)
         if source.match(/^https?:/)
-          "wget -q -O #{destination} '#{source}'"
+          "wget --no-check-certificate -q -O #{destination} '#{source}'"
         else
           "cp #{source} #{destination}"
         end
