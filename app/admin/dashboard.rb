@@ -14,7 +14,7 @@ ActiveAdmin.register_page "Dashboard" do
   title = 'WITH GREAT POWER COMES GREAT RESPONSIBILITY'
   content title: title do
 
-    div id: 'livedashboard', style: 'margin: 30px' do
+    div id: 'livedashboard', style: 'margin: 30px; height: 100%' do
       script do
         "document.fayeUrl = '#{Settings.faye.server}';".html_safe
       end
