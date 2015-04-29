@@ -7,7 +7,9 @@ ActiveAdmin.register Delayed::Job, as: "Job" do
 
   menu parent: "Admin"
 
-  actions :all, :except => [:edit, :new]
+  config.filters = false
+
+  actions :all, except: [:edit, :new]
 
   show do |job|
     attributes_table do
@@ -30,6 +32,19 @@ ActiveAdmin.register Delayed::Job, as: "Job" do
       end
     end
     active_admin_comments
+  end
+
+  sidebar :workers, only: :index do
+    output = %x[ ps `pgrep -f emacs -d \ ' '` ]
+    # pre output
+    workers = output.split("\n")
+    workers.shift
+    ul do
+      workers.each do |line|
+        _, pid, tty, stat, time, *cmd = " #{line}".split(/\s+/)
+        li [pid, time, cmd].flatten.join(' ')
+      end
+    end
   end
 
   index do
