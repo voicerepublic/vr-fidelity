@@ -35,7 +35,7 @@ ActiveAdmin.register Delayed::Job, as: "Job" do
   end
 
   sidebar :workers, only: :index do
-    output = %x[ ps `pgrep -f emacs -d \ ' '` ]
+    output = %x[ ps `pgrep -f delayed_job -d \ ' '` ]
     # pre output
     workers = output.split("\n")
     workers.shift
