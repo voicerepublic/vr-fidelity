@@ -2,9 +2,12 @@ module Fidelity
   module Strategy
     class Cleanup < Base
 
-      # finds files with result naming scheme
+      # TODO this would all be much easier if we'd move all to its own
+      # directory beforehand
       def inputs
-        Dir.glob("*.wav")
+        ["#{name}.wav"] +
+          Dir.glob("#{name}-*.wav") + # covers -clean, -precut, -bak, -untrimmed
+          fragments.map { |f| f.first.sub('.flv', '.wav') }
       end
 
       def run
