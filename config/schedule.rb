@@ -19,6 +19,9 @@
 
 # Learn more: http://github.com/javan/whenever
 
-every 10.minutes do
-  command "curl -k https://localhost:444/op/rp15 > app/current/public/system/rp15.html"
+if %x[ hostname ].chomp == 'voicerepublic-production'
+  every 10.minutes do
+    command "curl -k https://localhost:444/op/rp15" +
+            " > app/current/public/system/rp15.html"
+  end
 end
