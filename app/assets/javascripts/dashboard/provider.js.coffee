@@ -10,6 +10,7 @@ $ ->
   # namespace provider
   window.provider = {}
 
+  return unless Faye?
   faye = new Faye.Client(document.fayeUrl)
   faye.addExtension(new FayeAuthentication(faye))
   faye.addExtension(new FayeTtl(faye))

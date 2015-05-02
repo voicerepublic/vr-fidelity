@@ -1,0 +1,14 @@
+- @days.each do |day|
+  %h1== re:publica - #{day}
+  %table
+    %tr
+      - @stages.each do |stage|
+        %th= stage
+    %tr
+      - @stages.each do |stage|
+        %td
+          - @sessions[day][stage].each do |session|
+            .session{ 'data-timestamps' => session._timestamps }
+              %b= session._time_window.html_safe
+              %br
+              = link_to session.title, session._url
