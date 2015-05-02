@@ -17,4 +17,4 @@ $ ->
     node.addClass('now') if start <= now and end > now
 
   # reload the page every 5 minutes
-  setTimeout (-> window.location.reload()), 1000 * 60 * 10
+  #setTimeout (-> window.location.reload()), 1000 * 60 * 10
