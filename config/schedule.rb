@@ -20,5 +20,5 @@
 # Learn more: http://github.com/javan/whenever
 
 every 10.minutes do
-  command "curl -k https://localhost:444/op/rp15 > public/system/rp15.html"
+  command "curl -k https://localhost:444/op/rp15 > app/current/public/system/rp15.html"
 end
