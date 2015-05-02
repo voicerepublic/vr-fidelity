@@ -11,4 +11,4 @@
             .session{ 'data-timestamps' => session._timestamps }
               %b= session._time_window.html_safe
               %br
-              = link_to session.title, session._url
+              = link_to session.title, session._url, target: '_blank'
