@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   get 'op' => 'operations#index'
+  get 'op/rp15' => 'operations#rp15'
 
   root to: "admin/dashboard#index"
 
