@@ -1,8 +1,6 @@
-# coding: utf-8
-#
 # On console run with
 #
-#    Sync::Rp15.new(dryrun: true).sync
+#    Sync::Rp15.new.sync
 #
 # Update local copies with
 #
@@ -10,25 +8,7 @@
 #    curl http://re-publica.de/event/3013/json/speakers > rp15_speakers.json
 #
 module Sync
-  class Rp15 < Struct.new(:opts)
-
-    TAGS = {
-      're:publica'            => 'republica, Conference, Konferenz',
-      'Media Convention'      => 'republica, Media, Medien, Convention',
-      're:cord Musicday'      => 'republica, record, Musicday',
-      're:health'             => 'republica, Health, Gesundheit',
-      're:think Mobility'     => 'republica, rethink, Mobility, Mobilität',
-      'City Of The Future'    => 'republica, CityOfTheFuture, StadtDerZukunft',
-      'Culture'               => 'republica, Culture, Kultur',
-      'Politics & Society'    => 'republica, Politics, Politik, Society, Gesellschaft',
-      'Media'                 => 'republica, Media, Medien',
-      'GIG'                   => 'republica, GIG',
-      'Research & Education'  => 'republica, Research, Forschung, Education, Bildung',
-      'Business & Innovation' => 'republica, Business, Innovation, Wirtschaft',
-      'Fashiontech'           => 'republica, Fashiontech',
-      'Science & Technology'  => 'republica, Science, Wissenschaft, '+
-                                 'Technology, Technologie'
-    }
+  class Rp15
 
     DATETIME_REGEX = /^(\d\d)\.(\d\d)\.(\d{4})\s+-\s+([\d:]+)\s+bis\s+([\d:]+)$/
 
@@ -115,24 +95,6 @@ module Sync
       @sessions = data['items'].map { |i| OpenStruct.new(i) }
       puts "Found #{@sessions.size} sessions."
       @sessions
-    end
-
-    def speakers
-      return @speakers unless @speakers.nil?
-      url = SPEAKERS
-      # test with local copy
-      url = 'rp15_speakers.json' if File.exist?(Rails.root.join('rp15_speakers.json'))
-      print 'Fetching speakers data...'
-      json = open(url).read
-      puts 'done.'
-      data = JSON.load(json)
-      @speakers = data['items'].map { |i| OpenStruct.new(i) }
-      puts "Found #{@speakers.size} speakers."
-      @speakers
-    end
-
-    def speaker(uid)
-      speakers.find { |s| s.uid == uid }
     end
 
   end
