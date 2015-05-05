@@ -12,8 +12,8 @@ module Sync
 
     DATETIME_REGEX = /^(\d\d)\.(\d\d)\.(\d{4})\s+-\s+([\d:]+)\s+bis\s+([\d:]+)$/
 
-    SESSIONS = 'http://re-publica.de/event/3013/json/sessions'
-    SPEAKERS = 'http://re-publica.de/event/3013/json/speakers'
+    SESSIONS = 'https://re-publica.de/event/3013/json/sessions'
+    SPEAKERS = 'https://re-publica.de/event/3013/json/speakers'
 
     STAGES = [
       'STG-1',
