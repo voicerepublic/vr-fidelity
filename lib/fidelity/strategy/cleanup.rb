@@ -7,7 +7,7 @@ module Fidelity
       def inputs
         ["#{name}.wav"] +
           Dir.glob("#{name}-*.wav") + # covers -clean, -precut, -bak, -untrimmed
-          fragments.map { |f| f.first.sub('.flv', '.wav') }
+          Dir.glob("t#{name}-*.wav") # covers transcoded fragments
       end
 
       def run
