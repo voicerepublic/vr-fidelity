@@ -20,8 +20,11 @@
 # Learn more: http://github.com/javan/whenever
 
 if %x[ hostname ].chomp == 'voicerepublic-production'
-  every 10.minutes do
+  every 30.minutes do
     command "curl -k https://localhost:444/op/rp15" +
-            " > app/current/public/system/rp15.html"
+            " > app/current/public/system/rp15_new.html;" +
+            " grep 're:publica' app/current/public/system/rp15_new.html" +
+            " && cp app/current/public/system/rp15_new.html" +
+            " app/current/public/system/rp15.html"
   end
 end
