@@ -113,6 +113,7 @@ ActiveAdmin.register Talk do
     end
     column :collect, label: "Record"
     column :venue
+    column :play_count
     column :state
     column :grade do |talk|
       span class: "badge #{talk.grade}" do
