@@ -34,7 +34,7 @@ class Talk < ActiveRecord::Base
     failed:       "Recording available, but processing failed. (failed)"
   }
 
-  STATES = %w( prelive live postlive processing archived )
+  STATES = %w( pending prelive halflive live postlive processing archived )
 
   # TODO create a better more specific pattern for urls
   URL_PATTERN = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
