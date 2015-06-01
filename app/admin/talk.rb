@@ -272,6 +272,25 @@ ActiveAdmin.register Talk do
     f.actions
   end
 
+  csv do
+    column :id
+    column :uri
+    column :play_count
+    column :popularity
+    column :title
+    column :featured_from
+    column :starts_at
+    column :ends_at
+    column :started_at
+    column :ended_at
+    column :language
+    column :teaser
+    column :description
+    column :related_talk_id
+    column :speakers
+    column :tag_list
+  end
+
   permit_params %w( title
                     starts_at
                     featured_from
