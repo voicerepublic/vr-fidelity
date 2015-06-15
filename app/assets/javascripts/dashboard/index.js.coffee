@@ -335,5 +335,9 @@ $ ->
       data.fragments = data.fragments.sort(ascendingStartTime)
       # console.log("FRAGMENTS: "+JSON.stringify(data.fragments))
       # console.log(JSON.stringify(data.streams))
+
+    provider.log (payload, timestamp) ->
+      console.log payload
+
   catch error
     console.warn error
