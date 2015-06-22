@@ -177,3 +177,9 @@ $ ->
       callback talk, timestamp
 
   window.provider.monitoring = monitoring
+
+  log = (callback) ->
+    subscribe "/log", (payload, timestamp) ->
+      callback payload, timestamp
+
+  window.provider.log = log
