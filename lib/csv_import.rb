@@ -2,7 +2,7 @@ require 'csv'
 
 module CsvImport
 
-  def import(csv_data, default_columns = {})
+  def import(csv_data, default_columns = {}, transformers = {})
     csv_file = csv_data.read
     csv = CSV.parse(csv_file, headers: true, quote_char: '"')
     # validation
@@ -14,6 +14,7 @@ module CsvImport
         obj.send("#{col}=", val) if obj.send(col).blank?
       end
       obj.attributes = obj.attributes.merge(row_hash)
+      transformers.each { |field, method| obj.send(method, field) }
       errors[i+1] = obj.errors.full_messages unless obj.valid?
       objs << obj
     end

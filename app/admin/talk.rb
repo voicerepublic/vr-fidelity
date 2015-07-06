@@ -33,7 +33,11 @@ ActiveAdmin.register Talk do
   collection_action :import_csv, method: [:get, :post] do
     if params[:dump]
       begin
-        message = Talk.import(params[:dump][:file], { state: :prelive })
+        file = params[:dump][:file]
+        defaults = { state: :prelive }
+        transformers = { description: 'html2md' }
+
+        message = Talk.import(file, defaults, transformers)
         if message[:created] or message[:updated]
           flash[:notice] = "#{message[:created]} talk(s) created, " +
                            "#{message[:updated]} talk(s) updated."
