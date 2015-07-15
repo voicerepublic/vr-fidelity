@@ -46,6 +46,7 @@ class Talk < ActiveRecord::Base
 
   before_validation :set_starts_at
   before_validation :set_ends_at
+  before_save :set_description_as_html, if: :description_changed?
 
   validates :title, :starts_at, :ends_at, :tag_list, :uri, presence: true
   validates :uri, uniqueness: true
@@ -138,6 +139,15 @@ class Talk < ActiveRecord::Base
     end
   end
 
+  # a transformer for use in csv import
+  #
+  # converts given field from html 2 markdown if a html tag is
+  # detected
+  def html2md(field)
+    return if !self[field].match(/<[a-z][\s\S]*>/)
+    self[field] = ReverseMarkdown.convert(self[field])
+  end
+
   private
 
   # Assemble `starts_at` from `starts_at_date` and `starts_at_time`.
@@ -170,15 +180,16 @@ class Talk < ActiveRecord::Base
     self.grade = nil if grade.blank?
   end
 
-  ############################################################
-  # from here, shared code with the main app
-
   def generate_flyer?
     starts_at_changed? or title_changed?
   end
 
   def generate_flyer!
     Delayed::Job.enqueue GenerateFlyer.new(id: id), queue: 'audio'
+  end
+
+  def set_description_as_html
+    self.description_as_html = MARKDOWN.render(description)
   end
 
 end

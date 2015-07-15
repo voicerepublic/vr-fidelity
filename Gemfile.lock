@@ -275,8 +275,11 @@ GEM
       polyamorous (~> 1.1)
     rdoc (4.2.0)
       json (~> 1.4)
+    redcarpet (3.2.2)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
+    reverse_markdown (0.8.2)
+      nokogiri
     rspec-core (3.2.2)
       rspec-support (~> 3.2.0)
     rspec-expectations (3.2.0)
@@ -385,6 +388,8 @@ DEPENDENCIES
   rack-test
   rails (= 4.2.0)
   rails_config
+  redcarpet
+  reverse_markdown
   rspec-rails
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)

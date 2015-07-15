@@ -27,6 +27,9 @@ gem 'active_skin'
 
 gem 'whenever'
 
+gem 'redcarpet'
+gem 'reverse_markdown'
+
 # gem 'bcrypt', '~> 3.1.7'
 
 gem 'unicorn'
