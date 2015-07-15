@@ -29,6 +29,9 @@ en:
         socialshares_email_total: 'Email shares'
         metrics_figures_total: 'Metrics'
         metrics_datapoints_total: 'Metric datapoints'
+        paying_users_total: Paying Users Total
+        active_users_total: Active Users Total
+        new_users_total: New Users Total
   admin:
     metrics:
       show:
