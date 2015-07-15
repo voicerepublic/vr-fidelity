@@ -41,7 +41,9 @@ module CsvImport
   # Basically it does row.to_hash
   # But: It also strips the keys (sanitizing the input CSV headers)
   def convert_to_hash(row)
-    row.to_hash.map { |k, v| { k.strip => v } }.reduce Hash.new, :merge
+    hash = row.to_hash
+    hash.delete(nil)
+    hash.map { |k, v| { k.strip => v } }.reduce Hash.new, :merge
   end
 
 end
