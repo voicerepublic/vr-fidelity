@@ -13,7 +13,6 @@ ActiveAdmin.register Talk do
   filter :ends_at
   filter :started_at
   filter :ended_at
-  filter :collect, label: 'record'
   filter :teaser
   filter :description
   filter :speakers
@@ -93,29 +92,23 @@ ActiveAdmin.register Talk do
   index do
     selectable_column
     column :id
-    column :uri do |talk|
-      url = "//#{request.host_with_port}/talk/#{talk.id}".
-            sub(':444', '').sub(':3001', ':3000')
-      link_to talk.uri, url, target: '_blank'
-    end
+    column :uri
     column :starts_at, sortable: :starts_at do |talk|
       span style: 'white-space: pre' do
         l talk.starts_at, format: :iso
       end
     end
-    column :duration
     column :title, sortable: :title do |talk|
       truncate talk.title
     end
-    column :teaser, sortable: :teaser do |talk|
-      truncate talk.teaser
-    end
+    #column :teaser, sortable: :teaser do |talk|
+    #  truncate talk.teaser
+    #end
     column :featured_from, sortable: :featured_from do |talk|
       span style: 'white-space: pre' do
         l talk.featured_from, format: :iso unless talk.featured_from.nil?
       end
     end
-    column :collect, label: "Record"
     column :venue
     column :play_count
     column :state
@@ -124,7 +117,11 @@ ActiveAdmin.register Talk do
         talk.grade || 'none'
       end
     end
-    actions
+    actions do |talk|
+      url = "//#{request.host_with_port}/talks/#{talk.id}".
+            sub(':444', '').sub(':3001', ':3000')
+      link_to "&#10148; Public", url, target: '_blank'
+    end
   end
 
   sidebar :social, only: :show, if: ->{ talk.state == 'archived' } do
@@ -170,9 +167,6 @@ ActiveAdmin.register Talk do
       row :description
       row :language
       row :related_talk_id
-      row 'record' do
-        talk.collect
-      end
       row 'download' do
         url = "//#{request.host_with_port}/vrmedia/#{talk.id}-clean.mp3".
               sub(':444', '').sub(':3001', ':3000')
@@ -242,7 +236,6 @@ ActiveAdmin.register Talk do
       f.input :teaser
       f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
-      f.input :collect, label: "Record"
       f.input :speakers
       f.input :recording_override,
               hint: 'Paste a URL to import a manually'+
@@ -303,7 +296,6 @@ ActiveAdmin.register Talk do
                     language
                     teaser
                     description
-                    collect
                     started_at
                     ended_at
                     image

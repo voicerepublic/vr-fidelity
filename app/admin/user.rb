@@ -56,7 +56,11 @@ ActiveAdmin.register User do
         l user.created_at, format: :iso
       end
     end
-    actions
+    actions do |user|
+      url = "//#{request.host_with_port}/users/#{user.id}".
+            sub(':444', '').sub(':3001', ':3000')
+      link_to "&#10148; Public".html_safe, url, target: '_blank'
+    end
   end
 
   show do |user|

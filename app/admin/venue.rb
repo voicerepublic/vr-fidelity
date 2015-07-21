@@ -33,7 +33,11 @@ ActiveAdmin.register Venue do
       truncate venue.description
     end
     column :user
-    actions
+    actions do |venue|
+      url = "//#{request.host_with_port}/venues/#{venue.id}".
+            sub(':444', '').sub(':3001', ':3000')
+      link_to "&#10148; Public".html_safe, url, target: '_blank'
+    end
   end
 
   show do |v|
