@@ -247,6 +247,8 @@ ActiveAdmin.register Talk do
       f.input :recording_override,
               hint: 'Paste a URL to import a manually'+
               ' processed file, e.g. a dropbox URL.'
+      f.input :slides_uuid, label: 'Slides',
+              hint: 'Paste a URL to import slides, e.g. a dropbox URL. (PDF only!)'
       f.input :related_talk_id, as: :string, hint: 'ID of related talk'
     end
     f.inputs 'Image' do
@@ -313,6 +315,7 @@ ActiveAdmin.register Talk do
                     grade
                     format
                     speakers
+                    slides_uuid
                     recording_override ).map(&:to_sym)
 
 end
