@@ -19,6 +19,7 @@ ActiveAdmin.register Talk do
   filter :language, as: :select, collection: %w(en de fr it es)
 
   controller do
+    helper ApplicationHelper
     def scoped_collection
       Talk.includes(:venue)
     end
@@ -118,9 +119,7 @@ ActiveAdmin.register Talk do
       end
     end
     actions do |talk|
-      url = "//#{request.host_with_port}/talks/#{talk.id}".
-            sub(':444', '').sub(':3001', ':3000')
-      link_to "&#10148; Public".html_safe, url, target: '_blank'
+      link_to "&#10148; Public".html_safe, public_url(talk), target: '_blank'
     end
   end
 

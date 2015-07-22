@@ -12,4 +12,10 @@ module ApplicationHelper
 
   alias_method :m, :metric
 
+  def public_url(obj)
+    ns = obj.model_name.plural
+    "//#{request.host_with_port}/#{ns}/#{obj.id}".
+      sub(':444', '').sub(':3001', ':3000')
+  end
+
 end

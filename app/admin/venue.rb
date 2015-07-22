@@ -12,6 +12,7 @@ ActiveAdmin.register Venue do
   filter :description
 
   controller do
+    helper ApplicationHelper
     def scoped_collection
       Venue.includes(:user)
     end
@@ -34,9 +35,7 @@ ActiveAdmin.register Venue do
     end
     column :user
     actions do |venue|
-      url = "//#{request.host_with_port}/venues/#{venue.id}".
-            sub(':444', '').sub(':3001', ':3000')
-      link_to "&#10148; Public".html_safe, url, target: '_blank'
+      link_to "&#10148; Public".html_safe, public_url(venue), target: '_blank'
     end
   end
 

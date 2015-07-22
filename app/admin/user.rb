@@ -2,6 +2,8 @@ ActiveAdmin.register User do
 
   menu priority: 10
 
+  controller { helper ApplicationHelper }
+
   actions :all, except: [:destroy]
 
   action_item only: :show do
@@ -57,9 +59,7 @@ ActiveAdmin.register User do
       end
     end
     actions do |user|
-      url = "//#{request.host_with_port}/users/#{user.id}".
-            sub(':444', '').sub(':3001', ':3000')
-      link_to "&#10148; Public".html_safe, url, target: '_blank'
+      link_to "&#10148; Public".html_safe, public_url(user), target: '_blank'
     end
   end
 
