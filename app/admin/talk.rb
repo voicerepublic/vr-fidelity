@@ -120,7 +120,7 @@ ActiveAdmin.register Talk do
     actions do |talk|
       url = "//#{request.host_with_port}/talks/#{talk.id}".
             sub(':444', '').sub(':3001', ':3000')
-      link_to "&#10148; Public", url, target: '_blank'
+      link_to "&#10148; Public".html_safe, url, target: '_blank'
     end
   end
 
