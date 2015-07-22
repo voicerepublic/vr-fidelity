@@ -152,9 +152,9 @@ ActiveAdmin.register Talk do
     attributes_table do
       row :id
       row :uri do
-        url = "//#{request.host_with_port}/talk/#{talk.id}".
-              sub(':444', '').sub(':3001', ':3000')
-        link_to talk.uri, url, target: '_blank'
+        (talk.uri + ' ' +
+         link_to('&#10148; Public'.html_safe,
+                 public_url(talk), target: '_blank')).html_safe
       end
       row :state
       row :featured_from
@@ -167,14 +167,12 @@ ActiveAdmin.register Talk do
       row :language
       row :related_talk_id
       row 'download' do
-        url = "//#{request.host_with_port}/vrmedia/#{talk.id}-clean.mp3".
-              sub(':444', '').sub(':3001', ':3000')
-        link_to 'mp3', url, target: '_blank'
+        url = public_url "vrmedia/#{talk.id}-clean.mp3"
+        link_to '&#10148; mp3'.html_safe, url, target: '_blank'
       end
       row 'download' do
-        url = "//#{request.host_with_port}/vrmedia/#{talk.id}-clean.ogg".
-              sub(':444', '').sub(':3001', ':3000')
-        link_to 'ogg', url, target: '_blank'
+        url = public_url "vrmedia/#{talk.id}-clean.ogg"
+        link_to '&#10148; ogg'.html_safe, url, target: '_blank'
       end
       row :started_at
       row :format
