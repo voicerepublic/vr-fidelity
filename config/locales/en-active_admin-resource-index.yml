@@ -35,8 +35,6 @@ en:
         talks_with_slides_total: Talks with slides
         talks_with_slides_percent: Talks with slides
         storage_media: Storage consumed by Media
-        storage_uploads: Storage consumed by Uploads
-        storage_slides: Storage consumed by Slides
   admin:
     metrics:
       show:
