@@ -1,6 +1,6 @@
 ActiveAdmin.register Series do
 
-  menu label: 'Series', priority: 11
+  menu priority: 11
 
   actions :all, except: [:destroy]
 
