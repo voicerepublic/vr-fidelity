@@ -160,6 +160,7 @@ ActiveAdmin.register Talk do
               sub(':444', '').sub(':3001', ':3000')
         link_to talk.uri, url, target: '_blank'
       end
+      row :tag_list
       row :state
       row :featured_from
       row :starts_at
@@ -224,6 +225,7 @@ ActiveAdmin.register Talk do
   form do |f|
     f.inputs do
       f.input :title
+      f.input :tag_list, input_html: { value: f.object.tag_list * ', ' }, label: "Tags"
       f.input :starts_at,
               as: :string,
               input_html: {
@@ -310,6 +312,7 @@ ActiveAdmin.register Talk do
                     related_talk_id
                     retained_image
                     remove_image
+                    tag_list
                     grade
                     format
                     speakers
