@@ -26,6 +26,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'active_skin'
 
 gem 'whenever'
+gem 'friendly_id'
 
 gem 'redcarpet'
 gem 'reverse_markdown'

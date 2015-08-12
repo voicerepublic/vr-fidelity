@@ -1,6 +1,6 @@
 ActiveAdmin.register Series do
 
-  menu priority: 11
+  menu priority: 14
 
   actions :all, except: [:destroy]
 
@@ -49,8 +49,8 @@ ActiveAdmin.register Series do
       end
       row :flags do
         badges = Series::FLAGS.map do |f|
-          state = v.flags.include?(f.to_sym) ? ' active' : ''
-          content_tag :span, f.to_s.humanize,
+          state = v.flags.include?(f) ? ' active' : ''
+          content_tag :span, f.humanize,
                       class: "badge" + state
         end
         raw badges * ' '

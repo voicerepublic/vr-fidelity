@@ -41,6 +41,7 @@ class Talk < ActiveRecord::Base
   URL_MESSAGE = "if changed, must be a valid URL, i.e. matching #{URL_PATTERN}"
 
   belongs_to :series, inverse_of: :talks
+  belongs_to :venue
 
   acts_as_taggable
 
@@ -146,6 +147,13 @@ class Talk < ActiveRecord::Base
   def html2md(field)
     return if !self[field].match(/<[a-z][\s\S]*>/)
     self[field] = ReverseMarkdown.convert(self[field])
+  end
+
+  def venue_name=(name)
+    # TODO set a better default, this will lead to many uuids in the
+    # url, due to friendly_id's collision handling
+    name = 'Default venue' if name.blank?
+    self.venue = user.venues.find_or_create_by(name: name)
   end
 
   private
