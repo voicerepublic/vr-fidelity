@@ -24,7 +24,7 @@ FactoryGirl.define do
   factory :user do
   end
 
-  factory :venue do
+  factory :series do
   end
 
   sequence(:uri) { |n| "uri-#{n}" }
@@ -32,7 +32,7 @@ FactoryGirl.define do
   # FIXME
   # factory :talk do
   #   uri
-  #   venue
+  #   series
   #   title 'some title'
   #   starts_at { Time.now }
   #   tag_list 'some, tags'

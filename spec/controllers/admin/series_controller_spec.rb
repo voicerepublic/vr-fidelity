@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Admin::VenuesController, type: :controller do
+RSpec.describe Admin::SeriesController, type: :controller do
   login_admin_user
 
   it 'has an admin user logged in' do
@@ -13,8 +13,8 @@ RSpec.describe Admin::VenuesController, type: :controller do
   end
 
   it 'responds nicely' do
-    venue = create(:venue)
-    get :show, id: venue.id
+    series = create(:series)
+    get :show, id: series.id
     expect(response).to be_a_success
   end
 end

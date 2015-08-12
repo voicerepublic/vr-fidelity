@@ -15,7 +15,7 @@
 # * title [string]
 # * updated_at [datetime, not null] - last update time
 # * user_id [integer] - belongs to :user
-class Venue < ActiveRecord::Base
+class Series < ActiveRecord::Base
 
   # this is the place to add more flags
   FLAGS = %w( no_auto_postprocessing
