@@ -25,6 +25,7 @@ ActiveAdmin.register User do
   filter :firstname
   filter :lastname
   filter :email
+  filter :paying
   filter :provider
   filter :timezone
   filter :conference
@@ -37,6 +38,7 @@ ActiveAdmin.register User do
     column :firstname
     column :lastname
     column :email
+    column :paying
     column 'Series' do |user|
       user.venues.count
     end
@@ -65,6 +67,7 @@ ActiveAdmin.register User do
       row :slug
       row :firstname
       row :lastname
+      row :paying
       row :email
       row :timezone
       row :credits
@@ -99,6 +102,7 @@ ActiveAdmin.register User do
       f.input :firstname
       f.input :lastname
       f.input :email
+      f.input :paying
       f.input :summary
       f.input :about
       f.input :avatar, as: :dragonfly
@@ -107,6 +111,7 @@ ActiveAdmin.register User do
   end
 
   permit_params :firstname, :lastname, :email, :avatar,
-                :retained_avatar, :remove_avatar, :about
+                :retained_avatar, :remove_avatar, :about,
+                :paying
 
 end
