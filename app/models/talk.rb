@@ -55,8 +55,11 @@ class Talk < ActiveRecord::Base
   validates :teaser, length: { maximum: Settings.limit.string }
   validates :description, length: { maximum: Settings.limit.text }
 
-  validates :recording_override, format: { with: URL_PATTERN, message: URL_MESSAGE },
-            if: ->(t) { t.recording_override? && t.recording_override_changed? }
+  validates :recording_override, if: :process_override?,
+            format: { with: URL_PATTERN, message: URL_MESSAGE }
+  validates :slides_uuid, if: :process_slides?,
+            format: { with: URL_PATTERN, message: URL_MESSAGE }
+
   validates :starts_at_date, format: { with: /\A\d{4}-\d\d-\d\d\z/,
                                        message: "Invalid time" }
   validates :starts_at_time, format: { with: /\A\d\d:\d\d\z/,
@@ -65,8 +68,8 @@ class Talk < ActiveRecord::Base
 
   before_save :nilify_grade
   after_save :generate_flyer!, if: :generate_flyer?
-  after_save :schedule_processing_override,
-             if: ->(t) { t.recording_override? && t.recording_override_changed? }
+  after_save :schedule_processing_override, if: :process_override?
+  after_save :schedule_processing_slides, if: :process_slides?
 
   validate :venue_id do
     begin
@@ -163,8 +166,20 @@ class Talk < ActiveRecord::Base
     self.ends_at = starts_at + duration.minutes
   end
 
+  def process_override?
+    recording_override? and recording_override_changed?
+  end
+
   def schedule_processing_override
     Delayed::Job.enqueue ProcessOverride.new(id: id), queue: 'audio'
+  end
+
+  def process_slides?
+    slides_uuid? and slides_uuid_changed?
+  end
+
+  def schedule_processing_slides
+    Delayed::Job.enqueue ProcessSlides.new(id: id), queue: 'audio'
   end
 
   def related_talk_id_is_talk?
