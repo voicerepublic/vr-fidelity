@@ -114,6 +114,11 @@ class Talk < ActiveRecord::Base
     where('ends_at > ? AND starts_at < ?', 4.hours.ago, 4.hours.from_now)
   end
 
+  scope :uncategorized, -> do
+    tagged_with( ActsAsTaggableOn::Tag.where(category: true).pluck(:name),
+                 exclude: true )
+  end
+
   def effective_duration # in seconds
     ended_at - started_at
   end
