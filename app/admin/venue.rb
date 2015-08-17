@@ -12,6 +12,7 @@ ActiveAdmin.register Venue do
   filter :description
 
   controller do
+    helper ApplicationHelper
     def scoped_collection
       Venue.includes(:user)
     end
@@ -33,7 +34,9 @@ ActiveAdmin.register Venue do
       truncate venue.description
     end
     column :user
-    actions
+    actions do |venue|
+      link_to "&#10148; Public".html_safe, public_url(venue), target: '_blank'
+    end
   end
 
   show do |v|

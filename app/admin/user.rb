@@ -2,6 +2,8 @@ ActiveAdmin.register User do
 
   menu priority: 10
 
+  controller { helper ApplicationHelper }
+
   actions :all, except: [:destroy]
 
   action_item only: :show do
@@ -58,7 +60,9 @@ ActiveAdmin.register User do
         l user.created_at, format: :iso
       end
     end
-    actions
+    actions do |user|
+      link_to "&#10148; Public".html_safe, public_url(user), target: '_blank'
+    end
   end
 
   show do |user|

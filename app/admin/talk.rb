@@ -13,13 +13,13 @@ ActiveAdmin.register Talk do
   filter :ends_at
   filter :started_at
   filter :ended_at
-  filter :collect, label: 'record'
   filter :teaser
   filter :description
   filter :speakers
   filter :language, as: :select, collection: %w(en de fr it es)
 
   controller do
+    helper ApplicationHelper
     def scoped_collection
       Talk.includes(:venue)
     end
@@ -94,29 +94,23 @@ ActiveAdmin.register Talk do
   index do
     selectable_column
     column :id
-    column :uri do |talk|
-      url = "//#{request.host_with_port}/talk/#{talk.id}".
-            sub(':444', '').sub(':3001', ':3000')
-      link_to talk.uri, url, target: '_blank'
-    end
+    column :uri
     column :starts_at, sortable: :starts_at do |talk|
       span style: 'white-space: pre' do
         l talk.starts_at, format: :iso
       end
     end
-    column :duration
     column :title, sortable: :title do |talk|
       truncate talk.title
     end
-    column :teaser, sortable: :teaser do |talk|
-      truncate talk.teaser
-    end
+    #column :teaser, sortable: :teaser do |talk|
+    #  truncate talk.teaser
+    #end
     column :featured_from, sortable: :featured_from do |talk|
       span style: 'white-space: pre' do
         l talk.featured_from, format: :iso unless talk.featured_from.nil?
       end
     end
-    column :collect, label: "Record"
     column :venue
     column :play_count
     column :state
@@ -125,7 +119,9 @@ ActiveAdmin.register Talk do
         talk.grade || 'none'
       end
     end
-    actions
+    actions do |talk|
+      link_to "&#10148; Public".html_safe, public_url(talk), target: '_blank'
+    end
   end
 
   sidebar :social, only: :show, if: ->{ talk.state == 'archived' } do
@@ -157,9 +153,9 @@ ActiveAdmin.register Talk do
     attributes_table do
       row :id
       row :uri do
-        url = "//#{request.host_with_port}/talk/#{talk.id}".
-              sub(':444', '').sub(':3001', ':3000')
-        link_to talk.uri, url, target: '_blank'
+        (talk.uri + ' ' +
+         link_to('&#10148; Public'.html_safe,
+                 public_url(talk), target: '_blank')).html_safe
       end
       row :tag_list
       row :state
@@ -172,18 +168,13 @@ ActiveAdmin.register Talk do
       row :description
       row :language
       row :related_talk_id
-      row 'record' do
-        talk.collect
+      row 'download' do
+        url = public_url "vrmedia/#{talk.id}-clean.mp3"
+        link_to '&#10148; mp3'.html_safe, url, target: '_blank'
       end
       row 'download' do
-        url = "//#{request.host_with_port}/vrmedia/#{talk.id}-clean.mp3".
-              sub(':444', '').sub(':3001', ':3000')
-        link_to 'mp3', url, target: '_blank'
-      end
-      row 'download' do
-        url = "//#{request.host_with_port}/vrmedia/#{talk.id}-clean.ogg".
-              sub(':444', '').sub(':3001', ':3000')
-        link_to 'ogg', url, target: '_blank'
+        url = public_url "vrmedia/#{talk.id}-clean.ogg"
+        link_to '&#10148; ogg'.html_safe, url, target: '_blank'
       end
       row :started_at
       row :format
@@ -245,7 +236,6 @@ ActiveAdmin.register Talk do
       f.input :teaser
       f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
-      f.input :collect, label: "Record"
       f.input :speakers
       f.input :recording_override,
               hint: 'Paste a URL to import a manually'+
@@ -308,7 +298,6 @@ ActiveAdmin.register Talk do
                     language
                     teaser
                     description
-                    collect
                     started_at
                     ended_at
                     image
