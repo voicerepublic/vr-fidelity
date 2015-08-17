@@ -51,6 +51,17 @@ class Talk < ActiveRecord::Base
   validates :title, :starts_at, :ends_at, :tag_list, :uri, presence: true
   validates :uri, uniqueness: true
 
+  # The whole "choose your own uri", will bite us, if we're not extra
+  # carefull. I've repeatedly observed that operations used not
+  # wellformed uris, despite the fact that it is clearly documented on
+  # the import page. Thus, it will eventually happen, that a not
+  # wellformed prefix of an annual conference is used in subsequent
+  # year, effectivly overwriting existing talks. We will lose data &
+  # slugs will be all messed up. This is my attempt to be careful. (It
+  # only applies on create, so it shouldn't affect existing uris.)
+  validates :uri, on: :create, format: { with: /\A[a-zA-Z]+\d+-[a-zA-Z\d]+\z/,
+                                         message: "not wellformed." }
+
   validates :title, length: { maximum: Settings.limit.string }
   validates :teaser, length: { maximum: Settings.limit.string }
   validates :description, length: { maximum: Settings.limit.text }
