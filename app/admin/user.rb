@@ -42,7 +42,7 @@ ActiveAdmin.register User do
     column :email
     column :paying
     column 'Series' do |user|
-      user.venues.count
+      user.series.count
     end
     # column 'Talk Count' do |user|
     #   # TODO link_to user.talks.count, admin_talks # by user
@@ -90,9 +90,9 @@ ActiveAdmin.register User do
 
     panel "User's Series" do
       ul do
-        user.venues.each do |venue|
+        user.series.each do |series|
           li do
-            link_to venue.title, [:admin, venue]
+            link_to series.title, [:admin, series]
           end
         end
       end

@@ -21,7 +21,7 @@ ActiveAdmin.register Talk do
   controller do
     helper ApplicationHelper
     def scoped_collection
-      Talk.includes(:venue)
+      Talk.includes(:series)
     end
   end
 
@@ -111,7 +111,7 @@ ActiveAdmin.register Talk do
         l talk.featured_from, format: :iso unless talk.featured_from.nil?
       end
     end
-    column :venue
+    column :series
     column :play_count
     column :state
     column :grade do |talk|
@@ -162,7 +162,7 @@ ActiveAdmin.register Talk do
       row :featured_from
       row :starts_at
       row :ends_at
-      row :venue
+      row :series
       row :title
       row :teaser
       row :description
@@ -232,7 +232,7 @@ ActiveAdmin.register Talk do
                 f.object.featured_from.strftime("%Y-%m-%d %H:%M:%S")
               }
       f.input :duration # FIXME make it a select box with discrete values
-      #f.input :venue # removed for speed, if needed use something like select2
+      #f.input :series # removed for speed, if needed use something like select2
       f.input :teaser
       f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
@@ -294,7 +294,7 @@ ActiveAdmin.register Talk do
                     starts_at
                     featured_from
                     duration
-                    venue_id
+                    series_id
                     language
                     teaser
                     description

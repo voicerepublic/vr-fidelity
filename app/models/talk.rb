@@ -21,7 +21,7 @@
 # * teaser [string] - TODO: document me
 # * title [string]
 # * updated_at [datetime] - last update time
-# * venue_id [integer] - belongs to :venue
+# * series_id [integer] - belongs to :series
 class Talk < ActiveRecord::Base
 
   extend ::CsvImport
@@ -40,7 +40,7 @@ class Talk < ActiveRecord::Base
   URL_PATTERN = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
   URL_MESSAGE = "if changed, must be a valid URL, i.e. matching #{URL_PATTERN}"
 
-  belongs_to :venue, inverse_of: :talks
+  belongs_to :series, inverse_of: :talks
 
   acts_as_taggable
 
@@ -82,15 +82,15 @@ class Talk < ActiveRecord::Base
   after_save :schedule_processing_override, if: :process_override?
   after_save :schedule_processing_slides, if: :process_slides?
 
-  validate :venue_id do
+  validate :series_id do
     begin
-      Venue.find(venue_id)
+      Series.find(series_id)
     rescue
-      errors[:venue_id] = "with id #{venue_id} not found"
+      errors[:series_id] = "with id #{series_id} not found"
     end
   end
 
-  delegate :user, to: :venue
+  delegate :user, to: :series
 
   serialize :storage
   serialize :listeners

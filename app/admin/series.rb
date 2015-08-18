@@ -1,6 +1,6 @@
-ActiveAdmin.register Venue do
+ActiveAdmin.register Series do
 
-  menu label: 'Series', priority: 11
+  menu priority: 11
 
   actions :all, except: [:destroy]
 
@@ -14,7 +14,7 @@ ActiveAdmin.register Venue do
   controller do
     helper ApplicationHelper
     def scoped_collection
-      Venue.includes(:user)
+      Series.includes(:user)
     end
   end
 
@@ -24,14 +24,14 @@ ActiveAdmin.register Venue do
   index do
     selectable_column
     column :id
-    column :title, sortable: :title do |venue|
-      truncate venue.title
+    column :title, sortable: :title do |series|
+      truncate series.title
     end
-    column :teaser, sortable: :teaser do |venue|
-      truncate venue.teaser
+    column :teaser, sortable: :teaser do |series|
+      truncate series.teaser
     end
-    column :description, sortable: :description do |venue|
-      truncate venue.description
+    column :description, sortable: :description do |series|
+      truncate series.description
     end
     column :user
     actions do |venue|
@@ -51,7 +51,7 @@ ActiveAdmin.register Venue do
         raw v.description
       end
       row :flags do
-        badges = Venue::FLAGS.map do |f|
+        badges = Series::FLAGS.map do |f|
           state = v.flags.include?(f.to_sym) ? ' active' : ''
           content_tag :span, f.to_s.humanize,
                       class: "badge" + state
@@ -61,7 +61,7 @@ ActiveAdmin.register Venue do
       row :created_at
       row :updated_at
     end
-    panel "Talks in this Venue" do
+    panel "Talks in this Series" do
       ul do
         v.talks.each do |talk|
           li do
@@ -81,7 +81,7 @@ ActiveAdmin.register Venue do
       #f.input :user
       f.input :options, input_html: { rows: 6 },
               hint: "Boolean flags will be set/overriden by the checkboxes below."
-      f.input :flags, as: :check_boxes, collection: Venue::FLAGS,
+      f.input :flags, as: :check_boxes, collection: Series::FLAGS,
               member_label: :humanize,
               hint: "Please consult the event handbook for details on these options."
       f.input :image, as: :dragonfly
