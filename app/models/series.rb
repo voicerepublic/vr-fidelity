@@ -30,13 +30,13 @@ class Series < ActiveRecord::Base
   image_accessor :image
 
   def flags
-    YAML.load(options).reduce([]) { |r, f| f.last == true ? r.push(f.first) : r }
+    YAML.load(options).select { |k, v| v }.map { |k, v| k.to_s }
   end
 
   def flags=(values)
     values = values.select { |v| !v.blank? }
-    other = FLAGS.reduce({}) { |r, f| r.merge f.to_sym => false }
-    values.each { |v| other[v.to_sym] = true }
+    other = FLAGS.reduce({}) { |r, f| r.merge f => false }
+    values.each { |v| other[v] = true }
     self.options = YAML.dump(YAML.load(options).merge(other))
   end
 

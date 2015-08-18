@@ -1,6 +1,6 @@
 ActiveAdmin.register Talk do
 
-  menu priority: 12
+  menu priority: 13
 
   actions :all, except: [:new, :destroy]
 
@@ -8,6 +8,7 @@ ActiveAdmin.register Talk do
   filter :uri
   filter :slug
   filter :title
+  #filter :venue
   filter :featured_from
   filter :starts_at
   filter :ends_at
@@ -21,7 +22,7 @@ ActiveAdmin.register Talk do
   controller do
     helper ApplicationHelper
     def scoped_collection
-      Talk.includes(:series)
+      Talk.includes(:series, :venue)
     end
   end
 
@@ -111,6 +112,9 @@ ActiveAdmin.register Talk do
         l talk.featured_from, format: :iso unless talk.featured_from.nil?
       end
     end
+    column :venue do |talk|
+      talk.venue.try(:name)
+    end
     column :series
     column :play_count
     column :state
@@ -162,6 +166,7 @@ ActiveAdmin.register Talk do
       row :featured_from
       row :starts_at
       row :ends_at
+      row :venue
       row :series
       row :title
       row :teaser
@@ -233,6 +238,7 @@ ActiveAdmin.register Talk do
               }
       f.input :duration # FIXME make it a select box with discrete values
       #f.input :series # removed for speed, if needed use something like select2
+      f.input :venue, collection: f.object.user.venues
       f.input :teaser
       f.input :language, collection: %w(en de fr it es)
       f.input :description # FIXME use wysiwyg editor (wysihtml5)
@@ -294,6 +300,7 @@ ActiveAdmin.register Talk do
                     starts_at
                     featured_from
                     duration
+                    venue_id
                     series_id
                     language
                     teaser
