@@ -14,7 +14,18 @@ module CsvImport
         obj.send("#{col}=", val) if obj.send(col).blank?
       end
       obj.attributes = obj.attributes.merge(row_hash)
-      transformers.each { |field, method| obj.send(method, field) }
+
+      # TODO formerly this was, but then it breaks if
+      # the transformer is not defensive enough
+      # transformers.each { |field, method| obj.send(method, field) }
+      transformers.each do |field, method|
+        begin
+          obj.send(method, field)
+        rescue Exception => e
+          errors[i+1] = { transformer: "Problem running transformer '#{method}' on field '#{field}': '#{e.message}'" }
+        end
+      end
+      
       errors[i+1] = obj.errors.full_messages unless obj.valid?
       objs << obj
     end
