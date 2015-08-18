@@ -32,6 +32,8 @@ en:
         paying_users_total: Paying Users Total
         active_users_total: Active Users Total
         new_users_total: New Users Total
+        talks_with_slides_total: Talks with slides
+        talks_with_slides_percent: Talks with slides
   admin:
     metrics:
       show:
