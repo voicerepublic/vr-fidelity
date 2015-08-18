@@ -34,7 +34,7 @@ class Talk < ActiveRecord::Base
     failed:       "Recording available, but processing failed. (failed)"
   }
 
-  STATES = %w( pending prelive halflive live postlive processing archived )
+  STATES = %w( pending prelive live postlive processing archived )
 
   # TODO create a better more specific pattern for urls
   URL_PATTERN = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
@@ -51,12 +51,26 @@ class Talk < ActiveRecord::Base
   validates :title, :starts_at, :ends_at, :tag_list, :uri, presence: true
   validates :uri, uniqueness: true
 
+  # The whole "choose your own uri", will bite us, if we're not extra
+  # carefull. I've repeatedly observed that operations used not
+  # wellformed uris, despite the fact that it is clearly documented on
+  # the import page. Thus, it will eventually happen, that a not
+  # wellformed prefix of an annual conference is used in subsequent
+  # year, effectivly overwriting existing talks. We will lose data &
+  # slugs will be all messed up. This is my attempt to be careful. (It
+  # only applies on create, so it shouldn't affect existing uris.)
+  validates :uri, on: :create, format: { with: /\A[a-zA-Z]+\d+-[a-zA-Z\d]+\z/,
+                                         message: "not wellformed." }
+
   validates :title, length: { maximum: Settings.limit.string }
   validates :teaser, length: { maximum: Settings.limit.string }
   validates :description, length: { maximum: Settings.limit.text }
 
-  validates :recording_override, format: { with: URL_PATTERN, message: URL_MESSAGE },
-            if: ->(t) { t.recording_override? && t.recording_override_changed? }
+  validates :recording_override, if: :process_override?,
+            format: { with: URL_PATTERN, message: URL_MESSAGE }
+  validates :slides_uuid, if: :process_slides?,
+            format: { with: URL_PATTERN, message: URL_MESSAGE }
+
   validates :starts_at_date, format: { with: /\A\d{4}-\d\d-\d\d\z/,
                                        message: "Invalid time" }
   validates :starts_at_time, format: { with: /\A\d\d:\d\d\z/,
@@ -65,8 +79,8 @@ class Talk < ActiveRecord::Base
 
   before_save :nilify_grade
   after_save :generate_flyer!, if: :generate_flyer?
-  after_save :schedule_processing_override,
-             if: ->(t) { t.recording_override? && t.recording_override_changed? }
+  after_save :schedule_processing_override, if: :process_override?
+  after_save :schedule_processing_slides, if: :process_slides?
 
   validate :series_id do
     begin
@@ -98,6 +112,11 @@ class Talk < ActiveRecord::Base
 
   scope :in_dashboard, -> do
     where('ends_at > ? AND starts_at < ?', 4.hours.ago, 4.hours.from_now)
+  end
+
+  scope :uncategorized, -> do
+    tagged_with( ActsAsTaggableOn::Tag.where(category: true).pluck(:name),
+                 exclude: true )
   end
 
   def effective_duration # in seconds
@@ -163,8 +182,20 @@ class Talk < ActiveRecord::Base
     self.ends_at = starts_at + duration.minutes
   end
 
+  def process_override?
+    recording_override? and recording_override_changed?
+  end
+
   def schedule_processing_override
     Delayed::Job.enqueue ProcessOverride.new(id: id), queue: 'audio'
+  end
+
+  def process_slides?
+    slides_uuid? and slides_uuid_changed?
+  end
+
+  def schedule_processing_slides
+    Delayed::Job.enqueue ProcessSlides.new(id: id), queue: 'audio'
   end
 
   def related_talk_id_is_talk?
