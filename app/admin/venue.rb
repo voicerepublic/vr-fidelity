@@ -2,7 +2,7 @@ ActiveAdmin.register Venue do
 
   menu priority: 12
 
-  actions :all, except: [:destroy]
+  actions :all, except: [:new, :destroy]
 
   filter :id
   filter :name
