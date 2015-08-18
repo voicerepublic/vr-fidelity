@@ -34,7 +34,6 @@ en:
         new_users_total: New Users Total
         talks_with_slides_total: Talks with slides
         talks_with_slides_percent: Talks with slides
-        storage_media: Storage consumed by Media
   admin:
     metrics:
       show:
