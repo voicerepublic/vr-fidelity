@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   has_many :venues
   has_many :purchases, foreign_key: :owner_id
 
-  scope :paying, -> { where('purchases_count > 0') }
+  scope :paying, -> { where(paying: true) }
 
   image_accessor :avatar
 

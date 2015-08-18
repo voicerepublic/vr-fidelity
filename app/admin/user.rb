@@ -2,6 +2,8 @@ ActiveAdmin.register User do
 
   menu priority: 10
 
+  controller { helper ApplicationHelper }
+
   actions :all, except: [:destroy]
 
   action_item only: :show do
@@ -25,6 +27,7 @@ ActiveAdmin.register User do
   filter :firstname
   filter :lastname
   filter :email
+  filter :paying
   filter :provider
   filter :timezone
   filter :conference
@@ -37,6 +40,7 @@ ActiveAdmin.register User do
     column :firstname
     column :lastname
     column :email
+    column :paying
     column 'Series' do |user|
       user.series.count
     end
@@ -56,7 +60,9 @@ ActiveAdmin.register User do
         l user.created_at, format: :iso
       end
     end
-    actions
+    actions do |user|
+      link_to "&#10148; Public".html_safe, public_url(user), target: '_blank'
+    end
   end
 
   show do |user|
@@ -65,6 +71,7 @@ ActiveAdmin.register User do
       row :slug
       row :firstname
       row :lastname
+      row :paying
       row :email
       row :timezone
       row :credits
@@ -99,6 +106,7 @@ ActiveAdmin.register User do
       f.input :firstname
       f.input :lastname
       f.input :email
+      f.input :paying
       f.input :summary
       f.input :about
       f.input :avatar, as: :dragonfly
@@ -107,6 +115,7 @@ ActiveAdmin.register User do
   end
 
   permit_params :firstname, :lastname, :email, :avatar,
-                :retained_avatar, :remove_avatar, :about
+                :retained_avatar, :remove_avatar, :about,
+                :paying
 
 end
