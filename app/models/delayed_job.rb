@@ -30,6 +30,9 @@ class Delayed::Job
       rescue Exception => e
         return e.message
       end
+    when /object:Delayed::PerformableMailer/
+      handler.match(/email: (.+)/)
+
     else '?'
     end
   end
