@@ -30,11 +30,17 @@
 # * website [string] - TODO: document me
 class User < ActiveRecord::Base
 
+  FORMATS = I18n.t('user_formats')
+
   has_many :series
   has_many :venues
   has_many :purchases, foreign_key: :owner_id
 
   scope :paying, -> { where(paying: true) }
+
+  FORMATS.each do |key, value|
+    scope key.to_sym, -> { where(format: key) }
+  end
 
   image_accessor :avatar
 
