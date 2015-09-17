@@ -13,7 +13,6 @@ $ ->
   return unless Faye?
   faye = new Faye.Client(document.fayeUrl)
   faye.addExtension(new FayeAuthentication(faye))
-  faye.addExtension(new FayeTtl(faye))
 
   subscribe = (namespace, handler) ->
     faye.subscribe namespace, (payload) ->
