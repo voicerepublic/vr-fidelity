@@ -16,7 +16,7 @@ class Delayed::Job
       "Talk.find(#{payload_object.opts.try(:[], :id)}).postprocess!"
     when /struct:Reprocess/
       "Talk.find(#{payload_object.opts.try(:[], :id)}).reprocess!"
-    when /object:Delayed::PerformableMethod\nobject: !ruby\/ActiveRecord/
+    when /object:Delayed::PerformableMethod\nobject: !ruby\/object:/
       begin
         clazz = handler.match(/ActiveRecord:(.+)/).to_a.last
         meth = payload_object.method_name
@@ -25,8 +25,7 @@ class Delayed::Job
       rescue Exception => e
         return e.message
       end
-    when /object:Delayed::PerformableMailer/
-      handler.match(/email: (.+)/)
+    when /object:Delayed::PerformableMethod/
     else '?'
     end
   end
