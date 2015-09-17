@@ -16,16 +16,20 @@ class Delayed::Job
       "Talk.find(#{payload_object.opts.try(:[], :id)}).postprocess!"
     when /struct:Reprocess/
       "Talk.find(#{payload_object.opts.try(:[], :id)}).reprocess!"
-    when /object:Delayed::PerformableMethod\nobject: !ruby\/object:/
+    when /struct:EndTalk/
+      "Talk.find(#{payload_object.opts.try(:[], :id)}).end_talk!"
+    when /struct:ProcessSlides/
+      "Talk.find(#{payload_object.opts.try(:[], :id)}).process_slides!"
+
+    when /object:Delayed::PerformableMethod/
       begin
-        clazz = handler.match(/ActiveRecord:(.+)/).to_a.last
+        clazz = handler.match(/object: !ruby\/object:(.+)/).to_a.last
         meth = payload_object.method_name
         oid = payload_object.id
-        "#{clazz}.find(#{oid}).#{meth} # PM"
+        "#{clazz}.find(#{oid}).#{meth}"
       rescue Exception => e
         return e.message
       end
-    when /object:Delayed::PerformableMethod/
     else '?'
     end
   end
