@@ -26,14 +26,6 @@ class Talk < ActiveRecord::Base
 
   extend ::CsvImport
 
-  GRADES = {
-    ok:           "Everything ok. Quality acceptable. (ok)",
-    override:     "Manually overriden, quailty is good. (override)",
-    insufficient: "Insufficient or empty recording. (insufficient)",
-    norecording:  "No recording, no override available. (no recording)",
-    failed:       "Recording available, but processing failed. (failed)"
-  }
-
   STATES = %w( pending prelive live postlive processing archived )
 
   # TODO create a better more specific pattern for urls
@@ -78,7 +70,6 @@ class Talk < ActiveRecord::Base
                                        message: "Invalid time" }
   validate :related_talk_id_is_talk?, on: :update
 
-  before_save :nilify_grade
   after_save :generate_flyer!, if: :generate_flyer?
   after_save :schedule_processing_override, if: :process_override?
   after_save :schedule_processing_slides, if: :process_slides?
@@ -104,11 +95,6 @@ class Talk < ActiveRecord::Base
     scope state.to_sym, -> { where(state: state) }
   end
 
-  GRADES.keys.each do |grade|
-    scope grade.to_sym, -> { where(grade: grade) }
-  end
-
-  scope :nograde, -> { where(grade: nil) }
   scope :featured, -> { where.not(featured_from: nil) }
 
   scope :in_dashboard, -> do
@@ -213,10 +199,6 @@ class Talk < ActiveRecord::Base
     rescue
       errors.add(:related_talk_id, "is not a proper talk id")
     end
-  end
-
-  def nilify_grade
-    self.grade = nil if grade.blank?
   end
 
   def generate_flyer?
