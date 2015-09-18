@@ -18,11 +18,8 @@
 class Series < ActiveRecord::Base
 
   # this is the place to add more flags
-  FLAGS = %w( no_auto_postprocessing
-              no_auto_end_talk
-              no_email
-              autostart
-              suppress_chat).sort
+  FLAGS = %w( no_auto_end_talk
+              autostart ).sort
 
   belongs_to :user
   has_many :talks
