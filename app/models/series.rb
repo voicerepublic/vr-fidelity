@@ -18,7 +18,7 @@
 class Series < ActiveRecord::Base
 
   # this is the place to add more flags
-  FLAGS = %w( no_auto_end_talk
+  FLAGS = %w( autoend
               autostart ).sort
 
   belongs_to :user
