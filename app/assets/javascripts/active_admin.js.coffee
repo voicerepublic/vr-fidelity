@@ -11,6 +11,5 @@
 #= require talks
 #
 #= require dashboard/array
-#= require dashboard/faye_ttl
 #= require dashboard/provider
 #= require dashboard/index
