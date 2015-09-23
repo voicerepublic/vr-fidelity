@@ -89,8 +89,6 @@ ActiveAdmin.register Talk do
   scope :featured
   scope :uncategorized
   Talk::STATES.each { |state| scope state.to_sym }
-  scope :nograde
-  Talk::GRADES.keys.each { |grade| scope grade.to_sym }
 
   index do
     selectable_column
@@ -118,11 +116,6 @@ ActiveAdmin.register Talk do
     column :series
     column :play_count
     column :state
-    column :grade do |talk|
-      span class: "badge #{talk.grade}" do
-        talk.grade || 'none'
-      end
-    end
     actions do |talk|
       link_to "&#10148; Public".html_safe, public_url(talk), target: '_blank'
     end
@@ -185,7 +178,6 @@ ActiveAdmin.register Talk do
       row :format
       row :speakers
       if %w(postlive processing archived).include?(talk.state)
-        row :grade
         row :ended_at
         row :processed_at
         row :recording
@@ -255,10 +247,6 @@ ActiveAdmin.register Talk do
     end
     f.inputs 'Fields dependent on state' do
       f.input :state, input_html: { disabled: true }
-      if f.object.state == 'archived'
-        f.input :grade, collection: Talk::GRADES.invert,
-                hint: 'Used to manually classify the talks quality.'
-      end
       if %w(postlive archived).include? f.object.state
         f.input :started_at,
           as: :string,
@@ -312,7 +300,6 @@ ActiveAdmin.register Talk do
                     retained_image
                     remove_image
                     tag_list
-                    grade
                     format
                     speakers
                     slides_uuid
