@@ -32,10 +32,11 @@ en:
     users:
       credits:
         user_has_x_credits:
-          other: 'This user has currently %{count} credits.'
-          one: 'This user has currently 1 credit.'
-          zero: 'This user has currently no credits. What a poor old chap!'
-        quantity: Quantity
+          other: '%{user} currently has %{count} credits.'
+          one: 'This user currently has 1 credit.'
+          zero: 'This user currently has no credits. What a poor old chap!'
+        quantity: 'Quantity (in Talk Credits)'
+        payment: 'Payment (in EUR)'
         grant: Grant
         granted_x_credits:
           other: 'Granted %{count} credits. These will be available shortly.'
