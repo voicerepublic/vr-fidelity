@@ -47,6 +47,8 @@ Or install it yourself as:
 
     fidelity analyze <manifestfile>
 
+    fidelity process <s3-bucket>
+
 
 ### Code
 
