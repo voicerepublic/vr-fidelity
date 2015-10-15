@@ -1,14 +1,37 @@
+%h3 This form supports multiple use cases:
+%ol
+  %li
+    %b Donate credits
+    by granting credits, while keeping the payment at 0. (This is the
+    default.)
+  %li
+    %b Keep track of manual sales activity
+    by granting credits, while also tracking the agreed payment for
+    which a separate bill has been written.
+  %li
+    %b Keep track of a previous sale
+    by not granting any credits (setting credits to 0), but tracking
+    the agreed (or already executed) payment.
+  %li
+    %b Deduct credits
+    by granting a negative amount of credits, while keeping the
+    payment at 0.
+
 
 = form_for :grant, url: credits_admin_user_path(resource) do |f|
   = f.hidden_field :user_id, value: resource.id
-  %table
+  %table(style='width: 400px')
     %tr
       %td
-      %td= t('.user_has_x_credits', count: resource.credits)
+      %td= t('.user_has_x_credits', user: resource.firstname, count: resource.credits)
     %tr
       %td
         %label= t('.quantity')
-      %td= f.text_field :quantity, value: 1, style: 'width: 50px'
+      %td= f.text_field :quantity, value: 1, style: 'width: 50px', type: 'number'
+    %tr
+      %td
+        %label= t('.payment')
+      %td= f.text_field :payment, value: 0, style: 'width: 50px', type: 'number', step: 10
     %tr
       %td
       %td= f.submit t('.grant')
