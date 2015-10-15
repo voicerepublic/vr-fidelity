@@ -6,11 +6,9 @@ class Venue < ActiveRecord::Base
   validates :name, :user_id, presence: true
 
   # this is the place to add more flags
-  FLAGS = %w( no_auto_postprocessing
-              no_auto_end_talk
-              no_email
-              autostart
-              suppress_chat ).sort
+  FLAGS = %w( autostart
+              autoend
+              lineup )
 
   belongs_to :user
   has_many :talks

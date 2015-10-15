@@ -18,8 +18,8 @@ ActiveAdmin.register Series do
     end
   end
 
-  permit_params :title, :teaser, :description, :options, :image,
-                :retained_image, :remove_image, flags: []
+  permit_params :title, :teaser, :description, :image,
+                :retained_image, :remove_image
 
   index do
     selectable_column
@@ -50,14 +50,6 @@ ActiveAdmin.register Series do
       row :description do
         raw v.description
       end
-      row :flags do
-        badges = Series::FLAGS.map do |f|
-          state = v.flags.include?(f) ? ' active' : ''
-          content_tag :span, f.humanize,
-                      class: "badge" + state
-        end
-        raw badges * ' '
-      end
       row :created_at
       row :updated_at
     end
@@ -79,11 +71,6 @@ ActiveAdmin.register Series do
       f.input :teaser, input_html: { rows: 1 }
       f.input :description
       #f.input :user
-      f.input :options, input_html: { rows: 6 },
-              hint: "Boolean flags will be set/overriden by the checkboxes below."
-      f.input :flags, as: :check_boxes, collection: Series::FLAGS,
-              member_label: :humanize,
-              hint: "Please consult the event handbook for details on these options."
       f.input :image, as: :dragonfly
     end
     f.actions
