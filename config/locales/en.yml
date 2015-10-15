@@ -45,3 +45,9 @@ en:
     resource:
       show:
         grant: Grant Credits
+  user_publisher_types:
+    conference: Conference
+    institution: Statebased Institutions
+    foundation: Foundation or NGO
+    independent: Independent
+    academic: Academic
