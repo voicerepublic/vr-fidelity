@@ -8,7 +8,8 @@ class Venue < ActiveRecord::Base
   # this is the place to add more flags
   FLAGS = %w( autostart
               autoend
-              lineup )
+              lineup
+              no_email )
 
   belongs_to :user
   has_many :talks
