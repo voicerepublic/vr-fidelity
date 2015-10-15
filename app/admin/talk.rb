@@ -160,6 +160,7 @@ ActiveAdmin.register Talk do
       row :starts_at
       row :ends_at
       row :venue
+      row :user
       row :series
       row :title
       row :teaser
