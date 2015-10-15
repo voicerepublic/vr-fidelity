@@ -57,7 +57,7 @@ ActiveAdmin.register Venue do
       f.input :options, input_html: { rows: 6 },
               hint: "Boolean flags will be set/overriden by the checkboxes below."
       # FIXME selected options are not properly checkmarked
-      f.input :flags, as: :check_boxes, collection: Series::FLAGS,
+      f.input :flags, as: :check_boxes, collection: Venue::FLAGS,
               member_label: :humanize,
               hint: "Please consult the event handbook for details on these options."
     end
