@@ -21,7 +21,7 @@ ActiveAdmin.register User do
 
   scope :paying
 
-  User::FORMATS.each do |key, value|
+  User::PUBLISHER_TYPES.each do |key, value|
     scope value, key
   end
 
@@ -31,7 +31,7 @@ ActiveAdmin.register User do
   filter :firstname
   filter :lastname
   filter :email
-  # filter :format, as: :select, collection: User::FORMATS.invert
+  # filter :publisher_type, as: :select, collection: User::PUBLISHER_TYPES.invert
   filter :paying
   filter :provider
   filter :timezone
@@ -45,8 +45,8 @@ ActiveAdmin.register User do
     column :firstname
     column :lastname
     column :email
-    column :format do |user|
-      User::FORMATS[user.format.try(:to_sym)]
+    column :publisher_type do |user|
+      User::PUBLISHER_TYPES[user.publisher_type.try(:to_sym)]
     end
     column :paying
     column 'Series' do |user|
@@ -80,8 +80,8 @@ ActiveAdmin.register User do
       row :firstname
       row :lastname
       row :email
-      row :format do
-        User::FORMATS[user.format.try(:to_sym)]
+      row :publisher_type do
+        User::PUBLISHER_TYPES[user.publisher_type.try(:to_sym)]
       end
       row :paying
       row :timezone
@@ -117,7 +117,7 @@ ActiveAdmin.register User do
       f.input :firstname
       f.input :lastname
       f.input :email
-      f.input :format, as: :select, collection: User::FORMATS.invert
+      f.input :publisher_type, as: :select, collection: User::PUBLISHER_TYPES.invert
       f.input :paying
       f.input :summary
       f.input :about
@@ -128,6 +128,6 @@ ActiveAdmin.register User do
 
   permit_params :firstname, :lastname, :email, :avatar,
                 :retained_avatar, :remove_avatar, :about,
-                :paying, :format
+                :paying, :publisher_type
 
 end

@@ -45,7 +45,7 @@ en:
     resource:
       show:
         grant: Grant Credits
-  user_formats:
+  user_publisher_types:
     conference: Conference
     institution: Statebased Institutions
     foundation: Foundation or NGO
