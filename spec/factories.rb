@@ -29,13 +29,19 @@ FactoryGirl.define do
 
   sequence(:uri) { |n| "uri-#{n}" }
 
-  # FIXME
-  # factory :talk do
-  #   uri
-  #   series
-  #   title 'some title'
-  #   starts_at { Time.now }
-  #   tag_list 'some, tags'
-  # end
+  factory :talk do
+    uri 'sc15-123'
+    title "Some awesome title"
+    series
+    # NOTE: times set here are not affected by `Timecop.freeze` in a
+    # `before` block
+    starts_at_time 1.hour.from_now.strftime('%H:%M')
+    starts_at_date 1.hour.from_now.strftime('%Y-%m-%d')
+    duration 60
+    collect false
+    tag_list 'lorem, ipsum, dolor'
+    description 'Some talk description'
+    language 'en'
+  end
 
 end
