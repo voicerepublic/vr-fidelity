@@ -19,7 +19,12 @@ class Series < ActiveRecord::Base
 
   belongs_to :user
   has_many :talks
+  before_save :set_description_as_html, if: :description_changed?
 
   image_accessor :image
+
+  def set_description_as_html
+    self.description_as_html = MARKDOWN.render(description)
+  end
 
 end
