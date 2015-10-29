@@ -20,6 +20,7 @@ ActiveAdmin.register User do
   end
 
   scope :paying
+  scope :featured
 
   User::PUBLISHER_TYPES.each do |key, value|
     scope value, key
@@ -31,6 +32,7 @@ ActiveAdmin.register User do
   filter :firstname
   filter :lastname
   filter :email
+  filter :featured_from
   # filter :publisher_type, as: :select, collection: User::PUBLISHER_TYPES.invert
   filter :paying
   filter :provider
@@ -45,6 +47,11 @@ ActiveAdmin.register User do
     column :firstname
     column :lastname
     column :email
+    column :featured_from, sortable: :featured_from do |talk|
+      span style: 'white-space: pre' do
+        l talk.featured_from, format: :iso unless talk.featured_from.nil?
+      end
+    end
     column :publisher_type do |user|
       User::PUBLISHER_TYPES[user.publisher_type.try(:to_sym)]
     end
@@ -80,6 +87,7 @@ ActiveAdmin.register User do
       row :firstname
       row :lastname
       row :email
+      row :featured_from
       row :publisher_type do
         User::PUBLISHER_TYPES[user.publisher_type.try(:to_sym)]
       end
@@ -117,6 +125,12 @@ ActiveAdmin.register User do
       f.input :firstname
       f.input :lastname
       f.input :email
+      f.input :featured_from, as: :string,
+              input_html: {
+                class: 'picker',
+                value: f.object.featured_from &&
+                f.object.featured_from.strftime("%Y-%m-%d %H:%M:%S")
+              }
       f.input :publisher_type, as: :select, collection: User::PUBLISHER_TYPES.invert
       f.input :paying
       f.input :summary
@@ -128,6 +142,6 @@ ActiveAdmin.register User do
 
   permit_params :firstname, :lastname, :email, :avatar,
                 :retained_avatar, :remove_avatar, :about,
-                :paying, :publisher_type
+                :paying, :publisher_type, :featured_from
 
 end

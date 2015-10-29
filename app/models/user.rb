@@ -36,6 +36,7 @@ class User < ActiveRecord::Base
   has_many :venues
   has_many :purchases, foreign_key: :owner_id
 
+  scope :featured, -> { where.not(featured_from: nil) }
   scope :paying, -> { where(paying: true) }
 
   PUBLISHER_TYPES.each do |key, value|
