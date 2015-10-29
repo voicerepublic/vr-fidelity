@@ -25,6 +25,7 @@ FactoryGirl.define do
   end
 
   factory :series do
+    user
   end
 
   sequence(:uri) { |n| "uri-#{n}" }
