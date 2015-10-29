@@ -32,6 +32,8 @@ class Talk < ActiveRecord::Base
   URL_PATTERN = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
   URL_MESSAGE = "if changed, must be a valid URL, i.e. matching #{URL_PATTERN}"
 
+  attr_accessor :venue_name
+
   belongs_to :series, inverse_of: :talks
   belongs_to :venue
 
@@ -70,6 +72,7 @@ class Talk < ActiveRecord::Base
                                        message: "Invalid time" }
   validate :related_talk_id_is_talk?, on: :update
 
+  before_save :set_venue
   after_save :generate_flyer!, if: :generate_flyer?
   after_save :schedule_processing_override, if: :process_override?
   after_save :schedule_processing_slides, if: :process_slides?
@@ -154,14 +157,12 @@ class Talk < ActiveRecord::Base
     self[field] = ReverseMarkdown.convert(self[field])
   end
 
-  def venue_name=(name)
-    # TODO set a better default, this will lead to many uuids in the
-    # url, due to friendly_id's collision handling
-    name = 'Default venue' if name.blank?
-    self.venue = user.venues.find_or_create_by(name: name)
-  end
-
   private
+
+  def set_venue
+    self.venue_name = 'Default venue' if venue_name.blank?
+    self.venue = user.venues.find_or_create_by(name: venue_name.strip)
+  end
 
   # Assemble `starts_at` from `starts_at_date` and `starts_at_time`.
   #
