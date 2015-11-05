@@ -20,7 +20,8 @@ module Fidelity
       end
 
       def convert_wav_to_m4a_cmd
-        "avconv -v quiet -y -i #{input} -b:a 128k -strict experimental #{output}"
+        "avconv -v quiet -y -i #{input} -b:a 128k -ar 44100" +
+          " -strict experimental #{output}"
       end
 
       def output
