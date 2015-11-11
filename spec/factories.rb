@@ -22,9 +22,16 @@ FactoryGirl.define do
   end
 
   factory :user do
+    email
   end
 
   factory :series do
+    user
+  end
+
+  factory :venue do
+    user
+    name 'Some name'
   end
 
   sequence(:uri) { |n| "uri-#{n}" }
@@ -33,6 +40,7 @@ FactoryGirl.define do
     uri 'sc15-123'
     title "Some awesome title"
     series
+    venue
     # NOTE: times set here are not affected by `Timecop.freeze` in a
     # `before` block
     starts_at_time 1.hour.from_now.strftime('%H:%M')
