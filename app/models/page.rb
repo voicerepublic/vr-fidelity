@@ -7,6 +7,10 @@ class Page < ActiveRecord::Base
     de: 'Deutsch'
   }
 
+  TEMPLATES.each do |template|
+    scope template, -> { where(template: template) }
+  end
+
   extend FriendlyId
   friendly_id :slug_candidates, use: [:slugged, :finders]
 
