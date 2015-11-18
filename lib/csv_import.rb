@@ -8,7 +8,14 @@ module CsvImport
     # validation
     objs, errors = [], {}
     csv.each_with_index do |row, i|
+
+      Rails.logger.debug '-' * 60
+      Rails.logger.debug row
+
       row_hash = convert_to_hash(row)
+
+      Rails.logger.debug row_hash
+
       obj = find_or_initialize_by(uri: row_hash['uri'])
       default_columns.each do |col, val|
         obj.send("#{col}=", val) if obj.send(col).blank?
@@ -25,26 +32,39 @@ module CsvImport
           errors[i+1] = { transformer: "Problem running transformer '#{method}' on field '#{field}': '#{e.message}'" }
         end
       end
-      
+
       errors[i+1] = obj.errors.full_messages unless obj.valid?
       objs << obj
     end
+
+    Rails.logger.debug '=' * 60
+    Rails.logger.debug errors
+    Rails.logger.debug '=' * 60
+
     # render error if validation failed
     unless errors.empty?
       return { error: errors }
     end
+
     # render error if check uniqueness of uri fails
     if objs.map(&:uri).uniq.size != objs.size
       return { error: "Import canceled. Uris have to be unique." }
     end
+
+    Rails.logger.debug '+' * 60
+
     # creation
     result = { updated: 0, created: 0 }
     objs.map do |obj|
       sym = obj.persisted? ? :updated : :created
       result[sym] += 1
+      Rails.logger.debug 'SAVE: '+obj.uri
       obj.save!
     end
-    return result
+
+    Rails.logger.debug '^' * 60
+
+    result
   end
 
   private
