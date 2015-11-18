@@ -28,4 +28,20 @@ ActiveAdmin.register Page do
     f.actions
   end
 
+  show do
+    attributes_table do
+      row :slug
+      row :template
+      row :title_en
+      row :content_en_as_html do |page|
+        page.content_en_as_html.html_safe
+      end
+      row :title_de
+      row :content_de_as_html do |page|
+        page.content_de_as_html.html_safe
+      end
+    end
+    active_admin_comments
+  end
+
 end
