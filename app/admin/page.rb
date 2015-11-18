@@ -13,16 +13,14 @@ ActiveAdmin.register Page do
 
   form do |f|
     f.inputs do
-      f.input :slug, placeholder: 'If left blank will be derived from title (en).'
+      f.input :slug if f.object.persisted?
       f.input :template, collection: Page::TEMPLATES
     end
-    f.inputs 'English' do
-      f.input :title_en
-      f.input :content_en
-    end
-    f.inputs 'Deutsch' do
-      f.input :title_de
-      f.input :content_de
+    Page::LANGUAGES.each do |locale, language|
+      f.inputs language do
+        f.input "title_#{locale}"
+        f.input "content_#{locale}"
+      end
     end
     f.actions
   end
