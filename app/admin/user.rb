@@ -86,6 +86,7 @@ ActiveAdmin.register User do
       row :slug
       row :firstname
       row :lastname
+      row :tag_list
       row :email
       row :featured_from
       row :publisher_type do
@@ -125,6 +126,7 @@ ActiveAdmin.register User do
       f.input :firstname
       f.input :lastname
       f.input :email
+      f.input :tag_list, input_html: { value: f.object.tag_list * ', ' }, label: "Tags"
       f.input :featured_from, as: :string,
               input_html: {
                 class: 'picker',
@@ -140,8 +142,18 @@ ActiveAdmin.register User do
     f.actions
   end
 
+  csv do
+    column :firstname
+    column :lastname
+    column :email
+    column :tag_list
+    column :paying
+    column :featured_from
+  end
+
   permit_params :firstname, :lastname, :email, :avatar,
                 :retained_avatar, :remove_avatar, :about,
-                :paying, :publisher_type, :featured_from
+                :paying, :publisher_type, :featured_from,
+                :tag_list
 
 end

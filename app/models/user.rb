@@ -32,6 +32,8 @@ class User < ActiveRecord::Base
 
   PUBLISHER_TYPES = I18n.t('user_publisher_types')
 
+  acts_as_taggable
+
   has_many :series
   has_many :venues
   has_many :purchases, foreign_key: :owner_id
