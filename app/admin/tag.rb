@@ -2,11 +2,11 @@ ActiveAdmin.register ActsAsTaggableOn::Tag, as: 'Tag' do
 
   menu priority: 20
 
-  permit_params :name, :category
+  permit_params :name, :promoted
 
   filter :name
   filter :taggings_count, label: 'Occurences'
-  filter :category
+  filter :promoted
 
   config.sort_order = 'taggings_count_desc'
 
@@ -14,8 +14,8 @@ ActiveAdmin.register ActsAsTaggableOn::Tag, as: 'Tag' do
     selectable_column
     column :name
     column 'Occurences', :taggings_count
-    column :category, sortable: :category do |tag|
-      tag.category? ? status_tag("yes", :ok) : status_tag("no")
+    column :promoted, sortable: :promoted do |tag|
+      tag.promoted? ? status_tag("yes", :ok) : status_tag("no")
     end
     actions
   end

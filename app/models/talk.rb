@@ -104,8 +104,9 @@ class Talk < ActiveRecord::Base
     where('ends_at > ? AND starts_at < ?', 4.hours.ago, 4.hours.from_now)
   end
 
+  # TODO rewrite to use tag bundles
   scope :uncategorized, -> do
-    tagged_with( ActsAsTaggableOn::Tag.where(category: true).pluck(:name),
+    tagged_with( ActsAsTaggableOn::Tag.where(promoted: true).pluck(:name),
                  exclude: true )
   end
 
