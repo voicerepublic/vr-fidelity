@@ -18,9 +18,9 @@ class Page < ActiveRecord::Base
   # so for know you have to register subclasses here
   TYPES = %w( Pages::Default )
 
-  serialize :title
-  serialize :content
-  serialize :content_as_html
+  serialize :title, JSON
+  serialize :content, JSON
+  serialize :content_as_html, JSON
 
   # create a scope for each type
   TYPES.each do |type|
