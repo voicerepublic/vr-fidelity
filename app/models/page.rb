@@ -41,7 +41,8 @@ class Page < ActiveRecord::Base
   end
 
   def content_fields
-    raise 'class page needs to be subclassed!'
+    {}
+    #raise 'class page needs to be subclassed!'
   end
 
   private
