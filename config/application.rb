@@ -19,6 +19,7 @@ module VoicerepublicBackoffice
 
     config.autoload_paths += %W( #{config.root}/app/jobs
                                  #{config.root}/app/middlewares
+                                 #{config.root}/app/inputs
                                  #{config.root}/lib )
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
