@@ -139,7 +139,7 @@ ActiveAdmin.register User do
       f.input :summary
       f.input :about
       f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies to this user and all future series of this user."
-      f.input :avatar, as: :dragonfly
+      #f.input :avatar, as: :dragonfly
     end
     f.actions
   end

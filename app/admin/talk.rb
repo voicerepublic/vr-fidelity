@@ -260,9 +260,9 @@ ActiveAdmin.register Talk do
       f.input :related_talk_id, as: :string, hint: 'ID of related talk'
       f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies only to this talk."
     end
-    f.inputs 'Image' do
-      f.input :image, as: :dragonfly
-    end
+    #f.inputs 'Image' do
+    #  f.input :image, as: :dragonfly
+    #end
     f.inputs 'Fields dependent on state' do
       f.input :state, input_html: { disabled: true }
       if %w(postlive archived).include? f.object.state
