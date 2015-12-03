@@ -2,14 +2,20 @@ class Page < ActiveRecord::Base
 
   # `title` is special, every type must have it
   TYPE_SECTIONS = {
-    # landing_page: {
-    #   title: :string,
-    #   top_section: :text,
-    #   bottom_section: :text
-    # },
+    home: {
+      title:        :string,
+      top:          :text,
+      listen_pre:   :text,
+      listen_post:  :text,
+      archive_pre:  :text,
+      archive_post: :text,
+      references:   :text,
+      contact:      :text,
+      footer:       :text
+    },
     default: {
-      title: :string,
-      main: :text
+      title:        :string,
+      main:         :text
     }
   }
 
@@ -64,9 +70,11 @@ class Page < ActiveRecord::Base
 
   def populate_missing
     LANGUAGES.each do |locale, language|
-      TYPE_SECTIONS[type.to_sym].each do |key, section_type|
+      section_specs = TYPE_SECTIONS[type.to_sym]
+      raise "Could not find sections for type '#{type}'" if section_specs.nil?
+      section_specs.each do |key, section_type|
         attrs = { locale: locale, key: key, type: section_type }
-        section = sections.find_or_initialize_by(attrs)
+        section = sections.find_or_create_by(attrs)
         # use the initial_title for title fields
         section.content ||= initial_title if key == :title
       end
