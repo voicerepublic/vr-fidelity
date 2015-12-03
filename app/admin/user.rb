@@ -102,6 +102,7 @@ ActiveAdmin.register User do
         raw user.about
       end
       row :referrer
+      row :penalty
     end
 
     panel "Transaction History" do
@@ -137,6 +138,7 @@ ActiveAdmin.register User do
       f.input :paying
       f.input :summary
       f.input :about
+      f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies to this user and all future series of this user."
       f.input :avatar, as: :dragonfly
     end
     f.actions
@@ -149,11 +151,12 @@ ActiveAdmin.register User do
     column :tag_list
     column :paying
     column :featured_from
+    column :penalty
   end
 
   permit_params :firstname, :lastname, :email, :avatar,
                 :retained_avatar, :remove_avatar, :about,
                 :paying, :publisher_type, :featured_from,
-                :tag_list
+                :tag_list, :penalty
 
 end

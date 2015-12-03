@@ -4,6 +4,9 @@ ActiveAdmin.register Series do
 
   actions :all, except: [:destroy]
 
+  permit_params :title, :teaser, :description, :image,
+                :retained_image, :remove_image, :penalty
+
   filter :id
   filter :uri
   filter :slug
@@ -17,9 +20,6 @@ ActiveAdmin.register Series do
       Series.includes(:user)
     end
   end
-
-  permit_params :title, :teaser, :description, :image,
-                :retained_image, :remove_image
 
   index do
     selectable_column
@@ -50,6 +50,7 @@ ActiveAdmin.register Series do
       row :description do
         raw v.description
       end
+      row :penalty
       row :created_at
       row :updated_at
     end
@@ -70,7 +71,7 @@ ActiveAdmin.register Series do
       f.input :title
       f.input :teaser, input_html: { rows: 1 }
       f.input :description
-      #f.input :user
+      f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies to this series and all future talks in this series."
       f.input :image, as: :dragonfly
     end
     f.actions

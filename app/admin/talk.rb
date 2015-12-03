@@ -4,6 +4,28 @@ ActiveAdmin.register Talk do
 
   actions :all, except: [:new, :destroy]
 
+  permit_params %w( title
+                    starts_at
+                    featured_from
+                    duration
+                    venue_id
+                    series_id
+                    language
+                    teaser
+                    description
+                    started_at
+                    ended_at
+                    image
+                    related_talk_id
+                    retained_image
+                    remove_image
+                    tag_list
+                    format
+                    speakers
+                    slides_uuid
+                    penalty
+                    recording_override ).map(&:to_sym)
+
   filter :id
   filter :uri
   filter :slug
@@ -18,13 +40,6 @@ ActiveAdmin.register Talk do
   filter :description
   filter :speakers
   filter :language, as: :select, collection: %w(en de fr it es)
-
-  controller do
-    helper ApplicationHelper
-    def scoped_collection
-      Talk.includes(:series, :venue)
-    end
-  end
 
   # BEGIN CSV Import
   action_item :import, only: :index do
@@ -178,6 +193,7 @@ ActiveAdmin.register Talk do
       row :started_at
       row :format
       row :speakers
+      row :penalty
       if %w(postlive processing archived).include?(talk.state)
         row :ended_at
         row :processed_at
@@ -242,6 +258,7 @@ ActiveAdmin.register Talk do
       f.input :slides_uuid, label: 'Slides',
               hint: 'Paste a URL to import slides, e.g. a dropbox URL. (PDF only!)'
       f.input :related_talk_id, as: :string, hint: 'ID of related talk'
+      f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies only to this talk."
     end
     f.inputs 'Image' do
       f.input :image, as: :dragonfly
@@ -285,25 +302,11 @@ ActiveAdmin.register Talk do
     column :tag_list
   end
 
-  permit_params %w( title
-                    starts_at
-                    featured_from
-                    duration
-                    venue_id
-                    series_id
-                    language
-                    teaser
-                    description
-                    started_at
-                    ended_at
-                    image
-                    related_talk_id
-                    retained_image
-                    remove_image
-                    tag_list
-                    format
-                    speakers
-                    slides_uuid
-                    recording_override ).map(&:to_sym)
+  controller do
+    helper ApplicationHelper
+    def scoped_collection
+      Talk.includes(:series, :venue)
+    end
+  end
 
 end
