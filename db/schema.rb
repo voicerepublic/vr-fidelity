@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151029132313) do
+ActiveRecord::Schema.define(version: 20151203124427) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,6 +107,15 @@ ActiveRecord::Schema.define(version: 20151029132313) do
     t.datetime "created_at"
   end
 
+  create_table "pages", force: :cascade do |t|
+    t.string   "slug"
+    t.string   "type",          default: "default"
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.string   "initial_title"
+    t.text     "content"
+  end
+
   create_table "participations", force: :cascade do |t|
     t.integer  "series_id"
     t.integer  "user_id"
@@ -154,6 +163,21 @@ ActiveRecord::Schema.define(version: 20151029132313) do
   add_index "reminders", ["rememberable_id", "rememberable_type"], name: "index_reminders_on_rememberable_id_and_rememberable_type", using: :btree
   add_index "reminders", ["user_id"], name: "index_reminders_on_user_id", using: :btree
 
+  create_table "sections", force: :cascade do |t|
+    t.integer  "page_id"
+    t.string   "type"
+    t.string   "locale"
+    t.string   "key"
+    t.text     "content"
+    t.text     "content_as_html"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "sections", ["key"], name: "index_sections_on_key", using: :btree
+  add_index "sections", ["locale"], name: "index_sections_on_locale", using: :btree
+  add_index "sections", ["page_id"], name: "index_sections_on_page_id", using: :btree
+
   create_table "series", force: :cascade do |t|
     t.text     "description"
     t.string   "title",               limit: 255
@@ -166,7 +190,8 @@ ActiveRecord::Schema.define(version: 20151029132313) do
     t.string   "uri",                 limit: 255
     t.string   "slug",                limit: 255
     t.float    "penalty",                         default: 1.0
-    t.text     "description_as_html"
+    t.text     "description_as_html",             default: ""
+    t.boolean  "is_hidden",                       default: false
   end
 
   add_index "series", ["slug"], name: "index_series_on_slug", unique: true, using: :btree
@@ -195,6 +220,19 @@ ActiveRecord::Schema.define(version: 20151029132313) do
 
   add_index "social_shares", ["shareable_id", "shareable_type"], name: "index_social_shares_on_shareable_id_and_shareable_type", using: :btree
 
+  create_table "tag_bundles", force: :cascade do |t|
+    t.string   "title_en"
+    t.string   "title_de"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.string   "group"
+    t.text     "description_en"
+    t.text     "description_de"
+    t.boolean  "promoted",       default: false
+  end
+
+  add_index "tag_bundles", ["group"], name: "index_tag_bundles_on_group", using: :btree
+
   create_table "taggings", force: :cascade do |t|
     t.integer  "tag_id"
     t.integer  "taggable_id"
@@ -209,12 +247,12 @@ ActiveRecord::Schema.define(version: 20151029132313) do
 
   create_table "tags", force: :cascade do |t|
     t.string  "name",           limit: 255
-    t.boolean "category",                   default: false
+    t.boolean "promoted",                   default: false
     t.integer "taggings_count",             default: 0
   end
 
-  add_index "tags", ["category"], name: "index_tags_on_category", using: :btree
   add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
+  add_index "tags", ["promoted"], name: "index_tags_on_promoted", using: :btree
   add_index "tags", ["taggings_count"], name: "index_tags_on_taggings_count", using: :btree
 
   create_table "talks", force: :cascade do |t|
@@ -239,7 +277,7 @@ ActiveRecord::Schema.define(version: 20151029132313) do
     t.string   "starts_at_date",      limit: 255
     t.string   "starts_at_time",      limit: 255
     t.string   "uri",                 limit: 255
-    t.text     "recording_override"
+    t.string   "recording_override",  limit: 255
     t.integer  "related_talk_id"
     t.text     "storage",                         default: "--- {}\n"
     t.string   "grade",               limit: 255
@@ -253,10 +291,10 @@ ActiveRecord::Schema.define(version: 20151029132313) do
     t.boolean  "dryrun",                          default: false
     t.text     "social_links",                    default: "--- []"
     t.text     "listeners",                       default: "--- {}"
-    t.string   "slides_uid"
-    t.text     "description_as_html"
+    t.text     "description_as_html",             default: ""
     t.string   "slides_uuid"
     t.integer  "venue_id"
+    t.boolean  "is_hidden",                       default: false
   end
 
   add_index "talks", ["grade"], name: "index_talks_on_grade", using: :btree
@@ -319,9 +357,10 @@ ActiveRecord::Schema.define(version: 20151029132313) do
     t.integer  "credits",                            default: 0
     t.integer  "purchases_count",                    default: 0
     t.string   "referrer"
-    t.text     "about_as_html"
+    t.text     "about_as_html",                      default: ""
     t.boolean  "paying",                             default: false
     t.string   "publisher_type"
+    t.boolean  "is_hidden",                          default: false
     t.datetime "featured_from"
   end
 

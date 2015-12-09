@@ -15,7 +15,8 @@ ActiveAdmin.register TagBundle do
 
   permit_params :title_en, :title_de,
                 :content_en, :content_de,
-                :group, :promoted, :tag_list
+                :group, :promoted, :tag_list,
+                :description_de, :description_en
 
   index do
     selectable_column
