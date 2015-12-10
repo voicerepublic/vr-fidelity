@@ -31,7 +31,11 @@
     %tr
       %td
         %label= t('.payment')
-      %td= f.text_field :payment, value: 0, style: 'width: 50px', type: 'number', step: 10
+      %td= f.text_field :payment, value: 0, style: 'width: 50px', type: 'number'
+    %tr
+      %td
+        %label= t('.comment')
+        %td= f.text_field :comment, placeholder: "Please leave a comment."
     %tr
       %td
       %td= f.submit t('.grant')
