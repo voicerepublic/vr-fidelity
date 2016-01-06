@@ -194,6 +194,9 @@ ActiveAdmin.register Talk do
       row :format
       row :speakers
       row :penalty
+      row :live_listener_count do
+        talk.listeners.size
+      end
       if %w(postlive processing archived).include?(talk.state)
         row :ended_at
         row :processed_at
