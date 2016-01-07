@@ -63,7 +63,7 @@ ActiveAdmin.register TagBundle do
       end      
     end
     # send file to user
-    send_data csv.encode('Windows-1251'), type: 'text/csv; charset=windows-1251; header=present', disposition: "attachment; filename=tag_bundle_report.csv"
+    send_data csv.encode('UTF-8'), type: 'text/csv; charset=utf-8; header=present', disposition: "attachment; filename=tag_bundle_report.csv"
   end
 
   action_item :download_report, only: :show do
