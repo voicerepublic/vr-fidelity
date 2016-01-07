@@ -13,10 +13,10 @@ ActiveAdmin.register TagBundle do
   filter :group
   filter :promoted
 
-  permit_params :title_en, :title_de,
-                :content_en, :content_de,
-                :group, :promoted, :tag_list,
-                :description_de, :description_en
+  permit_params :group, :promoted, :tag_list, :icon,
+                :title_en, :title_de,
+                :description_en, :description_de
+
 
   index do
     selectable_column
@@ -60,7 +60,7 @@ ActiveAdmin.register TagBundle do
 
       talks.each do |talk|
         csv << [ talk.play_count, talk.title, talk.speakers, "https://voicerepublic.com/talk/#{talk.slug}", talk.series.title, talk.user.full_name ]
-      end      
+      end
     end
     # send file to user
     send_data csv.encode('UTF-8'), type: 'text/csv; charset=utf-8; header=present', disposition: "attachment; filename=tag_bundle_report.csv"
