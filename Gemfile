@@ -14,6 +14,7 @@ gem 'delayed_job', '~> 4.0.6'
 gem 'delayed_job_active_record', '~> 4.0.3'
 gem "highcharts-rails", "~> 3.0.0"
 gem 'd3_rails'
+gem 'c3-rails'
 gem 'faye-authentication', github: 'branch14/faye-authentication'
 gem 'devise'
 # sprockets is locked so that it does not update by accident to v3 which will
@@ -35,10 +36,13 @@ gem 'reverse_markdown'
 
 gem 'unicorn'
 gem 'activeadmin', github: 'activeadmin/activeadmin'
-gem 'airbrake'
 gem 'rails_config'
 gem 'activeadmin-dragonfly', github: 'stefanoverna/activeadmin-dragonfly'
 gem 'acts-as-taggable-on'
+
+group :production do
+  gem 'airbrake', '~> 5.0'
+end
 
 group :development do
   gem 'annotator'

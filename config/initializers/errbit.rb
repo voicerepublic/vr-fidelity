@@ -1,6 +1,8 @@
-Airbrake.configure do |config|
-  config.api_key = 'a7c6435a7262e37062be690ef1af398b'
-  config.host    = 'errbit.voicerepublic.com'
-  config.port    = 80
-  config.secure  = config.port == 443
+if Settings.errbit.enabled
+  Airbrake.configure do |config|
+    config.host = Settings.errbit.host
+    config.project_id = true
+    config.project_key = Settings.errbit.api_key
+    config.ignore_environments = %w(development test)
+  end
 end
