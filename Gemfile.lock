@@ -75,9 +75,9 @@ GEM
     acts-as-taggable-on (3.5.0)
       activerecord (>= 3.2, < 5)
     addressable (2.3.8)
-    airbrake (4.1.0)
-      builder
-      multi_json
+    airbrake (5.0.2)
+      airbrake-ruby (~> 1.0)
+    airbrake-ruby (1.0.2)
     annotator (0.0.10)
       activerecord (>= 3.0)
     arbre (1.0.3)
@@ -366,7 +366,7 @@ DEPENDENCIES
   activeadmin!
   activeadmin-dragonfly!
   acts-as-taggable-on
-  airbrake
+  airbrake (~> 5.0)
   annotator
   byebug
   c3-rails
