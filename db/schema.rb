@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151203124427) do
+ActiveRecord::Schema.define(version: 20160121083232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,15 +107,6 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.datetime "created_at"
   end
 
-  create_table "pages", force: :cascade do |t|
-    t.string   "slug"
-    t.string   "type",          default: "default"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.string   "initial_title"
-    t.text     "content"
-  end
-
   create_table "participations", force: :cascade do |t|
     t.integer  "series_id"
     t.integer  "user_id"
@@ -164,19 +155,16 @@ ActiveRecord::Schema.define(version: 20151203124427) do
   add_index "reminders", ["user_id"], name: "index_reminders_on_user_id", using: :btree
 
   create_table "sections", force: :cascade do |t|
-    t.integer  "page_id"
-    t.string   "type"
     t.string   "locale"
     t.string   "key"
     t.text     "content"
-    t.text     "content_as_html"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.text     "content_as_html", default: ""
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
   add_index "sections", ["key"], name: "index_sections_on_key", using: :btree
   add_index "sections", ["locale"], name: "index_sections_on_locale", using: :btree
-  add_index "sections", ["page_id"], name: "index_sections_on_page_id", using: :btree
 
   create_table "series", force: :cascade do |t|
     t.text     "description"
@@ -190,8 +178,7 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.string   "uri",                 limit: 255
     t.string   "slug",                limit: 255
     t.float    "penalty",                         default: 1.0
-    t.text     "description_as_html",             default: ""
-    t.boolean  "is_hidden",                       default: false
+    t.text     "description_as_html"
   end
 
   add_index "series", ["slug"], name: "index_series_on_slug", unique: true, using: :btree
@@ -229,6 +216,7 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.text     "description_en"
     t.text     "description_de"
     t.boolean  "promoted",       default: false
+    t.string   "icon"
   end
 
   add_index "tag_bundles", ["group"], name: "index_tag_bundles_on_group", using: :btree
@@ -277,7 +265,7 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.string   "starts_at_date",      limit: 255
     t.string   "starts_at_time",      limit: 255
     t.string   "uri",                 limit: 255
-    t.string   "recording_override",  limit: 255
+    t.text     "recording_override"
     t.integer  "related_talk_id"
     t.text     "storage",                         default: "--- {}\n"
     t.string   "grade",               limit: 255
@@ -291,10 +279,12 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.boolean  "dryrun",                          default: false
     t.text     "social_links",                    default: "--- []"
     t.text     "listeners",                       default: "--- {}"
-    t.text     "description_as_html",             default: ""
+    t.string   "slides_uid"
+    t.text     "description_as_html"
     t.string   "slides_uuid"
     t.integer  "venue_id"
-    t.boolean  "is_hidden",                       default: false
+    t.string   "icon"
+    t.string   "image_alt"
   end
 
   add_index "talks", ["grade"], name: "index_talks_on_grade", using: :btree
@@ -357,10 +347,9 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.integer  "credits",                            default: 0
     t.integer  "purchases_count",                    default: 0
     t.string   "referrer"
-    t.text     "about_as_html",                      default: ""
+    t.text     "about_as_html"
     t.boolean  "paying",                             default: false
     t.string   "publisher_type"
-    t.boolean  "is_hidden",                          default: false
     t.datetime "featured_from"
   end
 
