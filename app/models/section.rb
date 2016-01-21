@@ -3,7 +3,9 @@ class Section < ActiveRecord::Base
   before_save :set_content_as_html, if: :content_changed?
 
   def self.locales
-    distinct(:locale).pluck(:locale)
+    # ActiveAdmin will puke its guts out when you do this...
+    # distinct(:locale).pluck(:locale)
+    %w(en de)
   end
 
   private
