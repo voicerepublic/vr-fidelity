@@ -2,7 +2,9 @@ class Section < ActiveRecord::Base
 
   before_save :set_content_as_html, if: :content_changed?
 
-  scope :locales, -> { distinct(:locale).pluck(:locale) }
+  def self.locales
+    distinct(:locale).pluck(:locale)
+  end
 
   private
 
