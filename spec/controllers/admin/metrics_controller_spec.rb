@@ -13,9 +13,4 @@ RSpec.describe Admin::MetricsController, type: :controller do
     expect(response).to be_a_success
   end
 
-  it 'responds nicely' do
-    metric = create(:metric)
-    get :show, id: metric.id
-    expect(response).to be_a_success
-  end
 end

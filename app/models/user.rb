@@ -30,8 +30,6 @@
 # * website [string] - TODO: document me
 class User < ActiveRecord::Base
 
-  PUBLISHER_TYPES = I18n.t('user_publisher_types')
-
   acts_as_taggable
 
   has_many :series
@@ -40,10 +38,6 @@ class User < ActiveRecord::Base
 
   scope :featured, -> { where.not(featured_from: nil) }
   scope :paying, -> { where(paying: true) }
-
-  PUBLISHER_TYPES.each do |key, value|
-    scope key.to_sym, -> { where(publisher_type: key) }
-  end
 
   image_accessor :avatar
 
