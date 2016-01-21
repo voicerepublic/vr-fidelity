@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160121101631) do
+ActiveRecord::Schema.define(version: 20160121145313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -178,7 +178,7 @@ ActiveRecord::Schema.define(version: 20160121101631) do
     t.string   "uri",                 limit: 255
     t.string   "slug",                limit: 255
     t.float    "penalty",                         default: 1.0
-    t.text     "description_as_html"
+    t.text     "description_as_html",             default: ""
     t.string   "image_alt",                       default: ""
   end
 
@@ -254,35 +254,35 @@ ActiveRecord::Schema.define(version: 20160121101631) do
     t.datetime "updated_at"
     t.string   "teaser",              limit: 255
     t.text     "description"
-    t.integer  "duration",                        default: 30
+    t.integer  "duration",                         default: 30
     t.string   "image_uid",           limit: 255
     t.text     "session"
     t.datetime "featured_from"
     t.string   "state",               limit: 255
     t.datetime "started_at"
     t.datetime "processed_at"
-    t.integer  "play_count",                      default: 0
+    t.integer  "play_count",                       default: 0
     t.string   "starts_at_date",      limit: 255
     t.string   "starts_at_time",      limit: 255
     t.string   "uri",                 limit: 255
-    t.text     "recording_override"
+    t.string   "recording_override",  limit: 1024
     t.integer  "related_talk_id"
-    t.text     "storage",                         default: "--- {}\n"
-    t.string   "language",            limit: 255, default: "en"
+    t.text     "storage",                          default: "--- {}\n"
+    t.string   "language",            limit: 255,  default: "en"
     t.string   "slug",                limit: 255
     t.string   "speakers",            limit: 255
     t.string   "user_override_uuid",  limit: 255
     t.text     "edit_config"
-    t.float    "popularity",                      default: 1.0
-    t.float    "penalty",                         default: 1.0
-    t.boolean  "dryrun",                          default: false
-    t.text     "social_links",                    default: "--- []"
-    t.text     "listeners",                       default: "--- {}"
+    t.float    "popularity",                       default: 1.0
+    t.float    "penalty",                          default: 1.0
+    t.boolean  "dryrun",                           default: false
+    t.text     "social_links",                     default: "--- []"
+    t.text     "listeners",                        default: "--- {}"
     t.string   "slides_uid"
-    t.text     "description_as_html"
-    t.string   "slides_uuid"
+    t.text     "description_as_html",              default: ""
+    t.string   "slides_uuid",         limit: 1024
     t.integer  "venue_id"
-    t.string   "icon"
+    t.string   "icon",                             default: "default"
     t.string   "image_alt"
   end
 
@@ -344,7 +344,7 @@ ActiveRecord::Schema.define(version: 20160121101631) do
     t.integer  "credits",                            default: 0
     t.integer  "purchases_count",                    default: 0
     t.string   "referrer"
-    t.text     "about_as_html"
+    t.text     "about_as_html",                      default: ""
     t.boolean  "paying",                             default: false
     t.datetime "featured_from"
     t.datetime "featured_until"
