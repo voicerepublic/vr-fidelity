@@ -8,3 +8,5 @@ faye:
 limit:
   text: 2300
   string: 140
+errbit:
+  enabled: false

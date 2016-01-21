@@ -75,9 +75,9 @@ GEM
     acts-as-taggable-on (3.5.0)
       activerecord (>= 3.2, < 5)
     addressable (2.3.8)
-    airbrake (4.1.0)
-      builder
-      multi_json
+    airbrake (5.0.2)
+      airbrake-ruby (~> 1.0)
+    airbrake-ruby (1.0.2)
     annotator (0.0.10)
       activerecord (>= 3.0)
     arbre (1.0.3)
@@ -92,6 +92,7 @@ GEM
     builder (3.2.2)
     byebug (4.0.5)
       columnize (= 0.9.0)
+    c3-rails (0.4.10)
     capistrano (3.1.0)
       i18n
       rake (>= 10.0.0)
@@ -365,9 +366,10 @@ DEPENDENCIES
   activeadmin!
   activeadmin-dragonfly!
   acts-as-taggable-on
-  airbrake
+  airbrake (~> 5.0)
   annotator
   byebug
+  c3-rails
   capistrano (~> 3.1.0)
   capistrano-bundler (~> 1.1.1)
   capistrano-rails (~> 1.1.1)

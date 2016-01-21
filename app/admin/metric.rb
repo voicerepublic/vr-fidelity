@@ -2,36 +2,20 @@ ActiveAdmin.register Metric do
 
   menu priority: 22
 
-  # make ApplicationHelper reload properly
-  #
-  # see https://github.com/activeadmin/activeadmin/issues/697
-  #
-  controller { helper ApplicationHelper }
-
-  actions :index, :show
+  actions :index
 
   config.batch_actions = false
   config.filters = false
+  config.paginate = false
 
-  index as: :grid, columns: 5 do |metric|
-    div m(metric), class: 'panel figure'
-  end
-
-  # make show render partial app/views/admin/metrics/_show
-  show do
-    render 'show'
-  end
+  index as: ActiveAdmin::Views::IndexAsGraph
 
   controller do
-    # this resource is actually a collection
-    def resource
-      Metric.where(key: params[:id]).order('created_at DESC').limit(90)
-    end
-
-    # only fetch the latest metrics
+    # fetch all datapoints not older than 1 month
     def scoped_collection
-      max_created_at = Metric.maximum(:created_at)
-      Metric.where('created_at > ?', max_created_at - 2.hours)
+      metrics = Metric.where('created_at > ?', 1.month.ago)
+      metrics = Metric.all if metrics.empty? # for development
+      metrics
     end
   end
 
