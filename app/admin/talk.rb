@@ -16,6 +16,7 @@ ActiveAdmin.register Talk do
                     started_at
                     ended_at
                     image
+                    image_alt
                     related_talk_id
                     retained_image
                     remove_image
@@ -262,6 +263,7 @@ ActiveAdmin.register Talk do
               hint: 'Paste a URL to import slides, e.g. a dropbox URL. (PDF only!)'
       f.input :related_talk_id, as: :string, hint: 'ID of related talk'
       f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies only to this talk."
+      f.input :image_alt
     end
     #f.inputs 'Image' do
     #  f.input :image, as: :dragonfly
