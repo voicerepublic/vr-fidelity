@@ -1,6 +1,6 @@
 ActiveAdmin.register Metric do
 
-  menu priority: 22
+  menu priority: 23
 
   # make ApplicationHelper reload properly
   #
