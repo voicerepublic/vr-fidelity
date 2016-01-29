@@ -162,7 +162,7 @@ class Talk < ActiveRecord::Base
 
   def set_venue
     self.venue_name = venue_name.to_s.strip
-    return if venue_name.blank? and venue?
+    return if venue_name.blank? and venue.present?
     self.venue_name = 'Default venue' if venue_name.blank?
     self.venue = user.venues.find_or_create_by(name: venue_name)
   end
