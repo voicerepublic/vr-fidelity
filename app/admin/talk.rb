@@ -162,15 +162,24 @@ ActiveAdmin.register Talk do
             tag.name
           end
           td do
-            bundles = TagBundle.tagged_with(tag.name, any: true).map do |b|
-              link_to b.title_en, admin_tag_bundle_path(b)
+            bundles = TagBundle.category.tagged_with(tag.name, any: true).map do |b|
+              link_to(b.title_en, [:admin, b])
             end
-            bundles.empty? ? '(none)' : bundles.join(', ')
+            bundles.empty? ? '(none)' : bundles.join(', ').html_safe
           end
         end
       end
     end
-    div "Icon: #{talk.icon}"
+    div do
+      span 'Current Icon: '
+      b talk.icon
+    end
+    if talk.icon != (future = talk.send(:set_icon))
+      div do
+        span 'Future Icon: '
+        b future
+      end
+    end
   end
 
   show do

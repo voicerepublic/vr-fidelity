@@ -73,6 +73,7 @@ class Talk < ActiveRecord::Base
   validate :related_talk_id_is_talk?, on: :update
 
   before_save :set_venue
+  before_save :set_icon, if: :tag_list_changed?
   after_save :generate_flyer!, if: :generate_flyer?
   after_save :schedule_processing_override, if: :process_override?
   after_save :schedule_processing_slides, if: :process_slides?
@@ -159,6 +160,14 @@ class Talk < ActiveRecord::Base
   end
 
   private
+
+  def set_icon
+    bundles = TagBundle.category.tagged_with(tags, any: true)
+    icon = bundles.group(:icon).count.
+           sort_by(&:last).reverse.
+           map(&:first).compact.first
+    self.icon = icon || 'default'
+  end
 
   def set_venue
     self.venue_name = venue_name.to_s.strip
