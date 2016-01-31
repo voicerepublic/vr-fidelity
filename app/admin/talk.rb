@@ -150,6 +150,29 @@ ActiveAdmin.register Talk do
     end
   end
 
+  sidebar 'Tags, TagBundles & Icon', only: :show do
+    table do
+      tr do
+        th 'Tag'
+        th 'Bundles'
+      end
+      talk.tags.each do |tag|
+        tr do
+          td do
+            tag.name
+          end
+          td do
+            bundles = TagBundle.tagged_with(tag.name, any: true).map do |b|
+              link_to bundle.title_en, admin_bundle_path(b)
+            end
+            bundles.empty? ? '(none)' : bundles.join(', ')
+          end
+        end
+      end
+    end
+    div "Icon: #{talk.icon}"
+  end
+
   show do
     if %w(postlive processing archived).include?(talk.state)
       div id: 'visual' do
@@ -170,7 +193,6 @@ ActiveAdmin.register Talk do
          link_to('&#10148; Public'.html_safe,
                  public_url(talk), target: '_blank')).html_safe
       end
-      row :tag_list
       row :state
       row :featured_from
       row :starts_at
