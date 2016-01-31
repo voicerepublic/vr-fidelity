@@ -163,7 +163,7 @@ ActiveAdmin.register Talk do
           end
           td do
             bundles = TagBundle.tagged_with(tag.name, any: true).map do |b|
-              link_to bundle.title_en, admin_bundle_path(b)
+              link_to b.title_en, admin_bundle_path(b)
             end
             bundles.empty? ? '(none)' : bundles.join(', ')
           end
