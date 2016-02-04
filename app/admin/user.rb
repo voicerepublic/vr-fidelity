@@ -159,6 +159,6 @@ ActiveAdmin.register User do
   permit_params :firstname, :lastname, :email, :avatar,
                 :retained_avatar, :remove_avatar, :about,
                 :paying, :featured_from, :featured_until,
-                :tag_list, :penalty, :image_alt
+                :tag_list, :penalty, :image_alt, :summary
 
 end
