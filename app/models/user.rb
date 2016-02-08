@@ -36,6 +36,8 @@ class User < ActiveRecord::Base
   has_many :venues
   has_many :purchases, foreign_key: :owner_id
 
+  before_save :set_about_as_html, if: :about_changed?
+
   scope :featured, -> { where.not(featured_from: nil) }
   scope :paying, -> { where(paying: true) }
 
@@ -43,6 +45,10 @@ class User < ActiveRecord::Base
 
   def full_name
     [firstname, lastname].compact * ' '
+  end
+
+  def set_about_as_html
+    self.about_as_html = MARKDOWN.render(about)
   end
 
 end
