@@ -130,3 +130,10 @@ html, body {
 #footer {
   display: none;
 }
+#title_bar .action_items span.action_item > a:not(.disabled):hover, #title_bar .action_items span.action_item > .dropdown_menu > a:not(.disabled):hover {
+background-color: red;
+color: white;
+box-shadow: none;
+text-shadow: none;
+border: none;
+}
