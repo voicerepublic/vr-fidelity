@@ -1,17 +1,11 @@
 class Section < ActiveRecord::Base
 
-  self.inheritance_column = :_sti_disabled
-
-  belongs_to :page
-
   before_save :set_content_as_html, if: :content_changed?
 
-  def label
-    "#{key} (#{Page::LANGUAGES[locale.to_sym]})"
-  end
-
-  def input_options
-    { label: label, as: type }
+  def self.locales
+    # ActiveAdmin will puke its guts out when you do this...
+    # distinct(:locale).pluck(:locale)
+    %w(en de)
   end
 
   private

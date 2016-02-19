@@ -26,6 +26,7 @@ $skinLogo: image-url("logo.png") no-repeat 10px 2px;
 @import 'jquery-ui/datepicker';
 @import 'jquery-ui/slider';
 @import 'jquery-ui-timepicker-addon';
+@import 'c3';
 
 .dropdown_menu {
     float: left;

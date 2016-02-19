@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151203124427) do
+ActiveRecord::Schema.define(version: 20160121145313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,15 +107,6 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.datetime "created_at"
   end
 
-  create_table "pages", force: :cascade do |t|
-    t.string   "slug"
-    t.string   "type",          default: "default"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.string   "initial_title"
-    t.text     "content"
-  end
-
   create_table "participations", force: :cascade do |t|
     t.integer  "series_id"
     t.integer  "user_id"
@@ -164,19 +155,16 @@ ActiveRecord::Schema.define(version: 20151203124427) do
   add_index "reminders", ["user_id"], name: "index_reminders_on_user_id", using: :btree
 
   create_table "sections", force: :cascade do |t|
-    t.integer  "page_id"
-    t.string   "type"
     t.string   "locale"
     t.string   "key"
     t.text     "content"
-    t.text     "content_as_html"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.text     "content_as_html", default: ""
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
   add_index "sections", ["key"], name: "index_sections_on_key", using: :btree
   add_index "sections", ["locale"], name: "index_sections_on_locale", using: :btree
-  add_index "sections", ["page_id"], name: "index_sections_on_page_id", using: :btree
 
   create_table "series", force: :cascade do |t|
     t.text     "description"
@@ -191,7 +179,7 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.string   "slug",                limit: 255
     t.float    "penalty",                         default: 1.0
     t.text     "description_as_html",             default: ""
-    t.boolean  "is_hidden",                       default: false
+    t.string   "image_alt",                       default: ""
   end
 
   add_index "series", ["slug"], name: "index_series_on_slug", unique: true, using: :btree
@@ -229,6 +217,7 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.text     "description_en"
     t.text     "description_de"
     t.boolean  "promoted",       default: false
+    t.string   "icon"
   end
 
   add_index "tag_bundles", ["group"], name: "index_tag_bundles_on_group", using: :btree
@@ -261,43 +250,42 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.datetime "starts_at"
     t.datetime "ends_at"
     t.datetime "ended_at"
-    t.boolean  "collect",                         default: true
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "teaser",              limit: 255
     t.text     "description"
-    t.integer  "duration",                        default: 30
+    t.integer  "duration",                         default: 30
     t.string   "image_uid",           limit: 255
     t.text     "session"
     t.datetime "featured_from"
     t.string   "state",               limit: 255
     t.datetime "started_at"
     t.datetime "processed_at"
-    t.integer  "play_count",                      default: 0
+    t.integer  "play_count",                       default: 0
     t.string   "starts_at_date",      limit: 255
     t.string   "starts_at_time",      limit: 255
     t.string   "uri",                 limit: 255
-    t.string   "recording_override",  limit: 255
+    t.string   "recording_override",  limit: 1024
     t.integer  "related_talk_id"
-    t.text     "storage",                         default: "--- {}\n"
-    t.string   "grade",               limit: 255
-    t.string   "language",            limit: 255, default: "en"
+    t.text     "storage",                          default: "--- {}\n"
+    t.string   "language",            limit: 255,  default: "en"
     t.string   "slug",                limit: 255
     t.string   "speakers",            limit: 255
     t.string   "user_override_uuid",  limit: 255
     t.text     "edit_config"
-    t.float    "popularity",                      default: 1.0
-    t.float    "penalty",                         default: 1.0
-    t.boolean  "dryrun",                          default: false
-    t.text     "social_links",                    default: "--- []"
-    t.text     "listeners",                       default: "--- {}"
-    t.text     "description_as_html",             default: ""
-    t.string   "slides_uuid"
+    t.float    "popularity",                       default: 1.0
+    t.float    "penalty",                          default: 1.0
+    t.boolean  "dryrun",                           default: false
+    t.text     "social_links",                     default: "--- []"
+    t.text     "listeners",                        default: "--- {}"
+    t.string   "slides_uid"
+    t.text     "description_as_html",              default: ""
+    t.string   "slides_uuid",         limit: 1024
     t.integer  "venue_id"
-    t.boolean  "is_hidden",                       default: false
+    t.string   "icon",                             default: "default"
+    t.string   "image_alt"
   end
 
-  add_index "talks", ["grade"], name: "index_talks_on_grade", using: :btree
   add_index "talks", ["popularity"], name: "index_talks_on_popularity", using: :btree
   add_index "talks", ["slug"], name: "index_talks_on_slug", unique: true, using: :btree
   add_index "talks", ["uri"], name: "index_talks_on_uri", using: :btree
@@ -345,7 +333,6 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.text     "about",                              default: ""
     t.string   "timezone",               limit: 255
     t.string   "website",                limit: 255
-    t.boolean  "conference"
     t.string   "authentication_token",   limit: 255
     t.integer  "default_series_id"
     t.string   "summary",                limit: 255
@@ -359,9 +346,9 @@ ActiveRecord::Schema.define(version: 20151203124427) do
     t.string   "referrer"
     t.text     "about_as_html",                      default: ""
     t.boolean  "paying",                             default: false
-    t.string   "publisher_type"
-    t.boolean  "is_hidden",                          default: false
     t.datetime "featured_from"
+    t.datetime "featured_until"
+    t.string   "image_alt",                          default: ""
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree

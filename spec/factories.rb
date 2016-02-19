@@ -46,7 +46,6 @@ FactoryGirl.define do
     starts_at_time 1.hour.from_now.strftime('%H:%M')
     starts_at_date 1.hour.from_now.strftime('%Y-%m-%d')
     duration 60
-    collect false
     tag_list 'lorem, ipsum, dolor'
     description 'Some talk description'
     language 'en'

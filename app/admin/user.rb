@@ -22,10 +22,6 @@ ActiveAdmin.register User do
   scope :paying
   scope :featured
 
-  User::PUBLISHER_TYPES.each do |key, value|
-    scope value, key
-  end
-
   filter :id
   filter :uid
   filter :slug
@@ -33,11 +29,10 @@ ActiveAdmin.register User do
   filter :lastname
   filter :email
   filter :featured_from
-  # filter :publisher_type, as: :select, collection: User::PUBLISHER_TYPES.invert
+  filter :featured_until
   filter :paying
   filter :provider
   filter :timezone
-  filter :conference
   filter :credits
   filter :referrer
 
@@ -52,8 +47,10 @@ ActiveAdmin.register User do
         l talk.featured_from, format: :iso unless talk.featured_from.nil?
       end
     end
-    column :publisher_type do |user|
-      User::PUBLISHER_TYPES[user.publisher_type.try(:to_sym)]
+    column :featured_until, sortable: :featured_until do |talk|
+      span style: 'white-space: pre' do
+        l talk.featured_until, format: :iso unless talk.featured_until.nil?
+      end
     end
     column :paying
     column 'Series' do |user|
@@ -89,9 +86,7 @@ ActiveAdmin.register User do
       row :tag_list
       row :email
       row :featured_from
-      row :publisher_type do
-        User::PUBLISHER_TYPES[user.publisher_type.try(:to_sym)]
-      end
+      row :featured_until
       row :paying
       row :timezone
       row :credits
@@ -134,12 +129,18 @@ ActiveAdmin.register User do
                 value: f.object.featured_from &&
                 f.object.featured_from.strftime("%Y-%m-%d %H:%M:%S")
               }
-      f.input :publisher_type, as: :select, collection: User::PUBLISHER_TYPES.invert
+      f.input :featured_until, as: :string,
+              input_html: {
+                class: 'picker',
+                value: f.object.featured_until &&
+                f.object.featured_until.strftime("%Y-%m-%d %H:%M:%S")
+              }
       f.input :paying
       f.input :summary
       f.input :about
       f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies to this user and all future series of this user."
       #f.input :avatar, as: :dragonfly
+      f.input :image_alt
     end
     f.actions
   end
@@ -151,12 +152,13 @@ ActiveAdmin.register User do
     column :tag_list
     column :paying
     column :featured_from
+    column :featured_until
     column :penalty
   end
 
   permit_params :firstname, :lastname, :email, :avatar,
                 :retained_avatar, :remove_avatar, :about,
-                :paying, :publisher_type, :featured_from,
-                :tag_list, :penalty
+                :paying, :featured_from, :featured_until,
+                :tag_list, :penalty, :image_alt, :summary
 
 end

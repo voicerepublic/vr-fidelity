@@ -59,7 +59,7 @@ ActiveAdmin.register TagBundle do
       csv << [ "play_count", "title", "speaker", "link", "series", "user" ]
 
       talks.each do |talk|
-        csv << [ talk.play_count, talk.title, talk.speakers, "https://voicerepublic.com/talk/#{talk.slug}", talk.series.title, talk.user.full_name ]
+        csv << [ talk.play_count, talk.title, talk.speakers, "https://voicerepublic.com/talks/#{talk.slug}", talk.series.title, talk.user.full_name ]
       end
     end
     # send file to user

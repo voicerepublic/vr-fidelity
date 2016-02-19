@@ -16,6 +16,7 @@ ActiveAdmin.register Talk do
                     started_at
                     ended_at
                     image
+                    image_alt
                     related_talk_id
                     retained_image
                     remove_image
@@ -149,6 +150,38 @@ ActiveAdmin.register Talk do
     end
   end
 
+  sidebar 'Tags, TagBundles & Icon', only: :show do
+    table do
+      tr do
+        th 'Tag'
+        th 'Bundles'
+      end
+      talk.tags.each do |tag|
+        tr do
+          td do
+            tag.name
+          end
+          td do
+            bundles = TagBundle.category.tagged_with(tag.name, any: true).map do |b|
+              link_to(b.title_en, [:admin, b])
+            end
+            bundles.empty? ? '(none)' : bundles.join(', ').html_safe
+          end
+        end
+      end
+    end
+    div do
+      span 'Current Icon: '
+      b talk.icon
+    end
+    if talk.icon != (future = talk.send(:set_icon))
+      div do
+        span 'Future Icon: '
+        b future
+      end
+    end
+  end
+
   show do
     if %w(postlive processing archived).include?(talk.state)
       div id: 'visual' do
@@ -169,7 +202,6 @@ ActiveAdmin.register Talk do
          link_to('&#10148; Public'.html_safe,
                  public_url(talk), target: '_blank')).html_safe
       end
-      row :tag_list
       row :state
       row :featured_from
       row :starts_at
@@ -262,6 +294,7 @@ ActiveAdmin.register Talk do
               hint: 'Paste a URL to import slides, e.g. a dropbox URL. (PDF only!)'
       f.input :related_talk_id, as: :string, hint: 'ID of related talk'
       f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies only to this talk."
+      f.input :image_alt
     end
     #f.inputs 'Image' do
     #  f.input :image, as: :dragonfly
