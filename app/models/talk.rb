@@ -162,7 +162,7 @@ class Talk < ActiveRecord::Base
   private
 
   def set_icon
-    bundles = TagBundle.category.tagged_with(tags, any: true)
+    bundles = TagBundle.category.tagged_with(tag_list, any: true)
     unless bundles.empty?
       icons = bundles.map { |b| [b.icon, (b.tag_list & tag_list).size] }
       icon = icons.sort_by(&:last).last.first
