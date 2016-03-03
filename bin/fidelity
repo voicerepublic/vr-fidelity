@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'logger'
-
 begin
   require File.expand_path(File.join(%w(.. .. lib fidelity)), __FILE__)
   Fidelity::Exec.run(ARGV)
