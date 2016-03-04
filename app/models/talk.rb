@@ -77,6 +77,7 @@ class Talk < ActiveRecord::Base
   after_save :generate_flyer!, if: :generate_flyer?
   after_save :schedule_processing_override, if: :process_override?
   after_save :schedule_processing_slides, if: :process_slides?
+  after_save :schedule_forward, if: :schedule_forward?
 
   validate :series_id do
     begin
@@ -204,6 +205,14 @@ class Talk < ActiveRecord::Base
 
   def schedule_processing_slides
     Delayed::Job.enqueue ProcessSlides.new(id: id), queue: 'audio'
+  end
+
+  def schedule_forward?
+    forward_url_changed? and forward_url.present?
+  end
+
+  def schedule_forward
+    Delayed::Job.enqueue Forward.new(id: id), queue: 'trigger'
   end
 
   def related_talk_id_is_talk?
