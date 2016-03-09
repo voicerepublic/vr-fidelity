@@ -114,6 +114,16 @@ ActiveAdmin.register User do
       end
     end
 
+    panel "User's Venues" do
+      ul do
+        user.venues.each do |venue|
+          li do
+            link_to venue.name, [:admin, venue]
+          end
+        end
+      end
+    end
+
     active_admin_comments
   end
 
