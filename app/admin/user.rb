@@ -146,6 +146,8 @@ ActiveAdmin.register User do
   end
 
   csv do
+    column :id
+    column :slug
     column :firstname
     column :lastname
     column :email
@@ -154,6 +156,9 @@ ActiveAdmin.register User do
     column :featured_from
     column :featured_until
     column :penalty
+    column :credits
+    column :sign_in_count
+    column :last_request_at
   end
 
   permit_params :firstname, :lastname, :email, :avatar,
