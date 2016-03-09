@@ -106,11 +106,7 @@ class Talk < ActiveRecord::Base
     where('ends_at > ? AND starts_at < ?', 4.hours.ago, 4.hours.from_now)
   end
 
-  # TODO rewrite to use tag bundles
-  scope :uncategorized, -> do
-    tagged_with( ActsAsTaggableOn::Tag.where(promoted: true).pluck(:name),
-                 exclude: true )
-  end
+  scope :uncategorized, -> { where(icon: 'default') }
 
   def effective_duration # in seconds
     ended_at - started_at
