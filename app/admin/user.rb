@@ -35,6 +35,7 @@ ActiveAdmin.register User do
   filter :timezone
   filter :credits
   filter :referrer
+  filter :contact_email
 
   index do
     selectable_column
@@ -98,6 +99,7 @@ ActiveAdmin.register User do
       end
       row :referrer
       row :penalty
+      row :contact_email
     end
 
     panel "Transaction History" do
@@ -151,6 +153,7 @@ ActiveAdmin.register User do
       f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies to this user and all future series of this user."
       #f.input :avatar, as: :dragonfly
       f.input :image_alt
+      f.input :contact_email
     end
     f.actions
   end
@@ -169,11 +172,13 @@ ActiveAdmin.register User do
     column :credits
     column :sign_in_count
     column :last_request_at
+    column :contact_email
   end
 
   permit_params :firstname, :lastname, :email, :avatar,
                 :retained_avatar, :remove_avatar, :about,
                 :paying, :featured_from, :featured_until,
-                :tag_list, :penalty, :image_alt, :summary
+                :tag_list, :penalty, :image_alt, :summary,
+                :contact_email
 
 end

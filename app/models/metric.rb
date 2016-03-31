@@ -33,6 +33,7 @@ class Metric < ActiveRecord::Base
         name: [user.firstname, user.lastname] * ' ',
         slug: user.slug,
         email: user.email,
+        contact_email: user.contact_email,
         series_count: user.series.count,
         series: {}
       }
