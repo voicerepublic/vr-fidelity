@@ -64,7 +64,7 @@ class Metric < ActiveRecord::Base
         user_play_count += serie_play_count
       end
       if tree[user.id][:play_count] = user_play_count
-        users << [user_play_count, user.slug, user.firstname, user.lastname, user.email]
+        users << [user_play_count, user.slug, user.firstname, user.lastname, user.email, user.contact_email ]
       end
     end
 
