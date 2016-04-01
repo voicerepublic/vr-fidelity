@@ -48,13 +48,21 @@ ActiveAdmin.register Device do
       row :disappeared_at
       row :paired_at
     end
-    # panel 'REPL' do
-    #   div id: 'repl' do
-    #     div id: 'log'
-    #     input id: 'code'
-    #   end
-    # end
+    # TODO show only in online states
+    panel 'REPL' do
+      div id: 'repl' do
+        div id: 'log' do
+          div id: 'bottom'
+        end
+        input id: 'code'
+      end
+    end
     active_admin_comments
+    script src: Settings.faye.server + '/client.js'
+    script do
+      "fayeUrl = '#{Settings.faye.server}';
+       device = #{device.attributes.to_json}".html_safe
+    end
   end
 
   form do |f|
