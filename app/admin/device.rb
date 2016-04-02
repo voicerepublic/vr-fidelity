@@ -57,6 +57,11 @@ ActiveAdmin.register Device do
         input id: 'code'
       end
     end
+    panel 'Status' do
+      div id: 'report' do
+        'Awaiting report...'
+      end
+    end
     active_admin_comments
     script src: Settings.faye.server + '/client.js'
     script do

@@ -6,13 +6,16 @@ $ ->
   faye = new Faye.Client(fayeUrl)
   faye.addExtension(new FayeAuthentication(faye))
 
+  $('#log').click ->
+    $('#code').focus()
+
   channel = "/device/#{device.identifier}"
 
   log = $('#log')
   bottom = $('#bottom')
 
   append = (text) ->
-    bottom.before("<div>#{text}</div>")
+    bottom.before($("<div>").text(text))
     log.scrollTop(log[0].scrollHeight)
 
   $('#code').keyup (event) ->
@@ -25,7 +28,16 @@ $ ->
       $('#code').val ''
 
   faye.subscribe channel, (message) ->
-    if message.event in ['eval', 'print']
-      append message[message.event]
+    event = message.event
 
-  append("REPL -> #{channel} (#{device.name})")
+    if event in ['eval', 'print']
+      append message[event]
+
+    if event is 'heartbeat'
+      $('tr.row-last_heartbeat_at td').html(new Date)
+
+    if event is 'report'
+      $('#report').text(JSON.stringify(message.report))
+
+  append("Connecting to #{channel}...")
+  faye.publish channel, event: 'handshake'
