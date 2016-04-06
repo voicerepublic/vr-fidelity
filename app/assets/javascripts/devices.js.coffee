@@ -33,11 +33,13 @@ $ ->
     if event in ['eval', 'print']
       append message[event]
 
-    if event is 'heartbeat'
+  faye.subscribe '/heartbeat', (message) ->
+    if message.identifier == device.identifier
       $('tr.row-last_heartbeat_at td').html(new Date)
 
-    if event is 'report'
-      $('#report').text(JSON.stringify(message.report))
+  faye.subscribe '/report', (message) ->
+    if message.identifier == device.identifier
+      $('#report').append("<div>#{JSON.stringify(message.report)}</div>")
 
   append("Connecting to #{channel}...")
   faye.publish channel, event: 'handshake'
