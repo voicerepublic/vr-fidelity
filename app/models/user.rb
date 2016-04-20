@@ -41,6 +41,8 @@ class User < ActiveRecord::Base
   scope :featured, -> { where.not(featured_from: nil) }
   scope :paying, -> { where(paying: true) }
 
+  scope :ordered, -> { order('firstname, lastname') }
+
   image_accessor :avatar
 
   def full_name

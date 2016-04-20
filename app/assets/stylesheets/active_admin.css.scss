@@ -138,3 +138,35 @@ box-shadow: none;
 text-shadow: none;
 border: none;
 }
+
+#repl {
+    background-color: black;
+    margin: 0 0 10px;
+    height: 200px;
+    #log, input#code {
+        background-color: black;
+        color: lightgrey;
+        font-family: monospace;
+        font-weight: bold;
+        font-size: 13px;
+    }
+    #log {
+        height: 100%;
+        overflow-y: scroll;
+    }
+    input#code {
+        margin: 0;
+        padding: 0;
+        border: none;
+        width: 100%;
+    }
+    input#code:focus{
+        outline: none;
+    }
+}
+
+.terminal {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 13px;
+}

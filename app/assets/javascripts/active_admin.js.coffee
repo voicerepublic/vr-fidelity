@@ -10,6 +10,7 @@
 #= require c3
 #= require faye-authentication
 #= require talks
+#= require devices
 #
 #= require dashboard/array
 #= require dashboard/provider
