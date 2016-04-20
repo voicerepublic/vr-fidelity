@@ -10,3 +10,6 @@ limit:
   string: 140
 errbit:
   enabled: false
+  api_key: 'this will be set on the stages in app/shared/config/settings.local.yml'
+  environment: 'development'
+  
