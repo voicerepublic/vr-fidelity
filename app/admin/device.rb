@@ -88,7 +88,7 @@ ActiveAdmin.register Device do
     after_action :propagate_restart, only: :update
 
     def propagate_restart
-      Faye.publish "/device/#{resource.identifier}", event: 'exit'
+      Faye.publish_to "/device/#{resource.identifier}", event: 'exit'
     end
   end
 
