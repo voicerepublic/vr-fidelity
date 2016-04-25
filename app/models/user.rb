@@ -56,7 +56,11 @@ class User < ActiveRecord::Base
 
   def tweetplan
     talks.prelive.map do |talk|
-      [talk.self_url, talk.title, talk.speakers, talk.social_links * ", "]
+      [ talk.start_at,
+        talk.self_url,
+        talk.title,
+        talk.speakers,
+        talk.social_links * ", " ]
     end
   end
 
