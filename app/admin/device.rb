@@ -18,7 +18,8 @@ ActiveAdmin.register Device do
                     target
                     loglevel
                     report_interval
-                    heartbeat_interval ).map(&:to_sym)
+                    heartbeat_interval
+                    options ).map(&:to_sym)
 
   # sidebar :actions, only: :show do
   #   button t('.shutdown')
