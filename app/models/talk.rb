@@ -24,6 +24,8 @@
 # * series_id [integer] - belongs to :series
 class Talk < ActiveRecord::Base
 
+  include ApplicationHelper
+
   extend ::CsvImport
 
   STATES = %w( pending prelive live postlive processing archived suspended )
@@ -154,6 +156,10 @@ class Talk < ActiveRecord::Base
   def html2md(field)
     return if !self[field].match(/<[a-z][\s\S]*>/)
     self[field] = ReverseMarkdown.convert(self[field])
+  end
+
+  def self_url
+    public_url(self, Settings.site_root)
   end
 
   private

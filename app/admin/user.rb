@@ -7,6 +7,20 @@ ActiveAdmin.register User do
   actions :all, except: [:destroy]
 
   action_item only: :show do
+    link_to t('.tweetplan'), tweetplan_admin_user_path(user)
+  end
+
+  member_action :tweetplan, method: :get do
+    name = "%Y-%m-%d-%H%M_tweetplan_#{resource.slug}.csv"
+    output = CSV.generate do |csv|
+      resource.tweetplan.each do |row|
+        csv << row
+      end
+    end
+    send_data output, filename: Time.now.strftime(name)
+  end
+
+  action_item only: :show do
     link_to t('.grant'), credits_admin_user_path(user)
   end
 
