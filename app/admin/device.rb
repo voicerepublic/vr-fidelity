@@ -78,8 +78,17 @@ ActiveAdmin.register Device do
       f.input :loglevel, hint: t('.hint_loglevel'), as: :select, collection: LOGLEVELS
       f.input :report_interval
       f.input :heartbeat_interval
+      f.input :options
     end
     f.actions
+  end
+
+  controller do
+    after_action :propagate_restart, only: :update
+
+    def propagate_restart
+      Faye.publish_to "/device/#{resource.identifier}", event: 'exit'
+    end
   end
 
 end
