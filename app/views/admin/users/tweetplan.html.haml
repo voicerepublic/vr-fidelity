@@ -1,6 +1,11 @@
-%table(style='background-color: white')
-  - @talks.each do |talk|
-    %tr
+%table.index_table
+  %tr
+    %th= t('.start')
+    %th= t('.title')
+    %th= t('.speakers')
+    %th= t('.links')
+  - @talks.each_with_index do |talk, index|
+    %tr{ class: index.even? ? 'odd' : 'even' }
       %td= talk.starts_at
       %td= link_to talk.title, public_url(talk)
       %td

@@ -110,6 +110,7 @@ class Talk < ActiveRecord::Base
 
   scope :uncategorized, -> { where(icon: 'default') }
 
+  scope :prelive_or_live, -> { where('talks.state in (?)', [:prelive, :live]) }
   scope :ordered, -> { order('starts_at ASC') }
 
   def effective_duration # in seconds
