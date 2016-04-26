@@ -1,0 +1,13 @@
+%table(style='background-color: white')
+  - @talks.each do |talk|
+    %tr
+      %td= talk.starts_at
+      %td= link_to talk.title, public_url(talk)
+      %td
+        %ul
+          - talk.speakers.split(', ').each do |speaker|
+            %li= speaker
+      %td
+        %ul
+          - talk.social_links.each do |link|
+            %li= link_to link, link

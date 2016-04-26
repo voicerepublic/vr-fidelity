@@ -110,6 +110,8 @@ class Talk < ActiveRecord::Base
 
   scope :uncategorized, -> { where(icon: 'default') }
 
+  scope :ordered, -> { order('starts_at ASC') }
+
   def effective_duration # in seconds
     ended_at - started_at
   end

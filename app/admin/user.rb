@@ -11,13 +11,7 @@ ActiveAdmin.register User do
   end
 
   member_action :tweetplan, method: :get do
-    name = "%Y-%m-%d-%H%M_tweetplan_#{resource.slug}.csv"
-    output = CSV.generate do |csv|
-      resource.tweetplan.each do |row|
-        csv << row
-      end
-    end
-    send_data output, filename: Time.now.strftime(name)
+    @talks = resource.talks.prelive.ordered
   end
 
   action_item only: :show do
