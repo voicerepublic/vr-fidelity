@@ -11,7 +11,9 @@ ActiveAdmin.register User do
   end
 
   member_action :tweetplan, method: :get do
-    @talks = resource.talks.prelive_or_live.ordered
+    @live = resource.talks.live.ordered
+    @archived = resource.talks.archived.ordered
+    @prelive = resource.talks.prelive.ordered
   end
 
   action_item only: :show do

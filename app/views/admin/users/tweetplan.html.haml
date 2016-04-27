@@ -1,18 +1,31 @@
-%table.index_table
-  %tr
-    %th= t('.start')
-    %th= t('.title')
-    %th= t('.speakers')
-    %th= t('.links')
-  - @talks.each_with_index do |talk, index|
-    %tr{ class: index.even? ? 'odd' : 'even' }
-      %td= talk.starts_at
-      %td= link_to talk.title, public_url(talk)
-      %td
-        %ul
-          - talk.speakers.split(', ').each do |speaker|
-            %li= speaker
-      %td
-        %ul
-          - talk.social_links.each do |link|
-            %li= link_to link, link
+.table-tools
+  %ul.table_tools_segmented_control
+    %li
+      %a.table_tools_button(href='#live')
+        = t('.live')
+        %span.count= @live.count
+    %li
+      %a.table_tools_button(href='#scheduled')
+        = t('.scheduled')
+        %span.count= @prelive.count
+    %li
+      %a.table_tools_button(href='#archived')
+        = t('.archived')
+        %span.count= @archived.count
+
+.index_content(style='padding-top: 40px')
+
+  - if @live.count > 0
+    %a(name='live')
+    %h2= t('.live', count: @live.count)
+    = render partial: 'listing', locals: { talks: @live }
+
+  - if @prelive.count > 0
+    %a(name='scheduled')
+    %h2= t('.scheduled', count: @prelive.count)
+    = render partial: 'listing', locals: { talks: @prelive }
+
+  - if @archived.count > 0
+    %a(name='archived')
+    %h2= t('.archived', count: @archived.count)
+    = render partial: 'listing', locals: { talks: @archived }
