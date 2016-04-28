@@ -326,6 +326,7 @@ ActiveAdmin.register Talk do
     column :uri
     column :play_count
     column :popularity
+    column(:venue_name) { |talk| talk.venue.name }
     column :title
     column :featured_from
     column :starts_at
