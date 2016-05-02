@@ -6,7 +6,7 @@ module Fidelity
 
       class << self
         def required_executables
-          %w( sox )
+          %w( sox avconv )
         end
       end
 

@@ -7,7 +7,8 @@ module Fidelity
       def inputs
         ["#{name}.wav"] +
           Dir.glob("#{name}-*.wav") + # covers -clean, -precut, -bak, -untrimmed
-          Dir.glob("t#{name}-*.wav") # covers transcoded fragments
+          Dir.glob("t#{name}-*.wav") + # covers transcoded fragments
+          Dir.glob("dump_*") # covers newer style dump files
       end
 
       def run
