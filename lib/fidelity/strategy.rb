@@ -19,3 +19,6 @@ require 'fidelity/strategy/copy_clean'
 require 'fidelity/strategy/jinglize'
 require 'fidelity/strategy/auphonic'
 require 'fidelity/strategy/cleanup'
+
+require 'fidelity/strategy/waveify'
+require 'fidelity/strategy/merge'

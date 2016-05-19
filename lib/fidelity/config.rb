@@ -22,32 +22,15 @@ module Fidelity
       self.journal = read_journal
     end
 
-    # fragments reduced to the ones that touch the live phase
-    def fragments(user=nil)
-      all_fragments(user).select do |frag|
-        duration = duration_of_flv(frag.first)
-        file_end = frag.last.to_i + duration
-        # fall back to 0 as start, which is fine for specs
-        file_end > (opts[:talk_start] || 0)
-      end
-    end
-
-    # all, all, all fragments! that's not even one less than all!
-    def all_fragments(user=nil)
-      return journal['record_done'] if user.nil?
-      fragments.select { |f| f.first.include?("-u#{user}-") }
-    end
-
-    # all user ids during live phase
-    def users
-      fragments.map do |path, time|
-        path.match(/t\d+-u(\d+)-/).to_a[1]
-      end.uniq.sort
+    def fragments
+      e = Dir.new('.').entries.grep(/^dump_/)
+      e -= e.grep(/\.wav$/) # but not wav
+      e.map { |f| f.match(/^dump_(\d+)/).to_a }
     end
 
     # start of the first file that touches the live phase
-    def file_start(user=nil)
-      fragments(user).map { |f| f.last }.sort.first.to_i
+    def file_start
+      fragments.map { |f| f.last }.sort.first.to_i
     end
 
     private

@@ -14,7 +14,7 @@ module Fidelity
 
       # all wave files
       def inputs
-        Dir.new('.').entries.grep(/.wav$/)
+        Dir.new('.').entries.grep(/^dump_\d+.*\.wav$/)
       end
 
       def run

@@ -11,7 +11,8 @@ module Fidelity
       end
 
       def inputs
-        Dir.new('.').entries.grep(/^dump_/)
+        e = Dir.new('.').entries.grep(/^dump_/)
+        e - e.grep(/\.wav$/)
       end
 
       def run
