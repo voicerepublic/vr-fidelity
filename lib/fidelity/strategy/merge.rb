@@ -35,7 +35,7 @@ module Fidelity
         end
 
         # extract datetime
-        inputs = inputs.map { |path| path.match(/dump_(\d+)\.wav/) }
+        inputs = inputs.map { |path| path.match(/dump_(\d+)\.wav/).to_a }
         # parse datetime
         inputs = inputs.map { |path, time| [path, parse_ts(time)] }
         # sort by datetime
