@@ -39,6 +39,17 @@ class User < ActiveRecord::Base
 
   before_save :set_about_as_html, if: :about_changed?
 
+  validates :email, uniqueness: true
+  validates :firstname, presence: true, length: { minimum: 1, maximum: 100 }
+  validates :lastname, presence: true, length: { minimum: 1, maximum: 100 }
+  validates :summary, length: { maximum: Settings.limit.string }
+  validates :about, length: { maximum: Settings.limit.text }
+  validates :slug, presence: true
+
+  validates :slug, length: { minimum: 5 }
+  validates :slug, format: { with: /\A[\w-]+\z/,
+                             message: I18n.t('validation.bad_chars_in_slug') }
+
   scope :featured, -> { where.not(featured_from: nil) }
   scope :paying, -> { where(paying: true) }
 
