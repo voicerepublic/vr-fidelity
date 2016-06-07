@@ -34,12 +34,15 @@ class User < ActiveRecord::Base
 
   has_many :series
   has_many :venues
+  has_many :talks, through: :venues
   has_many :purchases, foreign_key: :owner_id
 
   before_save :set_about_as_html, if: :about_changed?
 
   scope :featured, -> { where.not(featured_from: nil) }
   scope :paying, -> { where(paying: true) }
+
+  scope :ordered, -> { order('firstname, lastname') }
 
   image_accessor :avatar
 
@@ -49,6 +52,16 @@ class User < ActiveRecord::Base
 
   def set_about_as_html
     self.about_as_html = MARKDOWN.render(about)
+  end
+
+  def tweetplan
+    talks.prelive.map do |talk|
+      [ talk.start_at,
+        talk.self_url,
+        talk.title,
+        talk.speakers,
+        talk.social_links * ", " ]
+    end
   end
 
 end

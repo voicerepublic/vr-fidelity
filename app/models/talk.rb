@@ -24,6 +24,8 @@
 # * series_id [integer] - belongs to :series
 class Talk < ActiveRecord::Base
 
+  include ApplicationHelper
+
   extend ::CsvImport
 
   STATES = %w( pending prelive live postlive processing archived suspended )
@@ -77,6 +79,7 @@ class Talk < ActiveRecord::Base
   after_save :generate_flyer!, if: :generate_flyer?
   after_save :schedule_processing_override, if: :process_override?
   after_save :schedule_processing_slides, if: :process_slides?
+  after_save :schedule_forward, if: :schedule_forward?
 
   validate :series_id do
     begin
@@ -105,11 +108,10 @@ class Talk < ActiveRecord::Base
     where('ends_at > ? AND starts_at < ?', 4.hours.ago, 4.hours.from_now)
   end
 
-  # TODO rewrite to use tag bundles
-  scope :uncategorized, -> do
-    tagged_with( ActsAsTaggableOn::Tag.where(promoted: true).pluck(:name),
-                 exclude: true )
-  end
+  scope :uncategorized, -> { where(icon: 'default') }
+
+  scope :prelive_or_live, -> { where('talks.state in (?)', [:prelive, :live]) }
+  scope :ordered, -> { order('starts_at ASC') }
 
   def effective_duration # in seconds
     ended_at - started_at
@@ -159,13 +161,18 @@ class Talk < ActiveRecord::Base
     self[field] = ReverseMarkdown.convert(self[field])
   end
 
+  def self_url
+    public_url(self, Settings.site_root)
+  end
+
   private
 
   def set_icon
-    bundles = TagBundle.category.tagged_with(tags, any: true)
-    icon = bundles.group(:icon).count.
-           sort_by(&:last).reverse.
-           map(&:first).compact.first
+    bundles = TagBundle.category.tagged_with(tag_list, any: true)
+    unless bundles.empty?
+      icons = bundles.map { |b| [b.icon, (b.tag_list & tag_list).size] }
+      icon = icons.sort_by(&:last).last.first
+    end
     self.icon = icon || 'default'
   end
 
@@ -203,6 +210,14 @@ class Talk < ActiveRecord::Base
 
   def schedule_processing_slides
     Delayed::Job.enqueue ProcessSlides.new(id: id), queue: 'audio'
+  end
+
+  def schedule_forward?
+    forward_url_changed? and forward_url.present?
+  end
+
+  def schedule_forward
+    Delayed::Job.enqueue Forward.new(id: id), queue: 'trigger'
   end
 
   def related_talk_id_is_talk?

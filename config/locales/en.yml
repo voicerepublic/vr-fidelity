@@ -46,3 +46,12 @@ en:
     resource:
       show:
         grant: Grant Credits
+      edit:
+        hint_loglevel: |
+          Will print all message of the given level or higher. The
+          value takes effect after Knocking and thus will allways come
+          from LIVE.
+        hint_target: |
+          Specifies the target the device will register. The value
+          takes effect after Knocking and thus will allways come from
+          LIVE.

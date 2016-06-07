@@ -7,6 +7,14 @@ ActiveAdmin.register User do
   actions :all, except: [:destroy]
 
   action_item only: :show do
+    link_to t('.tweetplan'), tweetplan_admin_user_path(user)
+  end
+
+  member_action :tweetplan, method: :get do
+    @talks = resource.talks.prelive_or_live.ordered
+  end
+
+  action_item only: :show do
     link_to t('.grant'), credits_admin_user_path(user)
   end
 
@@ -35,6 +43,7 @@ ActiveAdmin.register User do
   filter :timezone
   filter :credits
   filter :referrer
+  filter :contact_email
 
   index do
     selectable_column
@@ -98,6 +107,7 @@ ActiveAdmin.register User do
       end
       row :referrer
       row :penalty
+      row :contact_email
     end
 
     panel "Transaction History" do
@@ -109,6 +119,16 @@ ActiveAdmin.register User do
         user.series.each do |series|
           li do
             link_to series.title, [:admin, series]
+          end
+        end
+      end
+    end
+
+    panel "User's Venues" do
+      ul do
+        user.venues.each do |venue|
+          li do
+            link_to venue.name, [:admin, venue]
           end
         end
       end
@@ -141,11 +161,14 @@ ActiveAdmin.register User do
       f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies to this user and all future series of this user."
       #f.input :avatar, as: :dragonfly
       f.input :image_alt
+      f.input :contact_email
     end
     f.actions
   end
 
   csv do
+    column :id
+    column :slug
     column :firstname
     column :lastname
     column :email
@@ -154,11 +177,16 @@ ActiveAdmin.register User do
     column :featured_from
     column :featured_until
     column :penalty
+    column :credits
+    column :sign_in_count
+    column :last_request_at
+    column :contact_email
   end
 
   permit_params :firstname, :lastname, :email, :avatar,
                 :retained_avatar, :remove_avatar, :about,
                 :paying, :featured_from, :featured_until,
-                :tag_list, :penalty, :image_alt, :summary
+                :tag_list, :penalty, :image_alt, :summary,
+                :contact_email
 
 end

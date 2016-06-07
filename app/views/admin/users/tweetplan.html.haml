@@ -1,0 +1,18 @@
+%table.index_table
+  %tr
+    %th= t('.start')
+    %th= t('.title')
+    %th= t('.speakers')
+    %th= t('.links')
+  - @talks.each_with_index do |talk, index|
+    %tr{ class: index.even? ? 'odd' : 'even' }
+      %td= talk.starts_at
+      %td= link_to talk.title, public_url(talk)
+      %td
+        %ul
+          - talk.speakers.split(', ').each do |speaker|
+            %li= speaker
+      %td
+        %ul
+          - talk.social_links.each do |link|
+            %li= link_to link, link

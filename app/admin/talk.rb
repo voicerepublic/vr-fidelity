@@ -25,6 +25,7 @@ ActiveAdmin.register Talk do
                     speakers
                     slides_uuid
                     penalty
+                    forward_url
                     recording_override ).map(&:to_sym)
 
   filter :id
@@ -295,6 +296,7 @@ ActiveAdmin.register Talk do
       f.input :related_talk_id, as: :string, hint: 'ID of related talk'
       f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies only to this talk."
       f.input :image_alt
+      f.input :forward_url
     end
     #f.inputs 'Image' do
     #  f.input :image, as: :dragonfly
@@ -324,6 +326,7 @@ ActiveAdmin.register Talk do
     column :uri
     column :play_count
     column :popularity
+    column(:venue_name) { |talk| talk.venue.name }
     column :title
     column :featured_from
     column :starts_at

@@ -4,5 +4,6 @@ if Settings.errbit.enabled
     config.project_id = true
     config.project_key = Settings.errbit.api_key
     config.ignore_environments = %w(development test)
+    config.environment = Settings.errbit.environment
   end
 end

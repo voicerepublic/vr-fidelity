@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160121145313) do
+ActiveRecord::Schema.define(version: 20160405185041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,6 +90,37 @@ ActiveRecord::Schema.define(version: 20160121145313) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
+  create_table "devices", force: :cascade do |t|
+    t.string   "identifier"
+    t.string   "type"
+    t.string   "subtype"
+    t.string   "name"
+    t.string   "state"
+    t.datetime "last_heartbeat_at"
+    t.integer  "organization_id"
+    t.datetime "paired_at"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.datetime "disappeared_at"
+    t.string   "target",             default: "live"
+    t.string   "public_ip_address"
+    t.integer  "loglevel",           default: 1
+    t.integer  "report_interval",    default: 60
+    t.integer  "heartbeat_interval", default: 5
+  end
+
+  add_index "devices", ["organization_id"], name: "index_devices_on_organization_id", using: :btree
+
+  create_table "memberships", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "organization_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "memberships", ["organization_id"], name: "index_memberships_on_organization_id", using: :btree
+  add_index "memberships", ["user_id"], name: "index_memberships_on_user_id", using: :btree
+
   create_table "messages", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "talk_id"
@@ -105,6 +136,28 @@ ActiveRecord::Schema.define(version: 20160121145313) do
     t.string   "key",        limit: 255
     t.float    "value"
     t.datetime "created_at"
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string   "name"
+    t.string   "slug"
+    t.integer  "credits"
+    t.string   "image_uid"
+    t.string   "image_name"
+    t.string   "image_alt"
+    t.string   "logo_uid"
+    t.string   "logo_name"
+    t.string   "logo_alt"
+    t.text     "description"
+    t.text     "description_as_html"
+    t.text     "description_as_text"
+    t.string   "website"
+    t.float    "penalty"
+    t.boolean  "paying"
+    t.datetime "featured_from"
+    t.datetime "featured_until"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
   create_table "participations", force: :cascade do |t|
@@ -179,7 +232,9 @@ ActiveRecord::Schema.define(version: 20160121145313) do
     t.string   "slug",                limit: 255
     t.float    "penalty",                         default: 1.0
     t.text     "description_as_html",             default: ""
+    t.boolean  "is_hidden",                       default: false
     t.string   "image_alt",                       default: ""
+    t.text     "description_as_text",             default: ""
   end
 
   add_index "series", ["slug"], name: "index_series_on_slug", unique: true, using: :btree
@@ -278,12 +333,15 @@ ActiveRecord::Schema.define(version: 20160121145313) do
     t.boolean  "dryrun",                           default: false
     t.text     "social_links",                     default: "--- []"
     t.text     "listeners",                        default: "--- {}"
-    t.string   "slides_uid"
     t.text     "description_as_html",              default: ""
     t.string   "slides_uuid",         limit: 1024
     t.integer  "venue_id"
+    t.boolean  "is_hidden",                        default: false
     t.string   "icon",                             default: "default"
     t.string   "image_alt"
+    t.text     "description_as_text",              default: ""
+    t.text     "processing_error"
+    t.string   "forward_url"
   end
 
   add_index "talks", ["popularity"], name: "index_talks_on_popularity", using: :btree
@@ -346,9 +404,12 @@ ActiveRecord::Schema.define(version: 20160121145313) do
     t.string   "referrer"
     t.text     "about_as_html",                      default: ""
     t.boolean  "paying",                             default: false
+    t.boolean  "is_hidden",                          default: false
     t.datetime "featured_from"
     t.datetime "featured_until"
     t.string   "image_alt",                          default: ""
+    t.text     "about_as_text",                      default: ""
+    t.string   "contact_email"
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", using: :btree
@@ -362,16 +423,38 @@ ActiveRecord::Schema.define(version: 20160121145313) do
     t.string   "name"
     t.string   "slug"
     t.integer  "user_id"
-    t.text     "options",    default: "--- {}\n"
-    t.decimal  "lat",        default: 47.374707
-    t.decimal  "long",       default: 8.5249116
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.text     "options",                       default: "--- {}\n"
+    t.decimal  "lat",                           default: 47.374707
+    t.decimal  "long",                          default: 8.5249116
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+    t.string   "client_token"
+    t.string   "instance_id"
+    t.string   "public_ip_address"
+    t.string   "stream_url"
+    t.string   "mount_point"
+    t.string   "source_password"
+    t.string   "admin_password"
+    t.string   "state"
+    t.string   "instance_type"
+    t.string   "source_identifier"
+    t.string   "source_ip_address"
+    t.string   "emergency_phone_number"
+    t.text     "street_address"
+    t.integer  "estimated_number_of_listeners"
+    t.datetime "started_provisioning_at"
+    t.datetime "completed_provisioning_at"
+    t.integer  "device_id"
   end
 
+  add_index "venues", ["device_id"], name: "index_venues_on_device_id", using: :btree
   add_index "venues", ["slug"], name: "index_venues_on_slug", using: :btree
   add_index "venues", ["user_id"], name: "index_venues_on_user_id", using: :btree
 
+  add_foreign_key "devices", "organizations"
+  add_foreign_key "memberships", "organizations"
+  add_foreign_key "memberships", "users"
   add_foreign_key "talks", "venues"
+  add_foreign_key "venues", "devices"
   add_foreign_key "venues", "users"
 end
