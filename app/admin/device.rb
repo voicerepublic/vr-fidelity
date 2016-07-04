@@ -13,6 +13,18 @@ ActiveAdmin.register Device do
 
   actions :all, except: [:new, :destroy]
 
+  action_item :unpair, only: :show do
+    unless device.state == 'unpaired'
+      link_to 'Unpair', action: 'unpair'
+    end
+  end
+
+  member_action :unpair do
+    device = Device.find(params[:id])
+    device.unpair!
+    redirect_to action: :show, notice: "Device now unpaired."
+  end
+
   permit_params %w( name
                     organization_id
                     target
@@ -20,6 +32,18 @@ ActiveAdmin.register Device do
                     report_interval
                     heartbeat_interval
                     options ).map(&:to_sym)
+
+  index	do
+    selectable_column
+    column :name
+    column :type
+    column :subtype
+    column :identifier
+    column :state
+    column :pairing_code
+    column :paired_at
+    actions
+  end
 
   # sidebar :actions, only: :show do
   #   button t('.shutdown')
@@ -47,6 +71,7 @@ ActiveAdmin.register Device do
       row :updated_at
       row :last_heartbeat_at
       row :disappeared_at
+      row :pairing_code
       row :paired_at
     end
     # TODO show only in online states

@@ -16,6 +16,11 @@ ActiveAdmin.register Organization do
                     featured_until
                     promoted ).map(&:to_sym)
 
+  filter :name
+  filter :slug
+  filter :description
+  filter :website
+
   form do |f|
     f.inputs do
       f.input :name
@@ -35,6 +40,50 @@ ActiveAdmin.register Organization do
       f.input :description
     end
     f.actions
+  end
+
+  index do
+    selectable_column
+    column :name
+    column :slug
+    column :featured_from
+    column :featured_until
+    actions
+  end
+
+  show do
+    attributes_table do
+      row :name
+      row :slug
+      row :image_alt
+      row :logo_alt
+      row :website
+      row :featured_from
+      row :featured_until
+      row :description_as_html
+    end
+    panel 'Devices' do
+      table do
+        tr do
+          th 'Name'
+          th 'Type'
+          th 'Subtype'
+          th 'Identifier'
+          th 'State'
+          th 'Paired At'
+        end
+        organization.devices.each do |device|
+          tr do
+            td link_to(device.name, [:admin, device])
+            td device.type
+            td device.subtype
+            td device.identifier
+            td device.state
+            td device.paired_at
+          end
+        end
+      end
+    end
   end
 
 end
