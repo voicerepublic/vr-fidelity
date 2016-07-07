@@ -41,7 +41,13 @@ ActiveAdmin.register Device do
     column :identifier
     column :state
     column :pairing_code
-    column :paired_at
+    column :disappeared_at do |d|
+      unless d.disappeared_at
+        span t('.online'), class: 'status_tag green'
+      else
+        d.disappeared_at
+      end
+    end
     actions
   end
 
