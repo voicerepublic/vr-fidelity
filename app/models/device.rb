@@ -9,6 +9,7 @@ class Device < ActiveRecord::Base
   def unpair!
     self.pairing_code = ('0'..'9').to_a.shuffle[0,4].join
     self.state = 'pairing'
+    self.name = nil
     self.paired_at = nil
     self.organization_id = nil
     save!
