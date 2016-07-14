@@ -14,6 +14,19 @@ ActiveAdmin.register_page "Dashboard" do
   title = 'WITH GREAT POWER COMES GREAT RESPONSIBILITY'
   content title: title do
 
+    table style: 'width: 200px' do
+      tr do
+        th 'Venue State'
+        th 'Count'
+      end
+      Venue.group(:state).count(:state).each do |state, count|
+        tr do
+          td state
+          td count
+        end
+      end
+    end
+
     div id: 'livedashboard', style: 'margin: 30px; height: 100%' do
       script do
         "document.fayeUrl = '#{Settings.faye.server}';".html_safe
