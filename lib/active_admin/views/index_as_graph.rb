@@ -16,8 +16,7 @@ module ActiveAdmin
 
       def show_by_default
         %w( active_users_total
-            new_users_total
-            paying_users_total ).map { |k| t(k) }
+            new_users_total ).map { |k| t(k) }
       end
 
       def build(page_presenter, collection)

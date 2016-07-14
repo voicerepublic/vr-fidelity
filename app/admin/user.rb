@@ -46,6 +46,9 @@ ActiveAdmin.register User do
   filter :credits
   filter :referrer
   filter :contact_email
+  filter :website
+  filter :facebook
+  filter :twitter
 
   index do
     selectable_column
@@ -110,6 +113,9 @@ ActiveAdmin.register User do
       row :referrer
       row :penalty
       row :contact_email
+      row :website
+      row :facebook
+      row :twitter
     end
 
     panel "Transaction History" do
@@ -164,6 +170,9 @@ ActiveAdmin.register User do
       #f.input :avatar, as: :dragonfly
       f.input :image_alt
       f.input :contact_email
+      f.input :website
+      f.input :facebook
+      f.input :twitter
     end
     f.actions
   end
