@@ -4,6 +4,10 @@ ActiveAdmin.register Venue do
 
   actions :all, except: [:new, :destroy]
 
+  Venue::STATES.each do |state|
+    scope state.to_sym
+  end
+
   filter :id
   filter :name
   filter :slug
@@ -25,6 +29,9 @@ ActiveAdmin.register Venue do
     column :lat
     column :long
     column :user
+    column :state do |v|
+      span v.state, class: 'status_tag '+v.state
+    end
     actions
   end
 

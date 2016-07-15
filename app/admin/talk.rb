@@ -127,14 +127,16 @@ ActiveAdmin.register Talk do
         l talk.featured_from, format: :iso unless talk.featured_from.nil?
       end
     end
-    column :venue do |talk|
-      talk.venue.try(:name)
-    end
-    column :series
+    # column :venue do |talk|
+    #   talk.venue.try(:name)
+    # end
+    # column :series
     column :play_count
-    column :state
+    column :state do |talk|
+      span talk.state, class: 'status_tag '+talk.state
+    end
     actions do |talk|
-      link_to "&#10148; Public".html_safe, public_url(talk), target: '_blank'
+      link_to "&#10148;&nbsp;Public".html_safe, public_url(talk), target: '_blank'
     end
   end
 

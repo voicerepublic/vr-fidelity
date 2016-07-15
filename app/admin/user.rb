@@ -56,17 +56,17 @@ ActiveAdmin.register User do
     column :firstname
     column :lastname
     column :email
-    column :featured_from, sortable: :featured_from do |talk|
-      span style: 'white-space: pre' do
-        l talk.featured_from, format: :iso unless talk.featured_from.nil?
-      end
-    end
-    column :featured_until, sortable: :featured_until do |talk|
-      span style: 'white-space: pre' do
-        l talk.featured_until, format: :iso unless talk.featured_until.nil?
-      end
-    end
-    column :paying
+    # column :featured_from, sortable: :featured_from do |talk|
+    #   span style: 'white-space: pre' do
+    #     l talk.featured_from, format: :iso unless talk.featured_from.nil?
+    #   end
+    # end
+    # column :featured_until, sortable: :featured_until do |talk|
+    #   span style: 'white-space: pre' do
+    #     l talk.featured_until, format: :iso unless talk.featured_until.nil?
+    #   end
+    # end
+    # column :paying
     column 'Series' do |user|
       user.series.count
     end
@@ -74,7 +74,7 @@ ActiveAdmin.register User do
     #   # TODO link_to user.talks.count, admin_talks # by user
     #   user.talks.count
     # end
-    column :credits
+    # column :credits
     column :sign_in_count
     column :last_sign_in_at do |user|
       span style: 'white-space: pre'  do
@@ -87,7 +87,7 @@ ActiveAdmin.register User do
       end
     end
     actions do |user|
-      link_to "&#10148; Public".html_safe, public_url(user), target: '_blank'
+      link_to "&#10148;&nbsp;Public".html_safe, public_url(user), target: '_blank'
     end
   end
 

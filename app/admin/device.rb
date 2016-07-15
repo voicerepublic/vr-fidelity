@@ -39,7 +39,6 @@ ActiveAdmin.register Device do
     column :type
     column :subtype
     column :identifier
-    column :state
     column :pairing_code
     column :disappeared_at do |d|
       unless d.disappeared_at
@@ -47,6 +46,9 @@ ActiveAdmin.register Device do
       else
         d.disappeared_at
       end
+    end
+    column :state do |device|
+      span device.state, class: 'status_tag '+device.state
     end
     actions
   end

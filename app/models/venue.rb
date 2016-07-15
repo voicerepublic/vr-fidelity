@@ -1,5 +1,18 @@
 class Venue < ActiveRecord::Base
 
+  STATES = %w( offline
+               available
+               provisioning
+               device_required
+               awaiting_stream
+               connected
+               disconnect_required
+               disconnected )
+
+  STATES.each do |state|
+    scope state.to_sym, -> { where(state: state) }
+  end
+
   extend FriendlyId
   friendly_id :slug_candidates, use: [:slugged, :finders]
 
@@ -13,6 +26,12 @@ class Venue < ActiveRecord::Base
 
   belongs_to :user
   has_many :talks
+
+  before_create :set_default_state
+
+  def set_default_state
+    self.state = 'offline'
+  end
 
   def flags
     YAML.load(options).select { |k, v| v }.map { |k, v| k.to_s }
