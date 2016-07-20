@@ -14,3 +14,13 @@ errbit:
   environment: 'development'
 # set in local!
 site_root: 'http://localhost:3000'
+
+fog:
+  storage:
+    provider: AWS
+    region: eu-central-1
+    aws_access_key_id: AKIAI7HSKHN3FBT2KAZQ
+    aws_secret_access_key: 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
+
+storage:
+  backup_recordings: vr-euc1-dev-backup-recordings@eu-central-1

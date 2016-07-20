@@ -83,6 +83,22 @@ ActiveAdmin.register Device do
       row :paired_at
     end
     # TODO show only in online states
+    panel 'Backup Recordings' do
+      table do
+        tr do
+          th 'Name'
+          th 'Size'
+          th 'Last modified'
+        end
+        device.backup_recordings.each do |rec|
+          tr do
+            td link_to rec.key, "/backup/#{rec.key}", target: '_blank'
+            td number_to_human_size(rec.content_length)
+            td time_ago_in_words(rec.last_modified)+' ago', title: rec.last_modified
+          end
+        end
+      end
+    end
     panel 'REPL' do
       div id: 'repl' do
         div id: 'log' do

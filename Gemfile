@@ -32,6 +32,8 @@ gem 'friendly_id'
 gem 'redcarpet'
 gem 'reverse_markdown'
 
+gem 'fog-aws', require: 'fog/aws'
+
 # gem 'bcrypt', '~> 3.1.7'
 
 gem 'unicorn'
