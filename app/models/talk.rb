@@ -187,7 +187,7 @@ class Talk < ActiveRecord::Base
   #
   # Since the validity of `starts_at_date` and `starts_at_time` is ensured
   # with regexes we are allowed to be optimistic about parsing here.
-  def set_starts_at
+  def set_starts_at_time_and_date
     self.starts_at_time = starts_at.strftime("%H:%M")
     self.starts_at_date = starts_at.strftime("%Y-%m-%d")
   end
