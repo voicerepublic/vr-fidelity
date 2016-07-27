@@ -22,10 +22,17 @@ FactoryGirl.define do
   end
 
   factory :user do
+    firstname "Max"
+    lastname "Mustermann"
+    
     email
   end
 
   factory :series do
+    title "A title"
+    teaser "A teaser"
+    description "A description"
+    
     user
   end
 
