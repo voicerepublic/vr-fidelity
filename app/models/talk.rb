@@ -45,7 +45,7 @@ class Talk < ActiveRecord::Base
   before_validation :set_ends_at
   before_save :set_description_as_html, if: :description_changed?
 
-  validates :title, :starts_at, :ends_at, :tag_list, :uri, presence: true
+  validates :title, :starts_at, :ends_at, :duration, :tag_list, :uri, presence: true
   validates :uri, uniqueness: true
 
   # The whole "choose your own uri", will bite us, if we're not extra
