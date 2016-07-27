@@ -113,12 +113,12 @@ ActiveAdmin.register Device do
             input id: 'code'
           end
         end
-        panel 'Status' do
-          div id: 'report' do
-          end
-        end
         panel 'Debug Log' do
           div id: 'debuglog' do
+          end
+        end
+        panel 'Status' do
+          div id: 'report' do
           end
         end
         active_admin_comments
