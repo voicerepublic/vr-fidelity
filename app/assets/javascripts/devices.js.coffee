@@ -3,8 +3,12 @@
 $ ->
   return unless $('.show.admin_devices').length
 
+  # --- faye setup
+
   faye = new Faye.Client(fayeUrl)
   faye.addExtension(new FayeAuthentication(faye))
+
+  # --- repl
 
   $('#log').click ->
     $('#code').focus()
@@ -33,13 +37,27 @@ $ ->
     if event in ['eval', 'print']
       append message[event]
 
+  append("Connecting to #{channel}...")
+  faye.publish channel, event: 'handshake'
+
+  # --- heartbeat
+
   faye.subscribe '/heartbeat', (message) ->
     if message.identifier == device.identifier
       $('tr.row-last_heartbeat_at td').html(new Date)
 
+  # --- report
+
   faye.subscribe '/report', (message) ->
     if message.identifier == device.identifier
-      $('#report').append("<div>#{JSON.stringify(message.report)}</div>")
+      $('#report').prepend("<div>#{JSON.stringify(message.report)}</div>")
 
-  append("Connecting to #{channel}...")
-  faye.publish channel, event: 'handshake'
+  # --- debug log
+
+  debuglog = $('#debuglog')
+
+  prepend = (text) ->
+    debuglog.prepend("<div>#{text}</div>")
+
+  faye.subscribe "/device/log/#{device.identifier}", (message) ->
+    prepend(message.log)

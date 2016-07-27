@@ -33,7 +33,7 @@ ActiveAdmin.register Device do
                     heartbeat_interval
                     options ).map(&:to_sym)
 
-  index	do
+  index do
     selectable_column
     column :name
     column :type
@@ -60,66 +60,74 @@ ActiveAdmin.register Device do
   # end
 
   show do
-    attributes_table do
-      row :id
-      row :name
-      row :identifier
-      row :type
-      row :subtype
-      row :state
-      row :target
-      row :loglevel do |d|
-        LOGLEVELS.invert[d.loglevel]
-      end
-      row :report_interval
-      row :heartbeat_interval
-      row :public_ip_address
-      row :organization
-      row :created_at
-      row :updated_at
-      row :last_heartbeat_at
-      row :disappeared_at
-      row :pairing_code
-      row :paired_at
-    end
-    # TODO show only in online states
-    panel 'Backup Recordings' do
-      table do
-        tr do
-          th 'Name'
-          th 'Start'
-          th 'Duration*',
-             title: 'Estimated based on size. Actual duration might differ.'
-          th 'Size'
+    columns do
+      column do
+        attributes_table do
+          row :id
+          row :name
+          row :identifier
+          row :type
+          row :subtype
+          row :state
+          row :target
+          row :loglevel do |d|
+            LOGLEVELS.invert[d.loglevel]
+          end
+          row :report_interval
+          row :heartbeat_interval
+          row :public_ip_address
+          row :organization
+          row :created_at
+          row :updated_at
+          row :last_heartbeat_at
+          row :disappeared_at
+          row :pairing_code
+          row :paired_at
         end
-        device.backup_recordings.each do |rec|
-          tr do
-            td link_to rec.key, "/backup/#{rec.key}", target: '_blank'
-            td Time.at(rec.key.match(/_(\d+)\.ogg$/)[1].to_i)
-            td hms(estimate_duration(rec.content_length))
-            td number_to_human_size(rec.content_length)
+        panel 'Backup Recordings' do
+          table do
+            tr do
+              th 'Name'
+              th 'Start'
+              th 'Duration*',
+                 title: 'Estimated based on size. Actual duration might differ.'
+              th 'Size'
+            end
+            device.backup_recordings.each do |rec|
+              tr do
+                td link_to rec.key, "/backup/#{rec.key}", target: '_blank'
+                td Time.at(rec.key.match(/_(\d+)\.ogg$/)[1].to_i)
+                td hms(estimate_duration(rec.content_length))
+                td number_to_human_size(rec.content_length)
+              end
+            end
           end
         end
       end
-    end
-    panel 'REPL' do
-      div id: 'repl' do
-        div id: 'log' do
-          div id: 'bottom'
+      column do
+        panel 'REPL' do
+          div id: 'repl' do
+            div id: 'log' do
+              div id: 'bottom'
+            end
+            input id: 'code'
+          end
         end
-        input id: 'code'
+        panel 'Status' do
+          div id: 'report' do
+          end
+        end
+        panel 'Debug Log' do
+          div id: 'debuglog' do
+          end
+        end
+        active_admin_comments
+        script src: Settings.faye.server + '/client.js'
+        script do
+          "fayeUrl = '#{Settings.faye.server}';
+           device = #{device.attributes.to_json}".html_safe
+        end
       end
-    end
-    panel 'Status' do
-      div id: 'report' do
-        'Awaiting report...'
-      end
-    end
-    active_admin_comments
-    script src: Settings.faye.server + '/client.js'
-    script do
-      "fayeUrl = '#{Settings.faye.server}';
-       device = #{device.attributes.to_json}".html_safe
     end
   end
 
