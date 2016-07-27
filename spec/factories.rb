@@ -43,8 +43,7 @@ FactoryGirl.define do
     venue
     # NOTE: times set here are not affected by `Timecop.freeze` in a
     # `before` block
-    starts_at_time 1.hour.from_now.strftime('%H:%M')
-    starts_at_date 1.hour.from_now.strftime('%Y-%m-%d')
+    starts_at 1.hour.from_now
     duration 60
     tag_list 'lorem, ipsum, dolor'
     description 'Some talk description'
