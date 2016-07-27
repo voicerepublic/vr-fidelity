@@ -41,7 +41,7 @@ class Talk < ActiveRecord::Base
 
   acts_as_taggable
 
-  before_validation :set_starts_at
+  before_validation :set_starts_at_time_and_date
   before_validation :set_ends_at
   before_save :set_description_as_html, if: :description_changed?
 
@@ -188,7 +188,8 @@ class Talk < ActiveRecord::Base
   # Since the validity of `starts_at_date` and `starts_at_time` is ensured
   # with regexes we are allowed to be optimistic about parsing here.
   def set_starts_at
-    self.starts_at = Time.zone.parse([starts_at_date, starts_at_time] * ' ')
+    self.starts_at_time = starts_at.strftime("%H:%M")
+    self.starts_at_date = starts_at.strftime("%Y-%m-%d")
   end
 
   def set_ends_at
