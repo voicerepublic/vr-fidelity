@@ -1,5 +1,6 @@
 #= require active_admin/base
 #
+#= require lodash
 #= require jquery-ui/datepicker
 #= require jquery-ui/slider
 #= require jquery-ui-timepicker-addon
@@ -12,6 +13,4 @@
 #= require talks
 #= require devices
 #
-#= require dashboard/array
-#= require dashboard/provider
 #= require dashboard/index

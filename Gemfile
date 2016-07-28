@@ -26,6 +26,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # optional
 gem 'active_skin'
 
+gem 'lodash-rails'
+
 gem 'whenever'
 gem 'friendly_id'
 
