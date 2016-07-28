@@ -29,7 +29,11 @@ ActiveAdmin.register_page "Dashboard" do
 
     div id: 'livedashboard', style: 'margin: 30px; height: 100%' do
       script do
-        "document.fayeUrl = '#{Settings.faye.server}';".html_safe
+        x = <<-EOF
+        document.fayeUrl = '#{Settings.faye.server}';
+        identifiers = #{Hash[Device.all.pluck(:id, :identifier)].to_json};
+        EOF
+        x.html_safe
       end
     end
 

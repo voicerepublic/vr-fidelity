@@ -12,44 +12,65 @@ $ ->
   faye = new Faye.Client(document.fayeUrl)
   faye.addExtension(new FayeAuthentication(faye))
 
+  # ============================================================
+  # data
+
   reports = {}
+  heartbeats = {}
+  connections = {}
+  stats = {}
+  venues = {}
+  talks = {}
+  lines = {}
+
+  # ============================================================
+  # add
+  addTalk = (snapshot, venueSlug=nil) ->
+    #console.log 'ADD TALK', snapshot
+    key = snapshot.id
+    talks[key] = _.assign(snapshot, venue_slug: venueSlug)
+
+  addVenue = (snapshot) ->
+    #console.log 'ADD VENUE', snapshot
+    key = snapshot.venue.slug
+    venues[key] = snapshot
+    _.each snapshot.venue.talks, (t) -> addTalk(t, key)
+    lines[key] = key
+    lines[identifiers[snapshot.venue.device_id]] = key
+
+  # ============================================================
+  # subscribe
   faye.subscribe '/report', (device) ->
     key = device.identifier
-    reports[key] = device
-    console.log(reports)
+    reports[key] = _.assign(device, time: new Date)
+    lines[key] ||= key
 
-  heartbeats = {}
   faye.subscribe '/heartbeat', (device) ->
     key = device.identifier
     heartbeats[key] = _.assign(device, time: new Date)
-    console.log(heartbeats)
+    lines[key] ||= key
 
-  connections = {}
-  faye.subscribe '/admin/connections', (details) ->
-    key = details.slug
-    connections[key] = details
-    # console.log(JSON.stringify(connections))
+  #faye.subscribe '/admin/connections', (details) ->
+  #  key = details.slug
+  #  connections[key] = details
 
-  stats = {}
   faye.subscribe '/admin/stats', (stat) ->
     key = stat.slug
-    stats[key] ||= _.assign({}, stat, {stats: []})
-    stats[key].stats.push(stat.stats)
-    # console.log(JSON.stringify(stats))
+    stats[key] = _.assign(stat, time: new Date, interval: 4)
+    lines[key] = key
 
-  venues = {}
-  faye.subscribe '/admin/venues', (snapshot) ->
-    key = snapshot.venue.slug
-    venues[key] ||= []
-    venues[key].push(snapshot)
-    # console.log(JSON.stringify(venues))
+  faye.subscribe '/admin/venues', addVenue
 
-  talks = {}
-  faye.subscribe '/admin/talks', (snapshot) ->
-    key = snapshot.talk.slug
-    talks[key] ||= []
-    talks[key].push(snapshot)
-    # console.log(JSON.stringify(talks))
+  faye.subscribe '/admin/bigpicture', (snapshots) ->
+    _.each snapshots, addVenue
+
+  #faye.subscribe '/admin/talks', (snapshot) ->
+  #  console.log snapshot
+  #  key = snapshot.talk.slug
+  #  #talks[key] ||= []
+  #  #talks[key].push(snapshot)
+  #  talks[key] = snapshot
+  #  # console.log(JSON.stringify(talks))
 
   # ============================================================
   # setup d3
@@ -61,8 +82,17 @@ $ ->
   maxY = svg[0][0].getBoundingClientRect().height
 
   # --- setup svg layers
-  svg.append('g').classed('devices', true)
+  svg.append('g').classed('lines', true)
+  svg.append('g').classed('talks', true)
+  svg.append('g').classed('connections', true)
+  svg.append('g').classed('venues', true)
+  svg.append('g').classed('reports', true)
+  svg.append('g').classed('reportDetails', true)
   svg.append('g').classed('heartbeats', true)
+  svg.append('g').classed('stats', true)
+  svg.append('g').classed('statsDetails', true)
+  svg.append('g').classed('identifiers', true)
+  svg.append('g').classed('slugs', true)
 
   # --- initialize time scale
   now     = new Date
@@ -103,7 +133,44 @@ $ ->
     .attr('y', maxY - 10)
     .text(preciseTimeFormatter(now))
 
-  animDuration = 2000
+
+  # helpers
+  heartbeatTimeout = (d, radius) ->
+    since = new Date - d.time
+    expected = d.interval * 1000
+    ratio = 1 - since / expected
+    if ratio >= 0
+      ['lime', ratio * radius]
+    else
+      ['red', Math.min(radius, -ratio * radius)]
+
+  venueColorByState =
+    offline:             'SlateGray'
+    available:           'Gold'
+    provisioning:        'Chocolate'
+    device_required:     'Fuchsia'
+    awaiting_stream:     'Fuchsia'
+    connected:           'Lime'
+    disconnect_required: 'Fuchsia'
+    disconnected:        'Red'
+
+  talkColorByState =
+    created:    'Red'
+    pending:    'Fuchsia'
+    prelive:    'Purple'
+    live:       'Lime'
+    postlive:   'Fuchsia'
+    processing: 'OrangeRed'
+    archived:   'RoyalBlue'
+    suspended:  'Red'
+
+  selectedVenues = {}
+
+  toggleVenueSelection = (slug) ->
+    selectedVenues[slug] = !selectedVenues[slug]
+
+  opacityBySelection = (slug) ->
+    if selectedVenues[slug] then 1 else 0
 
   # ============================================================
   # d3 update
@@ -125,34 +192,137 @@ $ ->
     # --- update clock
     svg.select('.now').text(preciseTimeFormatter(now))
 
-    # --- update reports
-    reportKeys = _.keys(reports)
+    # Y scale
+    yScale = d3.scale.ordinal()
+      .rangeRoundPoints([25, maxY-25], 0.25)
+      .domain(_.uniq(_.values(lines)))
+
+    # lines
+    lineNodes = svg.select('.lines')
+      .selectAll('.line').data(_.uniq(_.values(lines)))
+    lineNodes.enter().append('line')
+      .classed 'line', true
+      .attr 'stroke-width', 1
+      .attr 'stroke-opacity', 0.5
+    lineNodes
+      .attr 'x1', 0
+      .attr 'y1', yScale
+      .attr 'x2', maxX
+      .attr 'y2', yScale
+
+    # reports
     reportNodes = svg.select('.reports')
-      .selectAll('.report').data(reportKeys)
+      .selectAll('.report').data(_.values(reports))
     reportNodes.enter().append('circle')
       .attr 'class', 'report'
-      .attr 'fill',  '#ddd'
-    reportNodes.transition().duration(animDuration)
-      .attr 'cx', (d) -> maxX - 20
-      .attr 'cy', (d) -> 100
-      .attr 'r',  (d) -> 10
+      .attr 'stroke-opacity',  '0'
+    reportNodes
+      .attr 'cx',   (d) -> maxX - 80
+      .attr 'cy',   (d) -> yScale(lines[d.identifier])
+      .attr 'r',    (d) -> heartbeatTimeout(d, 20)[1]
+      .attr 'fill', (d) -> heartbeatTimeout(d, 20)[0]
 
-
-    heartbeatTimeout = (d) ->
-      1 / ((new Date - heartbeats[d].time) / (heartbeats[d].interval * 1000))
-
-    # --- update heartbeats
-    heartbeatKeys = _.keys(heartbeats)
+    # heartbeats
     heartbeatNodes = svg.select('.heartbeats')
-      .selectAll('.heartbeat').data(heartbeatKeys)
+      .selectAll('.heartbeat').data(_.values(heartbeats))
     heartbeatNodes.enter().append('circle')
       .attr 'class', 'heartbeat'
-      .attr 'fill',  'green'
-    heartbeatNodes.transition().duration(animDuration)
-      .attr 'cx', (d) -> maxX - 40
-      .attr 'cy', (d) -> 50
-      .attr 'r',  (d) -> heartbeatTimeout(d)
-      .each (d) -> console.log(heartbeatTimeout(d))
+      .attr 'stroke-opacity', 0
+    heartbeatNodes
+      .attr 'cx',   (d) -> maxX - 40
+      .attr 'cy',   (d) -> yScale(lines[d.identifier])
+      .attr 'r',    (d) -> heartbeatTimeout(d, 20)[1]
+      .attr 'fill', (d) -> heartbeatTimeout(d, 20)[0]
+
+    # venues
+    venueNodes = svg.select('.venues')
+      .selectAll('.venue').data(_.values(venues))
+    venueNodes.enter().append('circle')
+      .attr 'class', 'venue'
+      .on 'click', (d) -> toggleVenueSelection(d.venue.slug)
+    venueNodes
+      .attr 'stroke-opacity', (d) -> opacityBySelection(d.venue.slug)
+      .attr 'cx',   (d) -> 40
+      .attr 'cy',   (d) -> yScale(d.venue.slug)
+      .attr 'r',    (d) -> 20
+      .attr 'fill', (d) -> venueColorByState[d.venue.state]
+
+    # talks
+    talkNodes = svg.select('.talks')
+      .selectAll('.talk').data(_.values(talks))
+    talkNodes.enter().append('rect')
+      .attr 'class', 'talk'
+      .attr 'fill-opacity', 0.2
+      .attr 'stroke-opacity', 1
+      .attr 'stroke-width', 1
+    talkNodes
+      .attr 'x',      (d) -> timeScaleX(Date.parse(d.starts_at))
+      .attr 'y',      (d) -> yScale(d.venue_slug) - 20
+      .attr 'width',  (d) -> (timeScaleX(Date.parse(d.ends_at)) -
+                              timeScaleX(Date.parse(d.starts_at)))
+      .attr 'height', (d) -> 40
+      .attr 'stroke', (d) -> talkColorByState[d.state]
+      .attr 'fill',   (d) -> talkColorByState[d.state]
+
+    # identifiers
+    identifierNodes = svg.select('.identifiers')
+      .selectAll('.identifier').data(_.values(heartbeats))
+      .attr 'y', (d) -> yScale(lines[d.identifier]) + 10
+    identifierNodes.enter().append('text')
+      .classed 'identifier', true
+      .attr 'text-anchor', 'middle'
+      .attr 'opacity', 0.5
+      .attr 'x', maxX - 60
+      .text (d) -> d.identifier
+
+    # slugs
+    slugNodes = svg.select('.slugs')
+      .selectAll('.slug').data(_.values(venues))
+      .attr 'y', (d) -> yScale(d.venue.slug) + 10
+    slugNodes.enter().append('text')
+      .classed 'slug', true
+      .attr 'text-anchor', 'start'
+      .attr 'opacity', 0.5
+      .attr 'x', maxX/2 + 60
+      .text (d) -> d.venue.slug
+
+    # stats
+    statsNodes = svg.select('.stats').selectAll('.stat')
+      .data _.values(stats)
+      .attr 'cy',   (d) -> yScale(d.slug)
+      .attr 'r',    (d) -> heartbeatTimeout(d, 20)[1]
+      .attr 'fill', (d) -> heartbeatTimeout(d, 20)[0]
+    statsNodes.enter().append('circle')
+      .classed 'stat', true
+      .attr 'cx',   (d) -> maxX/2 + 40
+      .attr 'stroke-opacity', 0
+
+    # stats details
+    statsDetailNodes = svg.select('.statsDetails')
+      .selectAll('.statsDetail').data(_.values(stats))
+    statsDetailNodes.enter().append('text')
+      .classed 'statsDetail', true
+      .attr 'opacity', 0.5
+      .attr 'text-anchor', 'middle'
+      .attr 'x', maxX/2 + 40
+    statsDetailNodes
+      .attr 'y', (d) -> yScale(d.slug)
+      .text (d) -> d.stats.listener_count
+
+    # report details
+    reportDetailNodes = svg.select('.reportDetails')
+      .selectAll('.reportDetail').data(_.values(reports))
+      .attr 'transform', (d) ->
+        "translate(#{maxX - 200}, #{yScale(lines[d.identifier])+10})"
+    enter = reportDetailNodes.enter().append('g')
+      .classed 'reportDetail', true
+      .attr 'opacity', 0.5
+    enter.append('text').classed('temp', true)
+    #enter.append('text').classed('mem', true)
+    reportDetailNodes.select('.temp').text (d) -> d.report.temperature
+    #reportDetailNodes.select('.mem').text (d) ->
+    #  "#{d.report.memory.used}/#{d.report.memory.total}"
+
 
 
 

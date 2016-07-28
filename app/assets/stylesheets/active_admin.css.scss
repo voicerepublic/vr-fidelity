@@ -60,7 +60,6 @@ html, body {
             text-decoration: none;
         }
         text {
-            text-anchor: middle;
             dominant-baseline: central;
         }
         circle {
@@ -187,7 +186,7 @@ border: none;
     .pending    { background: Fuchsia; }
     .prelive    { background: Purple; }
     .live       { background: Lime; }
-    .postlive   { background: Red; }
+    .postlive   { background: Fuchsia; }
     .processing { background: OrangeRed; }
     .archived   { background: RoyalBlue; }
     .suspended  { background: Red; }
