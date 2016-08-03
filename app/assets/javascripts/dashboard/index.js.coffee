@@ -15,6 +15,8 @@ $ ->
   # ============================================================
   # data
 
+  debug = false
+
   events = [] # line, time, color
   reports = {}
   heartbeats = {}
@@ -66,6 +68,10 @@ $ ->
       line: server.name
       time: server.created_at
       color: 'magenta'
+    venues[server.name] ||= {venue: {slug: server.name}}
+    venues[server.name].venue.instance_id = server.instance_id
+    console.log server
+    console.log venues
 
   _.each briefings.talks, (talk) ->
 
@@ -79,11 +85,13 @@ $ ->
   # subscribe
 
   faye.subscribe '/report', (device) ->
+    console.log '/report', device if debug
     key = device.identifier
     reports[key] = _.assign(device, time: new Date)
     lines[key] ||= key
 
   faye.subscribe '/heartbeat', (device) ->
+    console.log '/heartbeat', device if debug
     key = device.identifier
     heartbeats[key] = _.assign(device, time: new Date)
     lines[key] ||= key
@@ -93,14 +101,14 @@ $ ->
   #  connections[key] = details
 
   faye.subscribe '/admin/stats', (stat) ->
+    console.log '/admin/stats', stat if debug
     key = stat.slug
     stats[key] = _.assign(stat, time: new Date, interval: 4)
     lines[key] = key
 
-  faye.subscribe '/admin/venues', addVenue
-
-  faye.subscribe '/admin/bigpicture', (snapshots) ->
-    _.each snapshots, addVenue
+  faye.subscribe '/admin/venues', (snapshot) ->
+    console.log '/admin/venues', snapshot if debug
+    addVenue(snapshot)
 
   #faye.subscribe '/admin/talks', (snapshot) ->
   #  console.log snapshot
@@ -133,6 +141,8 @@ $ ->
   svg.append('g').classed('slugs', true)
   svg.append('g').classed('events', true)
   svg.append('g').classed('venue_device_names', true)
+  svg.append('g').classed('venue_instance_ids', true)
+  svg.append('g').classed('talk_names', true)
 
   # --- initialize time scale
   now     = new Date
@@ -285,7 +295,7 @@ $ ->
       .attr 'cx',   (d) -> 40
       .attr 'cy',   (d) -> yScale(d.venue.slug)
       .attr 'r',    (d) -> 20
-      .attr 'fill', (d) -> venueColorByState[d.venue.state]
+      .attr 'fill', (d) -> venueColorByState[d.venue.state] || 'white'
 
     # talks
     talkNodes = svg.select('.talks')
@@ -301,8 +311,19 @@ $ ->
       .attr 'width',  (d) -> (timeScaleX(Date.parse(d.ends_at)) -
                               timeScaleX(Date.parse(d.starts_at)))
       .attr 'height', (d) -> 40
-      .attr 'stroke', (d) -> talkColorByState[d.state]
-      .attr 'fill',   (d) -> talkColorByState[d.state]
+      .attr 'stroke', (d) -> talkColorByState[d.state] || 'white'
+      .attr 'fill',   (d) -> talkColorByState[d.state] || 'white'
+
+    # talk names
+    talkNodes = svg.select('.talk_names')
+      .selectAll('.talk').data(_.values(talks))
+      .attr 'x', (d) -> timeScaleX(Date.parse(d.starts_at)) + 5
+      .attr 'y', (d) -> yScale(d.venue_slug) - 10
+    talkNodes.enter().append('text')
+      .classed 'talk', true
+      .attr 'text-anchor', 'start'
+      .attr 'opacity', 0.5
+      .text (d) -> d.title
 
     # identifiers
     identifierNodes = svg.select('.identifiers')
@@ -327,6 +348,18 @@ $ ->
       .attr 'x', maxX - 60
       .text (d) -> d.venue.device_name
 
+    # instance_ids
+    data = _.filter _.values(venues), (e) -> e.venue.instance_id?
+    identifierNodes = svg.select('.venue_instance_ids')
+      .selectAll('.venue_instance_id').data(data)
+      .attr 'y', (d) -> yScale(lines[d.venue.slug]) + 10
+    identifierNodes.enter().append('text')
+      .classed 'venue_instance_id', true
+      .attr 'text-anchor', 'middle'
+      .attr 'opacity', 0.5
+      .attr 'x', maxX/2 + 40
+      .text (d) -> d.venue.instance_id
+
     # slugs
     slugNodes = svg.select('.slugs')
       .selectAll('.slug').data(_.uniq(_.values(lines)))
@@ -335,7 +368,7 @@ $ ->
       .classed 'slug', true
       .attr 'text-anchor', 'start'
       .attr 'opacity', 0.5
-      .attr 'x', maxX/2 + 60
+      .attr 'x', maxX/2 + 80
       .text (d) -> d
 
     # stats

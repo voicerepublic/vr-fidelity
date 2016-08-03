@@ -6,7 +6,8 @@ EC2.instance_eval do
   def briefing
     servers.select { |s| s.ready? && s.tags['Target'] == Settings.target }
       .reduce({}) do |result, server|
-      result.merge server.id => { name: server.tags['Name'],
+      result.merge server.id => { instance_id: server.id,
+                                  name: server.tags['Name'],
                                   client_token: server.client_token,
                                   created_at: server.created_at,
                                   public_ip_address: server.public_ip_address }
