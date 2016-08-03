@@ -61,8 +61,6 @@ $ ->
       color: 'magenta'
     venues[server.name] ||= {venue: {slug: server.name}}
     venues[server.name].venue.instance_id = server.instance_id
-    console.log server
-    console.log venues
 
   _.each briefings.talks, (talk) ->
 
