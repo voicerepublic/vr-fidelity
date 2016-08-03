@@ -1,5 +1,11 @@
 class Venue < ActiveRecord::Base
 
+  class << self
+    def briefing
+      not_offline.map(&:attributes)
+    end
+  end
+
   STATES = %w( offline
                available
                provisioning
@@ -12,6 +18,8 @@ class Venue < ActiveRecord::Base
   STATES.each do |state|
     scope state.to_sym, -> { where(state: state) }
   end
+
+  scope :not_offline, -> { where.not(state: 'offline') }
 
   extend FriendlyId
   friendly_id :slug_candidates, use: [:slugged, :finders]
