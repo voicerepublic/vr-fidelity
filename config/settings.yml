@@ -1,3 +1,5 @@
+#target: local
+
 rtmp:
   archive_path:     ../dev/local/archive
   archive_raw_path: ../dev/local/archive_raw
@@ -21,6 +23,12 @@ fog:
     region: eu-central-1
     aws_access_key_id: AKIAI7HSKHN3FBT2KAZQ
     aws_secret_access_key: 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
+  compute:
+    provider: AWS
+    region: eu-central-1
+    # user: compute
+    aws_access_key_id: AKIAJ7YWXUASXEGYLVNA
+    aws_secret_access_key: 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
 
 storage:
   backup_recordings: vr-euc1-dev-backup-recordings@eu-central-1

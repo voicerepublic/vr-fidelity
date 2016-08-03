@@ -24,6 +24,12 @@
 # * series_id [integer] - belongs to :series
 class Talk < ActiveRecord::Base
 
+  class << self
+    def briefing
+      within(4.hours.ago, 6.hours.from_now).map(&:attributes)
+    end
+  end
+
   include ApplicationHelper
 
   extend ::CsvImport
@@ -104,8 +110,8 @@ class Talk < ActiveRecord::Base
 
   scope :featured, -> { where.not(featured_from: nil) }
 
-  scope :in_dashboard, -> do
-    where('ends_at > ? AND starts_at < ?', 4.hours.ago, 4.hours.from_now)
+  scope :within, ->(from, to) do
+    where('ends_at > ? AND starts_at < ?', from, to)
   end
 
   scope :uncategorized, -> { where(icon: 'default') }
