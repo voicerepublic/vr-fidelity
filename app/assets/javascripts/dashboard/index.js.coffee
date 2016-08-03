@@ -5,18 +5,13 @@ $ ->
   $('#active_admin_content').height('100%')
   $('#wrapper').height('80%')
 
-  # ============================================================
-  # setup data providers
-
+  # --- setup data providers
   return unless Faye?
   faye = new Faye.Client(document.fayeUrl)
   faye.addExtension(new FayeAuthentication(faye))
 
-  # ============================================================
-  # data
-
+  # --- data
   debug = false
-
   events = [] # line, time, color
   reports = {}
   heartbeats = {}
@@ -26,9 +21,7 @@ $ ->
   talks = {}
   lines = {} # slug: slug, identifier: slug, ...
 
-  # ============================================================
-  # helpers
-
+  # --- data helpers
   addTalk = (snapshot, venueSlug=nil) ->
     #console.log 'ADD TALK', snapshot
     key = snapshot.id
@@ -42,9 +35,7 @@ $ ->
     lines[key] = key
     lines[mappings.devices[snapshot.venue.device_id]] = key
 
-  # ============================================================
-  # use briefings
-
+  # --- briefings
   _.each briefings.venues, (venue) ->
     lines[venue.slug] = venue.slug
     lines[mappings.devices[venue.device_id]] = venue.slug if venue.device_id?
@@ -80,10 +71,7 @@ $ ->
 
     addTalk(talk, slug)
 
-
-  # ============================================================
-  # subscribe
-
+  # --- subscribes
   faye.subscribe '/report', (device) ->
     console.log '/report', device if debug
     key = device.identifier
@@ -118,9 +106,7 @@ $ ->
   #  talks[key] = snapshot
   #  # console.log(JSON.stringify(talks))
 
-  # ============================================================
-  # setup d3
-
+  # --- setup d3
   svg = d3.select('#livedashboard').append("svg")
   svg.attr("width", '100%').attr("height", '100%')
 
@@ -184,7 +170,7 @@ $ ->
     .text(preciseTimeFormatter(now))
 
 
-  # helpers
+  # --- helpers
   heartbeatTimeout = (d, radius) ->
     since = new Date - d.time
     expected = d.interval * 1000
@@ -222,9 +208,7 @@ $ ->
   opacityBySelection = (slug) ->
     if selectedVenues[slug] then 1 else 0
 
-  # ============================================================
-  # d3 update
-
+  # --- d3 update
 
   updateDashboard = ->
     requestAnimationFrame updateDashboard
@@ -242,7 +226,7 @@ $ ->
     # --- update clock
     svg.select('.now').text(preciseTimeFormatter(now))
 
-    # Y scale
+    # --- y scale
     yScale = d3.scale.ordinal()
       .rangeRoundPoints([25, maxY-25], 0.5)
       .domain(_.uniq(_.values(lines)))
@@ -409,7 +393,6 @@ $ ->
     #reportDetailNodes.select('.mem').text (d) ->
     #  "#{d.report.memory.used}/#{d.report.memory.total}"
 
-
     # events
     eventNodes = svg.select('.events')
       .selectAll('.event').data(events)
@@ -422,76 +405,5 @@ $ ->
       .attr 'opacity', 0.2
       .attr 'stroke-opacity', 0
 
-
-
-
+  # --- start update cycle
   updateDashboard()
-
-
-
-
-
-
-
-##    updateStreams = ->
-##
-##
-##      # --- recalculate y scale
-##      data.param = calculateParam()
-##
-##      # --- draw talks
-##      talks = svg.select('.talks').selectAll('.talk').data(data.talks)
-##      talks.enter().append('rect')
-##        .attr('class', 'talk')
-##        .attr('fill', '#ddd')
-##        .attr('x', maxX/2)
-##        .attr('width', 0)
-##        #.each((d) -> console.log(JSON.stringify(d)))
-##      talks.transition().duration(animDuration)
-##        .attr('x', (d) -> timeScaleX(Date.parse(d.starts_at)))
-##        .attr('width', (d) -> timeScaleX(Date.parse(d.ends_at)) -
-##          timeScaleX(Date.parse(d.starts_at)))
-##        .attr('y', (d) -> scaleY(d.id))
-##        .attr('height', (d) -> elementHeight(d.id))
-##
-##      # --- draw fragments
-##      fragments = svg.select('.fragments').selectAll('.fragment').data(data.fragments)
-##      fragments.enter().append('rect').attr('class', 'fragment')
-##        .attr('width', 0).attr('x', maxX/2)
-##      fragments.transition().duration(animDuration)
-##        .attr('x', (d) -> timeScaleX(d.start_time))
-##        .attr('y', (d) -> scaleY(d.stream_id))
-##        .attr('width', (d) -> timeScaleX(d.end_time) - timeScaleX(d.start_time))
-##        .attr('height', (d) -> elementHeight(d.stream_id))
-##        .attr('fill', (d) -> d.state)
-##
-##      # --- draw streams
-##      streams = svg.select('.streams').selectAll('.stream').data(data.streams)
-##      enter = streams.enter()
-##        .append('g')
-##          .attr('class', 'stream')
-##          .attr('transform', (d) -> "translate(#{maxX/2+5}, #{scaleY(d.id)+4})")
-##        .append('a')
-##          # TODO fix link issue
-##          .attr('xlink:href', (d) -> "//#{url}/talk/#{d.talk_id}")
-##      enter.append('text').attr('x',   0).attr('class', 'nclients')
-##      enter.append('text').attr('x',  70).attr('class', 'bandwidth')
-##      enter.append('text').attr('x',  90).attr('class', 'codec')
-##      enter.append('text').attr('x', 145).attr('class', 'id')
-##      update = streams.transition().duration(animDuration)
-##        .attr('transform', (d) -> "translate(#{maxX/2+5}, #{scaleY(d.id)+4})")
-##      update.select('.nclients').text((d) -> d.nclients)
-##      update.select('.bandwidth').text((d) -> "#{Math.round(d.bw_in/1024)} Kb/s")
-##      update.select('.codec').text((d) -> d.codec)
-##      update.select('.id').text((d) -> d.id)
-##
-##      # --- draw events
-##      events = svg.selectAll('.event').data(data.events)
-##      events.enter().append('path')
-##        .attr('class', 'event')
-##        .attr('d', eventMarker.top)
-##        .attr('fill', eventColor)
-##        .attr('transform', (d) -> "translate(#{maxX/2},#{scaleY(d.stream_id)})")
-##      events.transition().duration(animDuration)
-##        .attr('transform', (d) -> "translate(#{timeScaleX(d.timestamp)}," +
-##          "#{scaleY(d.stream_id)})")
