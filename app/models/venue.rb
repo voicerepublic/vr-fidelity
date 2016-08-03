@@ -4,6 +4,9 @@ class Venue < ActiveRecord::Base
     def briefing
       not_offline.map(&:attributes)
     end
+    def mapping
+      Hash[all.pluck(:id, :slug)]
+    end
   end
 
   STATES = %w( offline

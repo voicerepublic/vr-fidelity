@@ -1,5 +1,11 @@
 class Device < ActiveRecord::Base
 
+  class << self
+    def mapping
+      Hash[all.pluck(:id, :identifier)]
+    end
+  end
+
   self.inheritance_column = false
 
   validates :pairing_code, uniqueness: true, allow_nil: true

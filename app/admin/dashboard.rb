@@ -31,10 +31,14 @@ ActiveAdmin.register_page "Dashboard" do
       script do
         x = <<-EOF
         document.fayeUrl = '#{Settings.faye.server}';
-        identifiers = #{Hash[Device.all.pluck(:id, :identifier)].to_json};
+        mappings = {
+          devices: #{Device.mapping.to_json},
+          venues: #{Venue.mapping.to_json}
+        }
         briefings = {
-          servers: #{EC2.briefing.to_json};
-          venues: #{Venue.briefing.to_json};
+          servers: #{EC2.briefing.to_json},
+          venues: #{Venue.briefing.to_json},
+          talks: #{Talk.briefing.to_json}
         }
         EOF
         x.html_safe

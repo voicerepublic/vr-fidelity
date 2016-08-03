@@ -15,16 +15,18 @@ $ ->
   # ============================================================
   # data
 
+  events = [] # line, time, color
   reports = {}
   heartbeats = {}
   connections = {}
   stats = {}
   venues = {}
   talks = {}
-  lines = {}
+  lines = {} # slug: slug, identifier: slug, ...
 
   # ============================================================
-  # add
+  # helpers
+
   addTalk = (snapshot, venueSlug=nil) ->
     #console.log 'ADD TALK', snapshot
     key = snapshot.id
@@ -36,10 +38,46 @@ $ ->
     venues[key] = snapshot
     _.each snapshot.venue.talks, (t) -> addTalk(t, key)
     lines[key] = key
-    lines[identifiers[snapshot.venue.device_id]] = key
+    lines[mappings.devices[snapshot.venue.device_id]] = key
+
+  # ============================================================
+  # use briefings
+
+  _.each briefings.venues, (venue) ->
+    lines[venue.slug] = venue.slug
+    lines[mappings.devices[venue.device_id]] = venue.slug if venue.device_id?
+
+    venues[venue.slug] = {venue: venue}
+
+    if venue.started_provisioning_at?
+      events.push
+        line: venue.slug
+        time: venue.started_provisioning_at
+        color: 'orange'
+    if venue.completed_provisioning_at?
+      events.push
+        line: venue.slug
+        time: venue.completed_provisioning_at
+        color: 'lime'
+
+  _.each briefings.servers, (server) ->
+    lines[server.name] = server.name
+    events.push
+      line: server.name
+      time: server.created_at
+      color: 'magenta'
+
+  _.each briefings.talks, (talk) ->
+
+    slug = mappings.venues[talk.venue_id]
+    lines[slug] = slug
+
+    addTalk(talk, slug)
+
 
   # ============================================================
   # subscribe
+
   faye.subscribe '/report', (device) ->
     key = device.identifier
     reports[key] = _.assign(device, time: new Date)
@@ -93,6 +131,8 @@ $ ->
   svg.append('g').classed('statsDetails', true)
   svg.append('g').classed('identifiers', true)
   svg.append('g').classed('slugs', true)
+  svg.append('g').classed('events', true)
+  svg.append('g').classed('venue_device_names', true)
 
   # --- initialize time scale
   now     = new Date
@@ -194,7 +234,7 @@ $ ->
 
     # Y scale
     yScale = d3.scale.ordinal()
-      .rangeRoundPoints([25, maxY-25], 0.25)
+      .rangeRoundPoints([25, maxY-25], 0.5)
       .domain(_.uniq(_.values(lines)))
 
     # lines
@@ -203,7 +243,7 @@ $ ->
     lineNodes.enter().append('line')
       .classed 'line', true
       .attr 'stroke-width', 1
-      .attr 'stroke-opacity', 0.5
+      .attr 'stroke-opacity', 0.1
     lineNodes
       .attr 'x1', 0
       .attr 'y1', yScale
@@ -275,16 +315,28 @@ $ ->
       .attr 'x', maxX - 60
       .text (d) -> d.identifier
 
+    # device_name
+    data = _.filter _.values(venues), (e) -> e.venue.device_name?
+    identifierNodes = svg.select('.venue_device_names')
+      .selectAll('.venue_device_name').data(data)
+      .attr 'y', (d) -> yScale(lines[d.venue.slug]) - 10
+    identifierNodes.enter().append('text')
+      .classed 'venue_device_name', true
+      .attr 'text-anchor', 'middle'
+      .attr 'opacity', 0.5
+      .attr 'x', maxX - 60
+      .text (d) -> d.venue.device_name
+
     # slugs
     slugNodes = svg.select('.slugs')
-      .selectAll('.slug').data(_.values(venues))
-      .attr 'y', (d) -> yScale(d.venue.slug) + 10
+      .selectAll('.slug').data(_.uniq(_.values(lines)))
+      .attr 'y', (d) -> yScale(d) + 10
     slugNodes.enter().append('text')
       .classed 'slug', true
       .attr 'text-anchor', 'start'
       .attr 'opacity', 0.5
       .attr 'x', maxX/2 + 60
-      .text (d) -> d.venue.slug
+      .text (d) -> d
 
     # stats
     statsNodes = svg.select('.stats').selectAll('.stat')
@@ -304,6 +356,7 @@ $ ->
       .classed 'statsDetail', true
       .attr 'opacity', 0.5
       .attr 'text-anchor', 'middle'
+      #.attr 'font-size', '150%'
       .attr 'x', maxX/2 + 40
     statsDetailNodes
       .attr 'y', (d) -> yScale(d.slug)
@@ -322,6 +375,19 @@ $ ->
     reportDetailNodes.select('.temp').text (d) -> d.report.temperature
     #reportDetailNodes.select('.mem').text (d) ->
     #  "#{d.report.memory.used}/#{d.report.memory.total}"
+
+
+    # events
+    eventNodes = svg.select('.events')
+      .selectAll('.event').data(events)
+      .attr 'cx', (d) -> timeScaleX(Date.parse(d.time))
+      .attr 'cy', (d) -> yScale(d.line)
+    eventNodes.enter().append('circle')
+      .classed 'event', true
+      .attr 'r', 10
+      .attr 'fill', (d) -> d.color
+      .attr 'opacity', 0.2
+      .attr 'stroke-opacity', 0
 
 
 
