@@ -34,5 +34,6 @@ ActiveAdmin.register_page "Dashboard" do
         x.html_safe
       end
     end
+    script src: '/js/app.js'
   end
 end
