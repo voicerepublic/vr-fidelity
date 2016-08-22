@@ -8,9 +8,25 @@
    [ajax.core :refer [PUT]]
    [clojure.string :as str]
    ;;[cljsjs.selectize]
+   cljsjs.moment
    goog.string.format
    goog.string)
   (:require-macros [cljs.core :refer [exists?]]))
+
+;; ------------------------------
+;; state
+
+(defonce state (atom {:server-heartbeat {}
+                      :client-heartbeat {}
+                      :now "NOW"}))
+
+;; ------------------------------
+;; components
+
+(defn now-comp []
+  [:div#current-time-holder
+   [:div#current-time-badge
+    (.format (:now @state) "hh:mm:ss")]])
 
 (defn main-comp []
   [:main
@@ -51,7 +67,7 @@
         [:div.time-slot-fill {:style {:width "102px"}}]
         [:div.time-slot]]]]]
     [:div#current-time-line]
-    [:div#current-time-holder [:div#current-time-badge "11:46:05"]]]
+    [now-comp]]
    [:div#dashboard
     [:div#venue-column
      [:div.venue-tab
@@ -63,7 +79,7 @@
         [:p.name-id "sophie-glaser " [:span "  i-065618ba"]]
         [:p.state-badges
          [:span.device-type "butt"]
-         [:span.server-state.connected "connected"]
+        [:span.server-state.connected "connected"]
          [:span.device-type.live "live"]]]]
       [:div.bottom-row.clearfix
        [:p.small-6.columns.float-left.no-pad
@@ -107,36 +123,77 @@
         [:span.small-10.float-right.columns.server-heartbeat.no-pad.awaiting-stream]]
        [:p.small-6.columns.float-right.no-pad
         [:span.small-2.float-left.columns.connection-status.no-pad.awaiting-stream]
-        [:span.small-10.float-right.columns.box-heartbeat.no-pad.true]]]]]]]
-  )
+        [:span.small-10.float-right.columns.box-heartbeat.no-pad.true]]]]]]])
+
 ;; -------------------------
-;; Initialize
+;; briefings (initial data)
 
-;; (defn inc-now [state-map]
-;;   (update-in state-map [:now] inc))
-;;
-;; (defn start-timer []
-;;   (let [intervalId (js/setInterval #(swap! state inc-now) 1000)]
-;;     (swap! page-state assoc :intervalId intervalId)))
-;;
-;; (defn venue-channel []
-;;   (:channel (venue)))
-;;
-;; (defn schedule-check-availability []
-;;   (if (= (venue-state) "offline")
-;;     (js/setTimeout request-availability-action (max 0 (time-to-available)))))
+;; -------------------------
+;; message handlers
 
-;; (defn setup-faye [callback]
-;;   (print "Subscribe" (venue-channel))
-;;   (let [subscription
-;;         (.subscribe js/fayeClient (venue-channel)
-;;                     #(venue-message-handler (js->clj %  :keywordize-keys true)))]
-;;     (.then subscription callback)))
+(defn server-heartbeat-handler [heartbeat]
+  (swap! state assoc-in [:server-heartbeat (heartbeat :token)] (js/Date.)))
+
+(defn client-heartbeat-handler [heartbeat]
+  (swap! state assoc-in [:client-heartbeat (heartbeat :identifier)] (js/Date.)))
+
+(defn client-report-handler [data]
+  (let [key (data :identifier)
+        path [:client-report key]]
+    (swap! state assoc-in path data)))
+
+(defn server-stats-handler [data]
+  (let [key (data :slug)
+        path [:server-stats key]]
+    (swap! state assoc-in path data)))
+
+(defn venues-handler [data]
+  (let [key ((data :venue) :slug)
+        path [:venue key]]
+    (swap! state assoc-in path data)))
+
+(defn talks-handler [data]
+  (let [key ((data :talk) :slug)
+        path [:talk key]]
+    (swap! state assoc-in path data)))
+
+(defn client-event-handler [data]
+  (let [key (data :identifier)
+        path [:client-event key]]
+    (swap! state assoc-in path data)))
+
+(defn connections-handler [data]
+  (let [key (data :slug)
+        path [:connection key]]
+    (swap! state assoc-in path (data :event))))
+
+;; -------------------------
+;; init helpers
+
+(defn update-loop []
+  (js/requestAnimationFrame update-loop)
+  (swap! state assoc :now (js/moment)))
+
+(defn subscribe [channel handler]
+  (.subscribe js/fayeClient channel
+              #(handler (js->clj %  :keywordize-keys true))))
 
 (defn mount-root []
   (reagent/render [main-comp] (.getElementById js/document "livedashboard")))
 
+;; -------------------------
+;; initialize
+
 (defn init! []
-  ;; (start-timer)
-  ;; (setup-faye schedule-check-availability)
   (mount-root))
+
+(update-loop)
+
+(subscribe "/report"            client-report-handler)
+(subscribe "/heartbeat"         client-heartbeat-handler)
+(subscribe "/admin/stats"       server-stats-handler)
+(subscribe "/admin/venues"      venues-handler)
+(subscribe "/admin/talks"       talks-handler)
+(subscribe "/admin/connections" connections-handler)
+(subscribe "/server/heartbeat"  server-heartbeat-handler)
+(subscribe "/event/devices"     client-event-handler)
