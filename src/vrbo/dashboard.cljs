@@ -1,6 +1,6 @@
 (ns vrbo.dashboard
   (:require
-   ;;[vrng.util :as u :refer [t state to-millis track-event]]
+   [vrbo.util :as u :refer [to-millis]]
    ;;[vrng.sporktrum :as spork]
    [reagent.core :as reagent :refer [atom]]
    [reagent.session :as session]
@@ -16,34 +16,66 @@
 ;; ------------------------------
 ;; state
 
-(defonce state (atom {}))
+(defonce state (atom {:line-mapping {}}))
 
 ;; ------------------------------
 ;; demo data
 
 (defn populate-with-demo-data []
   (swap! state assoc :lines
-         [{:key         "sophie-glaser1"
-           :instance-id "i-065618ba"
-           :device      "butt"
-           :venue-state "offline"
-           :talk-state  "archived"
-           :server-heartbeat-progress 50}
-          {:key         "sophie-glaser2"
-           :instance-id "i-065618bb"
-           :device      "darkice"
-           :venue-state "available"
-           :talk-state  "prelive"
-           :server-heartbeat-progress 50}
-          {:key         "sophie-glaser3"
-           :instance-id "i-065618bc"
-           :device      "box: Aristotele"
-           :venue-state "awaiting_stream"
-           :talk-state  "live"
-           :server-heartbeat-progress 50}
-          ]))
+         {"sophie-glaser1" {:key         "sophie-glaser1"
+                            :instance-id "i-065618ba"
+                            :device      "butt"
+                            :venue-state "offline"
+                            :talk-state  "archived"
+                            :client-heartbeat (js/moment)
+                            :server-heartbeat (js/moment)}
+          "sophie-glaser2" {:key         "sophie-glaser2"
+                            :instance-id "i-065618bb"
+                            :device      "darkice"
+                            :venue-state "available"
+                            :talk-state  "prelive"
+                            :client-heartbeat (js/moment)
+                            :server-heartbeat (js/moment)}
+          "sophie-glaser3" {:key         "sophie-glaser3"
+                            :instance-id "i-065618bc"
+                            :device      "box"
+                            :venue-state "awaiting_stream"
+                            :talk-state  "live"
+                            :client-heartbeat (js/moment)
+                            :server-heartbeat (js/moment)}
+          })
+  (swap! state assoc :line-mapping
+         {"sophie-glaser1" "sophie-glaser1"
+          "sophie-glaser2" "sophie-glaser2"
+          "sophie-glaser3" "sophie-glaser3"}))
 
 (populate-with-demo-data)
+
+;; ------------------------------
+;; data helpers
+
+(defn now []
+  (@state :now))
+
+(defn progress [t0 t1 td]
+  (* (/ 100 td) (- t1 t0)))
+
+(defn server-heartbeat-progress [line]
+  (goog.string.format
+   "%.2f%%"
+   (max 0 (- 100 (progress (line :server-heartbeat) (now) 4000)))))
+
+(defn client-heartbeat-progress [line]
+  (goog.string.format
+   "%.2f%%"
+   (max 0 (- 100 (progress (line :client-heartbeat) (now) 5000)))))
+
+(defn list-of-lines []
+  ;; TODO do sorting
+  (doall (map #((@state :lines) %)
+              (distinct (vals (@state :line-mapping))))))
+
 
 ;; ------------------------------
 ;; components
@@ -51,7 +83,7 @@
 (defn now-comp []
   [:div#current-time-holder
    [:div#current-time-badge
-    (.format (:now @state) "hh:mm:ss")]])
+    (.format (now) "hh:mm:ss")]])
 
 (defn line-comp [line]
   ^{:key (line :key)}
@@ -65,10 +97,27 @@
      [:p.state-badges
       [:span.device-type (line :device)]
       [:span.device-type {:class (line :talk-state)} (line :talk-state)]
-      [:span.device-type (line :server-heartbeat-progress)]]]]])
+      [:span.device-type (server-heartbeat-progress line)]
+      [:span.device-type (client-heartbeat-progress line)]]]]])
+  
 
-(defn lines-comp [lines]
-  [:div#venue-column (doall (map line-comp lines))])
+(defn lines-comp []
+  [:div#venue-column
+   (doall (map line-comp (list-of-lines)))])
+
+(defn timeline-comp [line]
+  ^{:key (line :key)}
+  [:div.venue-timeslot-row
+   [:div.point-in-time {:style {:margin-left "350px"}}]
+   [:div.time-slot-holder
+    {:style {:margin-left "400px"}}
+    [:p.time-slot-title "This is a talky talk"]
+    [:div.time-slot-fill]
+    [:div.time-slot]]])
+
+(defn timelines-comp []
+  [:div.venue-timeslots
+   (doall (map timeline-comp (list-of-lines)))])
 
 (defn main-comp []
   [:main
@@ -84,46 +133,40 @@
     [:div.marker.half]
     [:div.marker "14:00"]
     [:div.marker.half]
-    [:div.venue-timeslots
-     [:div.venue-timeslot-row
-      [:div.point-in-time {:style {:margin-left "450px"}}]
-      [:div.time-slot-holder
-       {:style {:margin-left "400px"}}
-       [:p.time-slot-title "This is a talky talk"]
-       [:div.time-slot-fill]
-       [:div.time-slot]]]
-     [:div.venue-timeslot-row
-      [:div.time-slot-holder
-       {:style {:margin-left "800px"}}
-       [:p.time-slot-title "This is really awesome"]
-       [:div.time-slot]]]
-     [:div.venue-timeslot-row
-      [:div.time-slot-holder
-       {:style {:margin-left "200px"}}
-       [:p.time-slot-title "Funny Porcelain Handpuppet"]
-       [:div.time-slot-fill]
-       [:div.time-slot]
-       [:div.time-slot-holder
-        {:style {:margin-left "400px"}}
-        [:p.time-slot-title "Gagnly Steel Kerchiefs"]
-        [:div.time-slot-fill {:style {:width "102px"}}]
-        [:div.time-slot]]]]]
+    [timelines-comp]
     [:div#current-time-line]
     [now-comp]]
    [:div#dashboard
-    [lines-comp (@state :lines)]]])
+    [lines-comp]]])
 
 ;; -------------------------
 ;; briefings (initial data)
+
+;; ------------------------------
+;; helpers
+
+(defn line-lookup [key]
+  (let [line-key ((@state :line-mapping) key)]
+    (if-not line-key
+      (do
+        (swap! state assoc-in [:line-mapping key] key)
+        (swap! state assoc-in [:lines key :key] key)))
+    (or line-key key)))
 
 ;; -------------------------
 ;; message handlers
 
 (defn server-heartbeat-handler [heartbeat]
-  (swap! state assoc-in [:server-heartbeat (heartbeat :token)] (js/Date.)))
+  (let [now (js/moment)
+        key (heartbeat :token)
+        line-key (line-lookup key)]
+    (swap! state assoc-in [:lines line-key :server-heartbeat] now)))
 
 (defn client-heartbeat-handler [heartbeat]
-  (swap! state assoc-in [:client-heartbeat (heartbeat :identifier)] (js/Date.)))
+  (let [now (js/moment)
+        key (heartbeat :identifier)
+        line-key (line-lookup key)]
+    (swap! state assoc-in [:lines line-key :client-heartbeat] now)))
 
 (defn client-report-handler [data]
   (let [key (data :identifier)
