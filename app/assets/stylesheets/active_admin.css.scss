@@ -8,8 +8,11 @@
 // $sidebar-width: 242px;
 
 // Active Admins got SASS!
+
+@import "settings";
 @import "active_admin/mixins";
 @import "active_admin/base";
+@import "stream_dashboard";
 
 // using active_skin
 $skinActiveColor: #d50021;
