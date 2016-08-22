@@ -38,5 +38,9 @@ the main app.
 Dashboard Notes
 ---------------
 
+Run figwheel from the root of the project.
+
+### Channels
+
 * /server/heartbeat
 * /event/devices

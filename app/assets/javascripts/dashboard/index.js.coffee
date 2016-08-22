@@ -1,4 +1,6 @@
 $ ->
+  return # deactivated
+
   return unless $('#livedashboard').length
 
   # TODO fix these

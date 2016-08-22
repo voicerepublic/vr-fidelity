@@ -17,7 +17,11 @@ ActiveAdmin.register_page "Dashboard" do
       script do
         x = <<-EOF
 
-        document.fayeUrl = '#{Settings.faye.server}';
+        fayeUrl = '#{Settings.faye.server}';
+
+        fayeClient = new Faye.Client(fayeUrl);
+        fayeExtension = new FayeAuthentication(fayeClient);
+        fayeClient.addExtension(fayeExtension);
 
         mappings = {
           devices: #{Device.mapping.to_json},
