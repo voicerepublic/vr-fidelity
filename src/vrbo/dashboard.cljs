@@ -61,19 +61,11 @@
      [:button.play-button
       [:svg [:use {:xlink:href "#icon-sound_on"}]]]]
     [:div.venue-info
-     [:p.name-id (line :key) " " [:span (line :instance-id)]]
+     [:p [:span.venue-name (line :key)] " " [:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
      [:p.state-badges
       [:span.device-type (line :device)]
-      [:span.server-state {:class (line :talk-state)} (line :venue-state)]
       [:span.device-type {:class (line :talk-state)} (line :talk-state)]
-      [:span.device-type (line :server-heartbeat-progress)]]]]
-   [:div.bottom-row.clearfix
-    [:p.small-6.columns.float-left.no-pad
-     [:span.small-2.float-left.columns.server-status.no-pad.connected]
-     [:span.small-10.float-right.columns.server-heartbeat.no-pad.connected]]
-    [:p.small-6.columns.float-right.no-pad
-     [:span.small-2.float-left.columns.connection-status.no-pad.connected]
-     [:span.small-10.float-right.columns.box-heartbeat.no-pad.false]]]])
+      [:span.device-type (line :server-heartbeat-progress)]]]]])
 
 (defn lines-comp [lines]
   [:div#venue-column (doall (map line-comp lines))])
