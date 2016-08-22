@@ -19,13 +19,31 @@
 (defonce state (atom {}))
 
 ;; ------------------------------
-;; data munching
+;; demo data
 
-(defn lines [] ;; DEMO DATA
-  [{:key "sophie-glaser1"}
-   {:key "sophie-glaser2"}
-   {:key "sophie-glaser3"}
-   {:key "sophie-glaser4"}])
+(defn populate-with-demo-data []
+  (swap! state assoc :lines
+         [{:key         "sophie-glaser1"
+           :instance-id "i-065618ba"
+           :device      "butt"
+           :venue-state "offline"
+           :talk-state  "archived"
+           :server-heartbeat-progress 50}
+          {:key         "sophie-glaser2"
+           :instance-id "i-065618bb"
+           :device      "darkice"
+           :venue-state "available"
+           :talk-state  "prelive"
+           :server-heartbeat-progress 50}
+          {:key         "sophie-glaser3"
+           :instance-id "i-065618bc"
+           :device      "box: Aristotele"
+           :venue-state "awaiting_stream"
+           :talk-state  "live"
+           :server-heartbeat-progress 50}
+          ]))
+
+(populate-with-demo-data)
 
 ;; ------------------------------
 ;; components
@@ -43,11 +61,12 @@
      [:button.play-button
       [:svg [:use {:xlink:href "#icon-sound_on"}]]]]
     [:div.venue-info
-     [:p.name-id (line :key) " " [:span "  i-065618ba"]]
+     [:p.name-id (line :key) " " [:span (line :instance-id)]]
      [:p.state-badges
-      [:span.device-type "butt"]
-      [:span.server-state.connected "connected"]
-      [:span.device-type.live "live"]]]]
+      [:span.device-type (line :device)]
+      [:span.server-state {:class (line :talk-state)} (line :venue-state)]
+      [:span.device-type {:class (line :talk-state)} (line :talk-state)]
+      [:span.device-type (line :server-heartbeat-progress)]]]]
    [:div.bottom-row.clearfix
     [:p.small-6.columns.float-left.no-pad
      [:span.small-2.float-left.columns.server-status.no-pad.connected]
@@ -100,7 +119,7 @@
     [:div#current-time-line]
     [now-comp]]
    [:div#dashboard
-    [lines-comp (lines)]]])
+    [lines-comp (@state :lines)]]])
 
 ;; -------------------------
 ;; briefings (initial data)
