@@ -88,17 +88,17 @@
 (defn line-comp [line]
   ^{:key (line :key)}
   [:div.venue-tab
-   [:div.top-row.clearfix
     [:div.play-button-holder
-     [:button.play-button
-      [:svg [:use {:xlink:href "#icon-sound_on"}]]]]
+    [:button.play-button
+      [:svg [:use {:xlink:href "#icon-sound_on"}]]]
+   [:div.top-row.clearfix
     [:div.venue-info
      [:p [:span.venue-name (line :key)] " " [:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
      [:p.state-badges
       [:span.device-type (line :device)]
       [:span.device-type {:class (line :talk-state)} (line :talk-state)]
       [:span.device-type (server-heartbeat-progress line)]
-      [:span.device-type (client-heartbeat-progress line)]]]]])
+      [:span.device-type (client-heartbeat-progress line)]]]]]])
 
 
 (defn lines-comp []

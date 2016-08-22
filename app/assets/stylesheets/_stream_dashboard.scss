@@ -117,10 +117,10 @@
             
         }
         .play-button-holder {
-            width: 44px;
-            height: 44px;
+            padding: 18px;
             float: left;
             margin-right: 12px;
+            border-right: 1px solid #ccc;
             .play-button {
                 width: 44px;
                 height: 44px;
@@ -180,7 +180,7 @@
         // }
         .top-row {
             // margin-bottom: 12px;
-            padding: 12px;
+            //padding: 12px;
         }
         .bottom-row {
             border-top: 2px solid white;
@@ -190,12 +190,12 @@
         height: 80px;
         position: relative;
         margin-left: 50px;
+        float:left;
         // padding-top: 6px;
         .time-slot-title {
             font-size: 10px;
             font-weight: 500;
             z-index: 820;
-            position: absolute;
             top: 2px;
             left: 6px;
         }
