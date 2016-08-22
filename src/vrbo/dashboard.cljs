@@ -87,18 +87,29 @@
 
 (defn line-comp [line]
   ^{:key (line :key)}
-  [:div.venue-tab
+  [:div.venue-tab.clearfix
+    ;;Left side
     [:div.play-button-holder
-    [:button.play-button
-      [:svg [:use {:xlink:href "#icon-sound_on"}]]]
-   [:div.top-row.clearfix
-    [:div.venue-info
-     [:p [:span.venue-name (line :key)] " " [:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
-     [:p.state-badges
+      [:button.play-button
+        [:img {:src "assets/sound_on.svg"}]]]
+    ;; right side
+    [:div.info-box
+     [:div.venue-info [:span.venue-name (line :key)][:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
+     ;; TODO PHIL: accommodate client-state, client-name here, and accommodate addition of state-based css class for state:
+     [:div.device-info 
       [:span.device-type (line :device)]
-      [:span.device-type {:class (line :talk-state)} (line :talk-state)]
-      [:span.device-type (server-heartbeat-progress line)]
-      [:span.device-type (client-heartbeat-progress line)]]]]]])
+      [:span.device-name "client-name"]
+      [:span.device-state "client-state"]
+      [:span.device-heartbeat-holder.float-right [:span.device-heartbeat {:style {:width (client-heartbeat-progress line)}}]]]
+    [:div.server-info 
+      [:span.server-id (line :instance-id)]
+      [:span.listener-count [:img.listener-icon {:src "assets/person.svg"}] "listener-count"]
+      [:span.server-heartbeat-holder.float-right [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]]]
+     ; [:p.state-badges
+     ;  [:span.device-type (line :device)]
+     ;  [:span.device-type {:class (line :talk-state)} (line :talk-state)]
+     ;  [:span.device-type (server-heartbeat-progress line)]]
+      ]])
 
 
 (defn lines-comp []
