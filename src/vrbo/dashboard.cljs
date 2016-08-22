@@ -71,6 +71,12 @@
    "%.2f%%"
    (max 0 (- 100 (progress (line :client-heartbeat) (now) 5000)))))
 
+(defn list-of-lines []
+  ;; TODO do sorting
+  (doall (map #((@state :lines) %)
+              (distinct (vals (@state :line-mapping))))))
+
+
 ;; ------------------------------
 ;; components
 
@@ -102,10 +108,23 @@
      [:span.small-2.float-left.columns.connection-status.no-pad.connected]
      [:span.small-10.float-right.columns.box-heartbeat.no-pad.false]]]])
 
-(defn lines-comp [lines]
+(defn lines-comp []
   [:div#venue-column
-   (doall (map #(line-comp ((@state :lines) %))
-               (distinct (vals (@state :line-mapping)))))])
+   (doall (map line-comp (list-of-lines)))])
+
+(defn timeline-comp [line]
+  ^{:key (line :key)}
+  [:div.venue-timeslot-row
+   [:div.point-in-time {:style {:margin-left "350px"}}]
+   [:div.time-slot-holder
+    {:style {:margin-left "400px"}}
+    [:p.time-slot-title "This is a talky talk"]
+    [:div.time-slot-fill]
+    [:div.time-slot]]])
+
+(defn timelines-comp []
+  [:div.venue-timeslots
+   (doall (map timeline-comp (list-of-lines)))])
 
 (defn main-comp []
   [:main
@@ -121,34 +140,11 @@
     [:div.marker.half]
     [:div.marker "14:00"]
     [:div.marker.half]
-    [:div.venue-timeslots
-     [:div.venue-timeslot-row
-      [:div.point-in-time {:style {:margin-left "450px"}}]
-      [:div.time-slot-holder
-       {:style {:margin-left "400px"}}
-       [:p.time-slot-title "This is a talky talk"]
-       [:div.time-slot-fill]
-       [:div.time-slot]]]
-     [:div.venue-timeslot-row
-      [:div.time-slot-holder
-       {:style {:margin-left "800px"}}
-       [:p.time-slot-title "This is really awesome"]
-       [:div.time-slot]]]
-     [:div.venue-timeslot-row
-      [:div.time-slot-holder
-       {:style {:margin-left "200px"}}
-       [:p.time-slot-title "Funny Porcelain Handpuppet"]
-       [:div.time-slot-fill]
-       [:div.time-slot]
-       [:div.time-slot-holder
-        {:style {:margin-left "400px"}}
-        [:p.time-slot-title "Gagnly Steel Kerchiefs"]
-        [:div.time-slot-fill {:style {:width "102px"}}]
-        [:div.time-slot]]]]]
+    [timelines-comp]
     [:div#current-time-line]
     [now-comp]]
    [:div#dashboard
-    [lines-comp (@state :lines)]]])
+    [lines-comp]]])
 
 ;; -------------------------
 ;; briefings (initial data)
