@@ -99,7 +99,7 @@
       [:span.device-type {:class (line :talk-state)} (line :talk-state)]
       [:span.device-type (server-heartbeat-progress line)]
       [:span.device-type (client-heartbeat-progress line)]]]]])
-  
+
 
 (defn lines-comp []
   [:div#venue-column
@@ -109,9 +109,16 @@
   ^{:key (line :key)}
   [:div.venue-timeslot-row
    [:div.point-in-time {:style {:margin-left "350px"}}]
+
    [:div.time-slot-holder
-    {:style {:margin-left "400px"}}
-    [:p.time-slot-title "This is a talky talk"]
+    {:style {:margin-left "150px"}}
+    [:p.time-slot-title "This is a talky talk " (line :key)]
+    [:div.time-slot-fill]
+    [:div.time-slot]]
+
+   [:div.time-slot-holder
+    {:style {:margin-left "450px"}}
+    [:p.time-slot-title "This is a talky talk " (line :key) " 2"]
     [:div.time-slot-fill]
     [:div.time-slot]]])
 
