@@ -16,9 +16,16 @@
 ;; ------------------------------
 ;; state
 
-(defonce state (atom {:server-heartbeat {}
-                      :client-heartbeat {}
-                      :now "NOW"}))
+(defonce state (atom {}))
+
+;; ------------------------------
+;; data munching
+
+(defn lines [] ;; DEMO DATA
+  [{:key "sophie-glaser1"}
+   {:key "sophie-glaser2"}
+   {:key "sophie-glaser3"}
+   {:key "sophie-glaser4"}])
 
 ;; ------------------------------
 ;; components
@@ -27,6 +34,30 @@
   [:div#current-time-holder
    [:div#current-time-badge
     (.format (:now @state) "hh:mm:ss")]])
+
+(defn line-comp [line]
+  ^{:key (line :key)}
+  [:div.venue-tab
+   [:div.top-row.clearfix
+    [:div.play-button-holder
+     [:button.play-button
+      [:svg [:use {:xlink:href "#icon-sound_on"}]]]]
+    [:div.venue-info
+     [:p.name-id (line :key) " " [:span "  i-065618ba"]]
+     [:p.state-badges
+      [:span.device-type "butt"]
+      [:span.server-state.connected "connected"]
+      [:span.device-type.live "live"]]]]
+   [:div.bottom-row.clearfix
+    [:p.small-6.columns.float-left.no-pad
+     [:span.small-2.float-left.columns.server-status.no-pad.connected]
+     [:span.small-10.float-right.columns.server-heartbeat.no-pad.connected]]
+    [:p.small-6.columns.float-right.no-pad
+     [:span.small-2.float-left.columns.connection-status.no-pad.connected]
+     [:span.small-10.float-right.columns.box-heartbeat.no-pad.false]]]])
+
+(defn lines-comp [lines]
+  [:div#venue-column (doall (map line-comp lines))])
 
 (defn main-comp []
   [:main
@@ -69,61 +100,7 @@
     [:div#current-time-line]
     [now-comp]]
    [:div#dashboard
-    [:div#venue-column
-     [:div.venue-tab
-      [:div.top-row.clearfix
-       [:div.play-button-holder
-        [:button.play-button
-         [:svg [:use {:xlink:href "#icon-sound_on"}]]]]
-       [:div.venue-info
-        [:p.name-id "sophie-glaser " [:span "  i-065618ba"]]
-        [:p.state-badges
-         [:span.device-type "butt"]
-        [:span.server-state.connected "connected"]
-         [:span.device-type.live "live"]]]]
-      [:div.bottom-row.clearfix
-       [:p.small-6.columns.float-left.no-pad
-        [:span.small-2.float-left.columns.server-status.no-pad.connected]
-        [:span.small-10.float-right.columns.server-heartbeat.no-pad.connected]]
-       [:p.small-6.columns.float-right.no-pad
-        [:span.small-2.float-left.columns.connection-status.no-pad.connected]
-        [:span.small-10.float-right.columns.box-heartbeat.no-pad.false]]]]
-     [:div.venue-tab
-      [:div.top-row.clearfix
-       [:div.play-button-holder
-        [:button.play-button
-         [:svg [:use {:xlink:href "#icon-sound_on"}]]]]
-       [:div.venue-info
-        [:p.name-id "leipziger-buchmesse " [:span "  i-8dhskjh3"]]
-        [:p.state-badges
-         [:span.device-type "gandor"]
-         [:span.server-state.connected "connected"]
-         [:span.device-type.live "live"]]]]
-      [:div.bottom-row.clearfix
-       [:p.small-6.columns.float-left.no-pad
-        [:span.small-2.float-left.columns.server-status.no-pad.connected]
-        [:span.small-10.float-right.columns.server-heartbeat.no-pad.connected]]
-       [:p.small-6.columns.float-right.no-pad
-        [:span.small-2.float-left.columns.connection-status.no-pad.connected]
-        [:span.small-10.float-right.columns.box-heartbeat.no-pad.true]]]]
-     [:div.venue-tab
-      [:div.top-row.clearfix
-       [:div.play-button-holder
-        [:button.play-button
-         [:svg [:use {:xlink:href "#icon-sound_on"}]]]]
-       [:div.venue-info
-        [:p.name-id "voice-republic-testing " [:span "  i-e0f2bd5c"]]
-        [:p.state-badges
-         [:span.device-type "kant"]
-         [:span.server-state.awaiting-stream "awaiting-stream"]
-         [:span.device-type.offline "offline"]]]]
-      [:div.bottom-row.clearfix
-       [:p.small-6.columns.float-left.no-pad
-        [:span.small-2.float-left.columns.server-status.no-pad.awaiting-stream]
-        [:span.small-10.float-right.columns.server-heartbeat.no-pad.awaiting-stream]]
-       [:p.small-6.columns.float-right.no-pad
-        [:span.small-2.float-left.columns.connection-status.no-pad.awaiting-stream]
-        [:span.small-10.float-right.columns.box-heartbeat.no-pad.true]]]]]]])
+    [lines-comp (lines)]]])
 
 ;; -------------------------
 ;; briefings (initial data)
