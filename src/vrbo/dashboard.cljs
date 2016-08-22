@@ -28,19 +28,19 @@
            :device      "butt"
            :venue-state "offline"
            :talk-state  "archived"
-           :server-heartbeat (js/moment)}
+           :server-heartbeat-progress 50}
           {:key         "sophie-glaser2"
            :instance-id "i-065618bb"
            :device      "darkice"
            :venue-state "available"
            :talk-state  "prelive"
-           :server-heartbeat (js/moment)}
+           :server-heartbeat-progress 50}
           {:key         "sophie-glaser3"
            :instance-id "i-065618bc"
            :device      "box: Aristotele"
            :venue-state "awaiting_stream"
            :talk-state  "live"
-           :server-heartbeat (js/moment)}
+           :server-heartbeat-progress 50}
           ]))
 
 (populate-with-demo-data)
@@ -66,7 +66,7 @@
       [:span.device-type (line :device)]
       [:span.server-state {:class (line :talk-state)} (line :venue-state)]
       [:span.device-type {:class (line :talk-state)} (line :talk-state)]
-      [:span.device-type (.format (line :server-heartbeat) "hh:mm:ss")]]]]
+      [:span.device-type (line :server-heartbeat-progress)]]]]
    [:div.bottom-row.clearfix
     [:p.small-6.columns.float-left.no-pad
      [:span.small-2.float-left.columns.server-status.no-pad.connected]
