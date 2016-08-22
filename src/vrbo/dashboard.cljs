@@ -21,7 +21,7 @@
 ;; ------------------------------
 ;; data munching
 
-(defn lines []
+(defn lines [] ;; DEMO DATA
   [{:key "sophie-glaser1"}
    {:key "sophie-glaser2"}
    {:key "sophie-glaser3"}
@@ -43,7 +43,7 @@
      [:button.play-button
       [:svg [:use {:xlink:href "#icon-sound_on"}]]]]
     [:div.venue-info
-     [:p.name-id "sophie-glaser " [:span "  i-065618ba"]]
+     [:p.name-id (line :key) " " [:span "  i-065618ba"]]
      [:p.state-badges
       [:span.device-type "butt"]
       [:span.server-state.connected "connected"]
