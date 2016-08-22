@@ -1,3 +1,7 @@
+.admin_dashboard #active_admin_content {
+  padding: 0;
+}
+
 .clearfix::before,.clearfix::after {
     content: ' ';
     display: table;
@@ -254,6 +258,13 @@
         }
     }
     #time-grid {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
         position: absolute;
         width: 2000px;
         cursor: -webkit-grab;
