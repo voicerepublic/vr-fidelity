@@ -1,4 +1,4 @@
-(ns vrng.util
+(ns vrbo.util
   (:require
    [reagent.core :as reagent :refer [atom]]
    [clojure.string :as str]
@@ -6,26 +6,7 @@
    cljsjs.moment.locale.de))
 
 ;; ------------------------------
-;; STATE
-
-(defonce state
-  (atom (js->clj (.-initialSnapshot js/window) :keywordize-keys true)))
-
-(defn reset-state! [data]
-  (reset! state data))
-
-;; ------------------------------
-;; TRANSLATIONS
-
-(defonce translations
-  (atom (js->clj (.-translations js/window))))
-
-(defn t [& key]
-  (let [keys (flatten (map #(clojure.string/split % ".") key))]
-    (reduce get @translations keys)))
-
-;; ------------------------------
-;; TIMES
+;; times
 
 (def datetime-format "YYYY-MM-DD hh:mm:ss Z")
 
@@ -50,30 +31,3 @@
   (min 100 (* current (/ 100 total))))
 
 (.locale js/moment "en") ;; or "de", depending on user settings
-
-
-;; ------------------------------
-;; TIMER
-
-(defn inc-now [a-map]
-  (update-in a-map [:now] inc))
-
-(defn start-timer [a-atom]
-  (js/setInterval #(swap! a-atom inc-now) 1000))
-
-;; ------------------------------
-;; MESSAGEING
-
-(defn setup-faye [channel handler]
-  (print "Subscribe" channel "...")
-  (.subscribe js/fayeClient channel
-              #(handler (js->clj %  :keywordize-keys true))))
-
-;; ------------------------------
-;; GA
-
-(defn track-event [arguments]
-  (if (exists? js/_gaq)
-    (let [args (str/split arguments #" ")]
-      (.push js/_gaq (clj->js (cons "_trackEvent" args))))
-    (print "track:" arguments)))
