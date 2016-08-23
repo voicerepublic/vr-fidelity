@@ -102,12 +102,12 @@
 (defn server-heartbeat-progress [line]
   (goog.string.format
    "%.2f%%"
-   (max 0 (- 100 (progress (line :server-heartbeat) (now) 4000)))))
+   (max 0 (- 100 (progress (line :server-heartbeat) (js/moment) 4000)))))
 
 (defn client-heartbeat-progress [line]
   (goog.string.format
    "%.2f%%"
-   (max 0 (- 100 (progress (line :client-heartbeat) (now) 5000)))))
+   (max 0 (- 100 (progress (line :client-heartbeat) (js/moment) 5000)))))
 
 (defn list-of-lines []
   ;; TODO do sorting
@@ -118,7 +118,7 @@
 (defn time-position [time]
   (let [start (.subtract (now) 4 "hours")
         window (.duration js/moment 8 "hours")
-        diff (- (or time (now)) start)]
+        diff (- time start)]
     (* (/ 100 window) diff)))
 
 ;; ------------------------------
@@ -140,12 +140,12 @@
     [:div.info-box
      [:div.venue-info [:span.venue-name (line :key)][:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
      ;; TODO PHIL: accommodate client-state, client-name here, and accommodate addition of state-based css class for state:
-     [:div.device-info 
+     [:div.device-info
       [:span.device-type (line :device)]
       [:span.device-name "client-name"]
       [:span.device-state "client-state"]
       [:span.device-heartbeat-holder.float-right [:span.device-heartbeat {:style {:width (client-heartbeat-progress line)}}]]]
-    [:div.server-info 
+    [:div.server-info
       [:span.server-id (line :instance-id)]
       [:span.listener-count [:img.listener-icon {:src "assets/person.svg"}] "listener-count"]
       [:span.server-heartbeat-holder.float-right [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]]]
