@@ -236,13 +236,14 @@
         position: absolute;
         margin-left: 50px;
         float:left;
-        // padding-top: 6px;
+        width: 100%;
         .time-slot-title {
             font-size: 10px;
             font-weight: 500;
             z-index: 820;
-            top: 2px;
-            left: 6px;
+            margin-top: 4px;
+            margin-left: 8px;
+            line-height: 12px;
         }
         .time-slot-fill {
             background: $success-color;
