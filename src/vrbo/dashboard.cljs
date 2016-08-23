@@ -204,7 +204,7 @@
   ^{:key (talk :slug)}
   [:div.time-slot-holder
    {:style {:margin-left (time-position (talk :starts-at) "%")}}
-   [:p.time-slot-title (talk :title)]
+   [:p.time-slot-title {:style {:width (talk-width talk)}} (talk :title)]
    [:div.time-slot-fill]
    [:div.time-slot {:style {:width (talk-width talk)}}]])
 
