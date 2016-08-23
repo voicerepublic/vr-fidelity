@@ -26,9 +26,9 @@
          {"sophie-glaser1"
           {:key         "sophie-glaser1"
            :instance-id "i-065618ba"
-           :device      "butt"
+           :client-type "butt"
+           :listener-count 1
            :venue-state "offline"
-           :talk-state  "archived"
            :client-heartbeat (js/moment)
            :server-heartbeat (js/moment)
            :talks
@@ -48,9 +48,9 @@
           "sophie-glaser2"
           {:key         "sophie-glaser2"
            :instance-id "i-065618bb"
-           :device      "darkice"
+           :client-type "darkice"
+           :listener-count 2
            :venue-state "available"
-           :talk-state  "prelive"
            :client-heartbeat (js/moment)
            :server-heartbeat (js/moment)
            :talks
@@ -64,24 +64,26 @@
              :starts-at (.subtract (js/moment) 2 "hours")
              :title "History of a Land called Uqbar by Silas Haslam"}]}
 
-         "sophie-glaser3"
-         {:key         "sophie-glaser3"
-          :instance-id "i-065618bc"
-          :device      "box"
-          :venue-state "awaiting_stream"
-          :talk-state  "live"
-          :client-heartbeat (js/moment)
-          :server-heartbeat (js/moment)
-          :talks
-          [{:slug  "a"
+          "sophie-glaser3"
+          {:key         "sophie-glaser3 akljshdkjashd a"
+           :instance-id "i-065618bc"
+           :client-type "streamboxx"
+           :client-name "Aristoteles"
+           :client-state "streaming"
+           :listener-count 6
+           :venue-state "awaiting_stream"
+           :client-heartbeat (js/moment)
+           :server-heartbeat (js/moment)
+           :talks
+           [{:slug  "a"
              :starts-at (.subtract (js/moment) 2 "hours")
-            :title "Anglo-American Cyclopedia 1917 edition"}
-           {:slug  "b"
+             :title "Anglo-American Cyclopedia 1917 edition"}
+            {:slug  "b"
              :starts-at (.subtract (js/moment) 2 "hours")
-            :title "A First Encyclopaedia of Tlön"}
-           {:slug  "c"
+             :title "A First Encyclopaedia of Tlön"}
+            {:slug  "c"
              :starts-at (.subtract (js/moment) 2 "hours")
-            :title "History of a Land called Uqbar by Silas Haslam"}]}
+             :title "History of a Land called Uqbar by Silas Haslam"}]}
           })
   (swap! state assoc :line-mapping
          {"sophie-glaser1" "sophie-glaser1"
@@ -115,11 +117,29 @@
               (distinct (vals (@state :line-mapping))))))
 
 
-(defn time-position [time]
-  (let [start (.subtract (now) 4 "hours")
-        window (.duration js/moment 8 "hours")
-        diff (- time start)]
-    (* (/ 100 window) diff)))
+(defn window-start []
+  (.subtract (js/moment) 4 "hours"))
+
+(defn window-end []
+  (.add (js/moment) 4 "hours"))
+
+(defn time-position
+  ([time] (time-position time ""))
+  ([time suffix]
+   (let [window (- (window-end) (window-start))
+         diff (- time (window-start))]
+     (str (* (/ 100 window) diff) suffix))))
+
+(defn window-hour0 []
+  (.startOf (window-start) "hour"))
+
+(defn marker-times []
+  (map #(.add (window-hour0) % "hours") (range 0 9)))
+
+(defn markers []
+  (map #(hash-map :time %
+                  :label (.format % "hh:mm")
+                  :pos (time-position % "%")) (marker-times)))
 
 ;; ------------------------------
 ;; components
@@ -141,13 +161,13 @@
      [:div.venue-info [:span.venue-name (line :key)][:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
      ;; TODO PHIL: accommodate client-state, client-name here, and accommodate addition of state-based css class for state:
      [:div.device-info
-      [:span.device-type (line :device)]
-      [:span.device-name "client-name"]
-      [:span.device-state "client-state"]
+      [:span.device-type (line :client-type)]
+      [:span.device-name (line :client-name)]
+      [:span.device-state (line :client-state)]
       [:span.device-heartbeat-holder.float-right [:span.device-heartbeat {:style {:width (client-heartbeat-progress line)}}]]]
     [:div.server-info
       [:span.server-id (line :instance-id)]
-      [:span.listener-count [:img.listener-icon {:src "assets/person.svg"}] "listener-count"]
+      [:span.listener-count [:img.listener-icon {:src "assets/person.svg"}] (line :listener-count)]
       [:span.server-heartbeat-holder.float-right [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]]]
      ; [:p.state-badges
      ;  [:span.device-type (line :device)]
@@ -162,8 +182,8 @@
 (defn talk-comp [talk]
   ^{:key (talk :slug)}
   [:div.time-slot-holder
-   {:style {:margin-left (time-position (talk :starts-at))}}
-   [:p.time-slot-title (talk :title)]
+   {:style {:margin-left (time-position (talk :starts-at) "%")}}
+   [:p.time-slot-title (talk :title) " " (.format (talk :starts-at) "hh:mm")]
    [:div.time-slot-fill]
    [:div.time-slot]])
 
@@ -178,20 +198,29 @@
   [:div.venue-timeslots
    (doall (map timeline-comp (list-of-lines)))])
 
+(defn marker-comp [marker]
+  ^{:key (marker :label)}
+  [:div.marker {:style {:margin-left (marker :pos)}} (marker :label)])
+
+(defn markers-comp []
+  [:div.markers ;; new
+   (doall (map marker-comp (markers)))])
+
 (defn main-comp []
   [:main
    [:div#time-grid.ui-draggable.ui-draggable-handle
     {:style {:left "400px" :top "0px"}}
-    [:div.marker "10:00"]
-    [:div.marker.half]
-    [:div.marker "11:00"]
-    [:div.marker.half]
-    [:div.marker "12:00"]
-    [:div.marker.half]
-    [:div.marker "13:00"]
-    [:div.marker.half]
-    [:div.marker "14:00"]
-    [:div.marker.half]
+    [markers-comp]
+    ;;[:div.marker "10:00"]
+    ;;[:div.marker.half]
+    ;;[:div.marker "11:00"]
+    ;;[:div.marker.half]
+    ;;[:div.marker "12:00"]
+    ;;[:div.marker.half]
+    ;;[:div.marker "13:00"]
+    ;;[:div.marker.half]
+    ;;[:div.marker "14:00"]
+    ;;[:div.marker.half]
     [timelines-comp]
     [:div#current-time-line]
     [now-comp]]

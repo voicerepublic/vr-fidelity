@@ -71,7 +71,7 @@
         border-radius: 2px;
         margin: 0 auto;
         box-shadow: 0 1px 2px rgba(black, 0.2);
-        margin-left: 681px;
+        /*margin-left: 681px;*/
     }
     #current-time-line {
         position: absolute;
@@ -82,7 +82,6 @@
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         margin-top: 44px;
         z-index: 820;
-        margin-left: -292px;
     }
     .venue-tab {
         background-image: linear-gradient(-180deg, white 0%, #eeeeee 100%);
@@ -118,7 +117,7 @@
                 &.connected, &.live {
                     background: $success-color;
                 }
-            
+
         }
         .device-type, .device-state, .device-name, .server-id {
             background: #ddd;
@@ -161,7 +160,7 @@
             }
         }
         .info-box {
-            
+
             margin-left: 77px;
             height: 76px;
 
@@ -193,14 +192,14 @@
                 margin-top: -2px;
                 border-left:1px solid $steel;
             }
-       
+
 
             .device-heartbeat, .server-heartbeat {
                 background: $success-color;
                 height: 21px;
                 display: inherit;
             }
-        
+
 
         }
         .server-status, .connection-status {
@@ -218,7 +217,7 @@
         .server-status {
             border-bottom-left-radius: 3px;
         }
-    
+
         .top-row {
             // margin-bottom: 12px;
             //padding: 12px;
@@ -274,8 +273,7 @@
         // background: yellow;
         height: 100vh;
         .marker {
-            position: relative;
-            width: 10%;
+            position: absolute;
             float: left;
             border-left: 1px solid #bbb;
             height: 100%;
