@@ -7,6 +7,8 @@
   <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
   <%= csrf_meta_tags %>
   <%= yield :scripts %>
+  <!-- WEBFONTS -->
+  <%= stylesheet_link_tag "//cloud.webtype.com/css/fa41b746-9201-4f1c-ab4a-a330eb0afb96.css" %>
 </head>
 <body class="<%= [controller_name, action_name] * '-' %>">
 <%= yield %>

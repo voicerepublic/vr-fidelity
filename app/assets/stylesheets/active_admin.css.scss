@@ -9,10 +9,20 @@
 
 // Active Admins got SASS!
 
-@import "settings";
 @import "active_admin/mixins";
 @import "active_admin/base";
+@import "settings";
 @import "stream_dashboard";
+
+html, body {
+    font-family: $system-font-family !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: $header-font-family !important;
+    font-weight: $header-font-weight !important;
+}
 
 // using active_skin
 $skinActiveColor: #d50021;
