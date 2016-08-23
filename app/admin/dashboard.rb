@@ -13,7 +13,7 @@ ActiveAdmin.register_page "Dashboard" do
 
   title = 'WITH GREAT POWER COMES GREAT RESPONSIBILITY'
   content title: title do
-    div id: 'livedashboard', style: 'height: 100%' do
+    div id: 'livedashboard', style: 'height: 100vh' do
       script do
         x = <<-EOF
 

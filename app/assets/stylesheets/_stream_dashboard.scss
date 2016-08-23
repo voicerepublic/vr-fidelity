@@ -1,3 +1,7 @@
+.admin_dashboard #active_admin_content {
+  padding: 0;
+}
+
 .clearfix::before,.clearfix::after {
     content: ' ';
     display: table;
@@ -105,7 +109,7 @@
                 font-weight: 300;
             }
         }
-        .state-badges span,.venue-state {
+        .venue-state {
                 background: $vr-beige;
                 box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
                 border-radius: 2px;
@@ -116,34 +120,88 @@
                 }
             
         }
+        .device-type, .device-state, .device-name, .server-id {
+            background: #ddd;
+            border-radius:2px;
+            padding:0px 4px;
+                margin-right: 4px;
+        }
+        .device-name {
+            background:none;
+            border:1px solid #ddd;
+        }
         .play-button-holder {
-            width: 44px;
-            height: 44px;
+            padding: 16px;
             float: left;
-            margin-right: 12px;
+            border-right: 1px solid #ccc;
             .play-button {
                 width: 44px;
                 height: 44px;
                 border: 1px solid #ccc;
+                margin:0;
                 border-radius: 50%;
                 color: #ccc;
                 padding: 12px;
                 outline: none;
                 background: #f9f9f9;
-                svg {
-                    width: 18px;
-                    height: 18px;
-                    fill: currentColor;
+                img {
+                    opacity: .3;
                 }
                 &:hover {
                     background: #eee;
                     color: #bbb;
+                    img {
+                        opacity: .7;
+                    }
                 }
                 &.active {
                     background: $vr-light-blue;
                     color: white;
                 }
             }
+        }
+        .info-box {
+            
+            margin-left: 77px;
+            height: 76px;
+
+            .listener-icon {
+                opacity: .5;
+                margin-right: 3px;
+            }
+
+            .venue-info, .device-info {
+                border-bottom:1px solid #ccc;
+                padding-left: 6px;
+            }
+            .venue-info {
+                height: 33px;
+                padding-top:5px;
+            }
+            .device-info,.server-info {
+                height: 22px;
+                padding-top:2px;
+                padding-left:6px;
+            }
+            .device-heartbeat-holder,.server-heartbeat-holder {
+                // background:rgba(orange,.3);
+                box-shadow: inset 0 1px 1px rgba(black, 0.1);
+                height: 21px;
+                width: 24px;
+                display: inline-block;
+                text-align: left;
+                margin-top: -2px;
+                border-left:1px solid $steel;
+            }
+       
+
+            .device-heartbeat, .server-heartbeat {
+                background: $success-color;
+                height: 21px;
+                display: inherit;
+            }
+        
+
         }
         .server-status, .connection-status {
             height: 6px;
@@ -160,27 +218,10 @@
         .server-status {
             border-bottom-left-radius: 3px;
         }
-        .server-heartbeat, .box-heartbeat {
-            height: 6px;
-            background: $steel;
-            box-shadow: inset 0 1px rgba(black, 0.1);
-            display: block;
-            &.true {
-                background: $success-color;
-            }
-            &.connected {
-                background: $success-color;
-            }
-        }
-        .server-heartbeat {
-            border-right: 6px solid white;
-        }
-        // .box-heartbeat {
-        //     border-right: 2px solid white;
-        // }
+    
         .top-row {
             // margin-bottom: 12px;
-            padding: 12px;
+            //padding: 12px;
         }
         .bottom-row {
             border-top: 2px solid white;
@@ -190,12 +231,12 @@
         height: 80px;
         position: relative;
         margin-left: 50px;
+        float:left;
         // padding-top: 6px;
         .time-slot-title {
             font-size: 10px;
             font-weight: 500;
             z-index: 820;
-            position: absolute;
             top: 2px;
             left: 6px;
         }
@@ -217,6 +258,13 @@
         }
     }
     #time-grid {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
         position: absolute;
         width: 2000px;
         cursor: -webkit-grab;
