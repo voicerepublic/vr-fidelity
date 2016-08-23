@@ -23,27 +23,65 @@
 
 (defn populate-with-demo-data []
   (swap! state assoc :lines
-         {"sophie-glaser1" {:key         "sophie-glaser1"
-                            :instance-id "i-065618ba"
-                            :device      "butt"
-                            :venue-state "offline"
-                            :talk-state  "archived"
-                            :client-heartbeat (js/moment)
-                            :server-heartbeat (js/moment)}
-          "sophie-glaser2" {:key         "sophie-glaser2"
-                            :instance-id "i-065618bb"
-                            :device      "darkice"
-                            :venue-state "available"
-                            :talk-state  "prelive"
-                            :client-heartbeat (js/moment)
-                            :server-heartbeat (js/moment)}
-          "sophie-glaser3" {:key         "sophie-glaser3"
-                            :instance-id "i-065618bc"
-                            :device      "box"
-                            :venue-state "awaiting_stream"
-                            :talk-state  "live"
-                            :client-heartbeat (js/moment)
-                            :server-heartbeat (js/moment)}
+         {"sophie-glaser1"
+          {:key         "sophie-glaser1"
+           :instance-id "i-065618ba"
+           :device      "butt"
+           :venue-state "offline"
+           :talk-state  "archived"
+           :client-heartbeat (js/moment)
+           :server-heartbeat (js/moment)
+           :talks
+           [{:slug  "a"
+             :starts-at (.subtract (js/moment) 2 "hours")
+             ;;:ends-at (.subtract (js/moment) 1 "hours")
+             :title "Anglo-American Cyclopedia 1917 edition"}
+            {:slug  "b"
+             :starts-at (.add (js/moment) 1 "hours")
+             ;;:ends-at (.add (js/moment) 2 "hours")
+             :title "A First Encyclopaedia of Tlön"}
+            {:slug  "c"
+             :starts-at (.add (js/moment) 3 "hours")
+             ;;:ends-at (.add (js/moment) 4 "hours")
+             :title "History of a Land called Uqbar by Silas Haslam"}]}
+
+          "sophie-glaser2"
+          {:key         "sophie-glaser2"
+           :instance-id "i-065618bb"
+           :device      "darkice"
+           :venue-state "available"
+           :talk-state  "prelive"
+           :client-heartbeat (js/moment)
+           :server-heartbeat (js/moment)
+           :talks
+           [{:slug  "a"
+             :starts-at (.subtract (js/moment) 2 "hours")
+             :title "Anglo-American Cyclopedia 1917 edition"}
+            {:slug  "b"
+             :starts-at (.subtract (js/moment) 2 "hours")
+             :title "A First Encyclopaedia of Tlön"}
+            {:slug  "c"
+             :starts-at (.subtract (js/moment) 2 "hours")
+             :title "History of a Land called Uqbar by Silas Haslam"}]}
+
+         "sophie-glaser3"
+         {:key         "sophie-glaser3"
+          :instance-id "i-065618bc"
+          :device      "box"
+          :venue-state "awaiting_stream"
+          :talk-state  "live"
+          :client-heartbeat (js/moment)
+          :server-heartbeat (js/moment)
+          :talks
+          [{:slug  "a"
+             :starts-at (.subtract (js/moment) 2 "hours")
+            :title "Anglo-American Cyclopedia 1917 edition"}
+           {:slug  "b"
+             :starts-at (.subtract (js/moment) 2 "hours")
+            :title "A First Encyclopaedia of Tlön"}
+           {:slug  "c"
+             :starts-at (.subtract (js/moment) 2 "hours")
+            :title "History of a Land called Uqbar by Silas Haslam"}]}
           })
   (swap! state assoc :line-mapping
          {"sophie-glaser1" "sophie-glaser1"
@@ -77,6 +115,12 @@
               (distinct (vals (@state :line-mapping))))))
 
 
+(defn time-position [time]
+  (let [start (.subtract (now) 4 "hours")
+        window (.duration js/moment 8 "hours")
+        diff (- (or time (now)) start)]
+    (* (/ 100 window) diff)))
+
 ;; ------------------------------
 ;; components
 
@@ -100,27 +144,24 @@
       [:span.device-type (server-heartbeat-progress line)]
       [:span.device-type (client-heartbeat-progress line)]]]]])
 
-
 (defn lines-comp []
   [:div#venue-column
    (doall (map line-comp (list-of-lines)))])
+
+(defn talk-comp [talk]
+  ^{:key (talk :slug)}
+  [:div.time-slot-holder
+   {:style {:margin-left (time-position (talk :starts-at))}}
+   [:p.time-slot-title (talk :title)]
+   [:div.time-slot-fill]
+   [:div.time-slot]])
 
 (defn timeline-comp [line]
   ^{:key (line :key)}
   [:div.venue-timeslot-row
    [:div.point-in-time {:style {:margin-left "350px"}}]
-
-   [:div.time-slot-holder
-    {:style {:margin-left "150px"}}
-    [:p.time-slot-title "This is a talky talk " (line :key)]
-    [:div.time-slot-fill]
-    [:div.time-slot]]
-
-   [:div.time-slot-holder
-    {:style {:margin-left "450px"}}
-    [:p.time-slot-title "This is a talky talk " (line :key) " 2"]
-    [:div.time-slot-fill]
-    [:div.time-slot]]])
+   (if (some? (line :talks))
+     (doall (map talk-comp (line :talks))))])
 
 (defn timelines-comp []
   [:div.venue-timeslots
