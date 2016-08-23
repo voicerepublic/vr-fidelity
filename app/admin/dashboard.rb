@@ -11,7 +11,7 @@ ActiveAdmin.register_page "Dashboard" do
     }
   end
 
-  title = 'WITH GREAT POWER COMES GREAT RESPONSIBILITY'
+  title = 'With Great Power Comes Great Responsibility.'
   content title: title do
     div id: 'livedashboard', style: 'height: 100vh' do
       script do

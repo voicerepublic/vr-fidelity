@@ -93,17 +93,22 @@
         padding: 0;
         max-height: 80px;
         // padding-bottom: 6px;
-        font-size: 12px;
+        font-size: rem-calc(11);
         margin-bottom: 6px;
         p {
             margin: 0;
         }
         .venue-name {
-            font-size: rem-calc(14);
+            font-size: 12px;
             font-weight: 700;
             margin-right: 6px;
-            line-height: 14px;
+            line-height: 22px;
             margin-bottom: 8px;
+            max-width: 50%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
             span:last-child {
                 font-weight: 300;
             }
