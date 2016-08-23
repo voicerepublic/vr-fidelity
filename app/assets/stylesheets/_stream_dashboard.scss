@@ -228,7 +228,7 @@
     }
     .time-slot-holder {
         height: 80px;
-        position: relative;
+        position: absolute;
         margin-left: 50px;
         float:left;
         // padding-top: 6px;
@@ -296,6 +296,7 @@
         border-bottom: 1px solid rgba(white, 0.5);
         width: 100%;
         margin-bottom: 6px;
+        position:relative;
     }
     .point-in-time {
         width: 0;
