@@ -300,9 +300,20 @@
 ;; -------------------------
 ;; init helpers
 
+(def fps 30)
+(def interval (/ 1000 fps))
+
+(defonce then (atom (.now js/Date)))
+(swap! state assoc :now (js/moment))
+
 (defn update-loop []
   (js/requestAnimationFrame update-loop)
-  (swap! state assoc :now (js/moment)))
+  (let [now (.now js/Date)
+        delta (- now @then)]
+    (when (> delta interval)
+      (swap! state assoc :now (js/moment))
+      (reset! then (- now (mod delta interval))))))
+
 
 (defn subscribe [channel handler]
   (.subscribe js/fayeClient channel
