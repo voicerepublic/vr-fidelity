@@ -35,14 +35,17 @@
            [{:slug  "a"
              :starts-at (.subtract (js/moment) 2 "hours")
              :ends-at (.subtract (js/moment) 1 "hours")
+             :state "archived"
              :title "Anglo-American Cyclopedia 1917 edition"}
             {:slug  "b"
              :starts-at (.add (js/moment) 1 "hours")
              :ends-at (.add (js/moment) 2 "hours")
+             :state "prelive"
              :title "A First Encyclopaedia of Tlön"}
             {:slug  "c"
              :starts-at (.add (js/moment) 3 "hours")
              :ends-at (.add (js/moment) 4 "hours")
+             :state "prelive"
              :title "History of a Land called Uqbar by Silas Haslam"}]}
 
           "sophie-glaser2"
@@ -57,14 +60,17 @@
            [{:slug  "a"
              :starts-at (.subtract (js/moment) 2 "hours")
              :ends-at (.subtract (js/moment) 1.5 "hours")
+             :state "archived"
              :title "Anglo-American Cyclopedia 1917 edition"}
             {:slug  "b"
              :starts-at (.subtract (js/moment) 3 "hours")
              :ends-at (.subtract (js/moment) 2.5 "hours")
+             :state "archived"
              :title "A First Encyclopaedia of Tlön"}
             {:slug  "c"
              :starts-at (.subtract (js/moment) 4 "hours")
              :ends-at (.subtract (js/moment) 3.5 "hours")
+             :state "archived"
              :title "History of a Land called Uqbar by Silas Haslam"}]}
 
           "sophie-glaser3"
@@ -80,15 +86,18 @@
            :talks
            [{:slug  "a"
              :starts-at (.subtract (js/moment) 2 "hours")
-             :ends-at (.subtract (js/moment) 1 "hours")
+             :ends-at (.subtract (js/moment) 0 "hours")
+             :state "processing"
              :title "Anglo-American Cyclopedia 1917 edition"}
             {:slug  "b"
              :starts-at (.subtract (js/moment) 4 "hours")
-             :ends-at (.subtract (js/moment) 3 "hours")
+             :ends-at (.subtract (js/moment) 2 "hours")
+             :state "archived"
              :title "A First Encyclopaedia of Tlön"}
             {:slug  "c"
              :starts-at (.subtract (js/moment) 6 "hours")
-             :ends-at (.subtract (js/moment) 5 "hours")
+             :ends-at (.subtract (js/moment) 4 "hours")
+             :state "archived"
              :title "History of a Land called Uqbar by Silas Haslam"}]}
           })
   (swap! state assoc :line-mapping
@@ -118,10 +127,9 @@
    (max 0 (- 100 (progress (line :client-heartbeat) (js/moment) 5000)))))
 
 (defn list-of-lines []
-  ;; TODO do sorting
+  ;; TODO do some sorting
   (doall (map #((@state :lines) %)
               (distinct (vals (@state :line-mapping))))))
-
 
 (defn window-start []
   (.subtract (js/moment) 4 "hours"))
@@ -132,6 +140,7 @@
 (defn window-size []
   (- (window-end) (window-start)))
 
+;; TODO resolve code duplication in the following 2 functions
 (defn time-position
   ([time] (time-position time ""))
   ([time suffix]
@@ -151,16 +160,12 @@
 
 (defn markers []
   (map #(hash-map :time %
-                  :label (.format % "hh:mm")
+                  :label (.format % "HH:mm")
                   :pos (time-position % "%")) (marker-times)))
 
 (defn talk-width [talk]
   (let [duration (- (talk :ends-at) (talk :starts-at))]
-    ;;(prn (/ duration (* 1000 60 60)))
-    ;;(prn (/ (window-size) (* 1000 60 60)))
     (duration-width duration "%")))
-
-
 
 ;; ------------------------------
 ;; components
@@ -168,33 +173,31 @@
 (defn now-comp []
   [:div#current-time-holder
    [:div#current-time-badge
-    (.format (now) "hh:mm:ss")]])
+    (.format (now) "HH:mm:ss")]])
 
 (defn line-comp [line]
   ^{:key (line :key)}
   [:div.venue-tab.clearfix
-    ;;Left side
-    [:div.play-button-holder
-      [:button.play-button
-        [:img {:src "assets/sound_on.svg"}]]]
-    ;; right side
-    [:div.info-box
-     [:div.venue-info [:span.venue-name (line :key)][:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
-     ;; TODO PHIL: accommodate client-state, client-name here, and accommodate addition of state-based css class for state:
-     [:div.device-info
-      [:span.device-type (line :client-type)]
-      (if (line :client-name) [:span.device-name (line :client-name)])
-      (if (line :client-state) [:span.device-state (line :client-state)])
-      [:span.device-heartbeat-holder.float-right [:span.device-heartbeat {:style {:width (client-heartbeat-progress line)}}]]]
+   [:div.play-button-holder ; --- left side
+    [:button.play-button
+     [:img {:src "assets/sound_on.svg"}]]]
+   [:div.info-box ; --- right side
+    [:div.venue-info
+     [:span.venue-name (line :key)]
+     [:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
+    [:div.device-info
+     [:span.device-type {:class (line :client-type)} (line :client-type)]
+     (if (line :client-name) [:span.device-name (line :client-name)])
+     (if (line :client-state)
+       [:span.device-state {:class (line :client-state)} (line :client-state)])
+     [:span.device-heartbeat-holder.float-right
+      [:span.device-heartbeat {:style {:width (client-heartbeat-progress line)}}]]]
     [:div.server-info
-      [:span.server-id (line :instance-id)]
-      [:span.listener-count [:img.listener-icon {:src "assets/person.svg"}] (line :listener-count)]
-      [:span.server-heartbeat-holder.float-right [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]]]
-     ; [:p.state-badges
-     ;  [:span.device-type (line :device)]
-     ;  [:span.device-type {:class (line :talk-state)} (line :talk-state)]
-     ;  [:span.device-type (server-heartbeat-progress line)]]
-      ]])
+     [:span.server-id (line :instance-id)]
+     [:span.listener-count
+      [:img.listener-icon {:src "assets/person.svg"}] (line :listener-count)]
+     [:span.server-heartbeat-holder.float-right
+      [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]]]]])
 
 (defn lines-comp []
   [:div#venue-column
@@ -205,13 +208,15 @@
   [:div.time-slot-holder
    {:style {:margin-left (time-position (talk :starts-at) "%")}}
    [:p.time-slot-title {:style {:width (talk-width talk)}} (talk :title)]
+   [:p.talk-state {:class (talk :state)} (talk :state)]
    [:div.time-slot-fill]
    [:div.time-slot {:style {:width (talk-width talk)}}]])
 
 (defn timeline-comp [line]
   ^{:key (line :key)}
   [:div.venue-timeslot-row
-   ;;[:div.point-in-time {:style {:margin-left "350px"}}]
+   ;; TODO use
+   ;; [:div.point-in-time {:style {:margin-left "350px"}}]
    (if (some? (line :talks))
      (doall (map talk-comp (line :talks))))])
 
@@ -240,6 +245,8 @@
 
 ;; -------------------------
 ;; briefings (initial data)
+
+;; TODO fill lines data from with briefings
 
 ;; ------------------------------
 ;; helpers
@@ -297,8 +304,8 @@
         path [:connection key]]
     (swap! state assoc-in path (data :event))))
 
-;; -------------------------
-;; init helpers
+;; ------------------------------
+;; update loop at exactly 30fps
 
 (def fps 30)
 (def interval (/ 1000 fps))
@@ -314,6 +321,10 @@
       (swap! state assoc :now (js/moment))
       (reset! then (- now (mod delta interval))))))
 
+(update-loop)
+
+;; -------------------------
+;; init helpers
 
 (defn subscribe [channel handler]
   (.subscribe js/fayeClient channel
@@ -327,8 +338,6 @@
 
 (defn init! []
   (mount-root))
-
-(update-loop)
 
 (subscribe "/report"            client-report-handler)
 (subscribe "/heartbeat"         client-heartbeat-handler)
