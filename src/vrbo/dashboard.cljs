@@ -10,7 +10,8 @@
    ;;[cljsjs.selectize]
    cljsjs.moment
    goog.string.format
-   goog.string)
+   goog.string
+   [com.rpl.specter :as s])
   (:require-macros [cljs.core :refer [exists?]]))
 
 ;; ------------------------------
@@ -27,10 +28,10 @@
           {:key         "sophie-glaser1"
            :instance-id "i-065618ba"
            :client-type "butt"
-           :listener-count 1
            :venue-state "offline"
            :client-heartbeat (js/moment)
            :server-heartbeat (js/moment)
+           :stats {:listener_count 6}
            :talks
            [{:slug  "a"
              :starts-at (.subtract (js/moment) 2 "hours")
@@ -52,10 +53,10 @@
           {:key         "sophie-glaser2"
            :instance-id "i-065618bb"
            :client-type "darkice"
-           :listener-count 2
            :venue-state "available"
            :client-heartbeat (js/moment)
            :server-heartbeat (js/moment)
+           :stats {:listener_count 6}
            :talks
            [{:slug  "a"
              :starts-at (.subtract (js/moment) 2 "hours")
@@ -79,10 +80,10 @@
            :client-type "streamboxx"
            :client-name "Aristoteles"
            :client-state "streaming"
-           :listener-count 6
            :venue-state "awaiting_stream"
            :client-heartbeat (js/moment)
            :server-heartbeat (js/moment)
+           :stats {:listener_count 6}
            :talks
            [{:slug  "a"
              :starts-at (.subtract (js/moment) 2 "hours")
@@ -183,7 +184,7 @@
      [:img {:src "assets/sound_on.svg"}]]]
    [:div.info-box ; --- right side
     [:div.venue-info
-     [:span.venue-name (line :key)]
+     [:span.venue-name {:title (line :client-report)} (line :key)]
      [:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
     [:div.device-info
      [:span.device-type {:class (line :client-type)} (line :client-type)]
@@ -195,7 +196,10 @@
     [:div.server-info
      [:span.server-id (line :instance-id)]
      [:span.listener-count
-      [:img.listener-icon {:src "assets/person.svg"}] (line :listener-count)]
+      [:img.listener-icon {:src "assets/person.svg"}]
+      ;; TODO use specter here
+      ((or (line :stats) {}) :listener_count)
+      ]
      [:span.server-heartbeat-holder.float-right
       [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]]]]])
 
@@ -275,19 +279,26 @@
     (swap! state assoc-in [:lines line-key :client-heartbeat] now)))
 
 (defn client-report-handler [data]
-  (let [key (data :identifier)
-        path [:client-report key]]
-    (swap! state assoc-in path data)))
+  (let [line-key (line-lookup (data :identifier))]
+    (swap! state assoc-in
+           [:lines line-key :client-report] data)))
 
 (defn server-stats-handler [data]
-  (let [key (data :slug)
-        path [:server-stats key]]
-    (swap! state assoc-in path data)))
+  ;;(prn "SERVER STATS" data)
+  (let [line-key (line-lookup (data :slug))]
+    (swap! state assoc-in
+           [:lines line-key :stats]
+           (data :stats)))
+  ;;(.log js/console (clj->js (@state :lines)))
+  )
 
 (defn venues-handler [data]
+  (prn "VENUE" data)
   (let [key ((data :venue) :slug)
-        path [:venue key]]
-    (swap! state assoc-in path data)))
+        line-key (line-lookup key)]
+    (swap! state assoc-in
+           [:lines line-key :state]
+           ((data :venue) :state))))
 
 (defn talks-handler [data]
   (let [key ((data :talk) :slug)
