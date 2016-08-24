@@ -22,7 +22,7 @@ class Venue < ActiveRecord::Base
     scope state.to_sym, -> { where(state: state) }
   end
 
-  scope :not_offline, -> { where.not(state: 'offline') }
+  scope :not_offline, -> { where("state NOT IN ('offline', 'available')") }
 
   extend FriendlyId
   friendly_id :slug_candidates, use: [:slugged, :finders]
