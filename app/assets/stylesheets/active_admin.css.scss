@@ -184,31 +184,35 @@ border: none;
 }
 
 .admin_venues {
-    .offline             { background: SlateGray; }
-    .available           { background: Gold; }
-    .provisioning        { background: Chocolate; }
-    .device_required     { background: Fuchsia; }
-    .awaiting_stream     { background: Fuchsia; }
-    .connected           { background: Lime; }
-    .disconnect_required { background: Fuchsia; }
-    .disconnected        { background: Red; }
+    .offline,
+    .available           { background: #ccc; }
+    .provisioning,
+    .device_required     { background: $vr-beige; }
+    .awaiting_stream,
+    .disconnect_required { background: $vr-yellow; }
+    .connected           { background: $success-color; }
+    .disconnected        { background: $vr-red; }
 }
 
 .admin_talks {
-    .created    { background: Red; }
-    .pending    { background: Fuchsia; }
-    .prelive    { background: Purple; }
-    .live       { background: Lime; }
-    .postlive   { background: Fuchsia; }
-    .processing { background: OrangeRed; }
-    .archived   { background: RoyalBlue; }
-    .suspended  { background: Red; }
+    .created,
+    .pending,
+    .prelive,
+    .postlive   { background: $vr-beige; }
+    .processing { background: $vr-yellow; }
+    .live,
+    .archived   { background: $success-color; }
+    .suspended  { background: $vr-red; }
 }
 
 .admin_devices {
-    .unpaired  { background: SlateGray; }
-    .pairing   { background: Chocolate; }
-    .idle      { background: Purple; }
-    .streaming { background: Lime; }
-    .offline   { background: SlateGray; }
+    .offline,
+    .unpaired  { background: #ccc; }
+    .pairing   { background: $vr-purple; }
+    .idle      { background: $vr-beige; }
+    .streaming { background: $success-color; }
+    .starting  { background: $vr-yellow; }
+    .starting_stream,
+    .restarting_stream,
+    .stopping_stream { background: $vr-red; }
 }

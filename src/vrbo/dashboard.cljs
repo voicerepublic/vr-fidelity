@@ -114,7 +114,7 @@
    [:div.info-box ; --- right side
     [:div.venue-info
      [:span.venue-name {:title (str (line :client-report))} (line :key)]
-     [:span.venue-state.float-right {:class (line :talk-state)} (line :state)]
+     [:span.venue-state.float-right {:class (line :state)} (line :state)]
      ]
     [:div.device-info
      [:span.device-type {:class (client-type line)} (client-type line)]
@@ -131,7 +131,7 @@
       [:img.listener-icon {:src "assets/person.svg"}]
       (select-one [:stats :listener_count] line) "/"
       (select-one [:stats :listener_peak] line) " "
-      (goog.string.format "(%d kb/sbr)" (/ (select-one [:stats :bitrate] line) 1024))
+      (goog.string.format "(%d kb/s)" (/ (select-one [:stats :bitrate] line) 1024))
       ]
      [:span.server-heartbeat-holder.float-right
       [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]
@@ -146,8 +146,8 @@
   [:div.time-slot-holder
    {:style {:margin-left (time-position (parse-time (talk :starts_at)) "%")}}
    [:p.time-slot-title {:style {:width (talk-width talk)}}
-    [:a {:href (talk :url)} (talk :title)]]
-   [:p.talk-state {:class (talk :state)} (talk :state)]
+    [:a {:href (talk :url)} (talk :title)] " "
+    [:span.talk-state.label {:class (talk :state)} (talk :state)]]
    [:div.time-slot-fill]
    [:div.time-slot {:style {:width (talk-width talk)}}]])
 
@@ -298,7 +298,8 @@
 ;; ------------------------------
 ;; update loop at exactly 30fps
 
-(def fps 30)
+;;(def fps 30)
+(def fps 4)
 (def interval (/ 1000 fps))
 
 (defonce then (atom (.now js/Date)))
