@@ -13,56 +13,6 @@
 @import "active_admin/base";
 //@import "settings";
 
-$my-color: black;
-
-
-$system-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-
-$header-font-family: "Eagle", "Eagle-Book", $system-font-family;
-
-$header-font-weight: normal;
-
-$steel: #d9dadd !default;
-
-$talk-dark: #29292b !default;
-
-// We use these as default colors throughout
-$primary-color: #2c46b0 !default;
-
-// vr blue
-$secondary-color: #54c6c6 !default;
-
-// vr turq
-$alert-color: #f82847 !default;
-
-// vr red
-$success-color: #60BD70 !default;
-
-// vr greeen (new from nick)
-$warning-color: #ffed00 !default;
-
-// vr yellow
-$info-color: #fef1de !default;
-
-// vr beige
-$brand-purple: #a339cd !default;
-
-//vr-purple
-$light-gray: #e1e2e7 !default;
-
-//comments-bg
-$bluish-gray: #3C404B !default;
-
-//VR Brand:
-$vr-blue: $primary-color;
-$vr-light-blue: $secondary-color;
-$vr-red: $alert-color;
-$vr-purple: $brand-purple;
-$vr-yellow: $warning-color;
-$vr-beige: $info-color;
-$topbar-dark: #35363b !default;
-
-
 @import "stream_dashboard";
 
 html, body {
