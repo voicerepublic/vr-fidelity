@@ -21,6 +21,12 @@ class Series < ActiveRecord::Base
   has_many :talks
   before_save :set_description_as_html, if: :description_changed?
 
+  validates :title, :teaser, :description, presence: true
+
+  validates :title, length: { maximum: Settings.limit.string }
+  validates :teaser, length: { maximum: Settings.limit.string }
+  validates :description, length: { maximum: Settings.limit.text }
+
   image_accessor :image
 
   def set_description_as_html
