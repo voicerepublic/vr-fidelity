@@ -11,8 +11,10 @@
    cljsjs.moment
    goog.string.format
    goog.string
-   [com.rpl.specter :as s])
-  (:require-macros [cljs.core :refer [exists?]]))
+   [com.rpl.specter :as s :refer [NIL->VECTOR END keypath]])
+  (:require-macros [cljs.core :refer [exists?]]
+                   [com.rpl.specter.macros :as sm :refer [select-one transform setval]]))
+
 
 ;; ------------------------------
 ;; state
@@ -28,7 +30,7 @@
           {:key         "sophie-glaser1"
            :instance-id "i-065618ba"
            :client-type "butt"
-           :venue-state "offline"
+           :state "offline"
            :client-heartbeat (js/moment)
            :server-heartbeat (js/moment)
            :stats {:listener_count 6}
@@ -53,7 +55,7 @@
           {:key         "sophie-glaser2"
            :instance-id "i-065618bb"
            :client-type "darkice"
-           :venue-state "available"
+           :state "available"
            :client-heartbeat (js/moment)
            :server-heartbeat (js/moment)
            :stats {:listener_count 6}
@@ -80,7 +82,7 @@
            :client-type "streamboxx"
            :client-name "Aristoteles"
            :client-state "streaming"
-           :venue-state "awaiting_stream"
+           :state "awaiting_stream"
            :client-heartbeat (js/moment)
            :server-heartbeat (js/moment)
            :stats {:listener_count 6}
@@ -106,7 +108,7 @@
           "sophie-glaser2" "sophie-glaser2"
           "sophie-glaser3" "sophie-glaser3"}))
 
-(populate-with-demo-data)
+;;(populate-with-demo-data)
 
 ;; ------------------------------
 ;; data helpers
@@ -165,8 +167,21 @@
                   :pos (time-position % "%")) (marker-times)))
 
 (defn talk-width [talk]
-  (let [duration (- (talk :ends-at) (talk :starts-at))]
+  (let [duration (- (js/moment (talk :ends_at)) (js/moment (talk :starts_at)))]
     (duration-width duration "%")))
+
+;; ------------------------------
+;; data helpers
+
+(defn client-type [line]
+  (or (line :client_name)
+      (get-in @state [:devices (line :device_id) :type])))
+
+(defn client-name [line]
+  (get-in @state [:devices (line :device_id) :name]))
+
+(defn client-state [line]
+  (get-in @state [:devices (line :device_id) :state]))
 
 ;; ------------------------------
 ;; components
@@ -184,49 +199,61 @@
      [:img {:src "assets/sound_on.svg"}]]]
    [:div.info-box ; --- right side
     [:div.venue-info
-     [:span.venue-name {:title (line :client-report)} (line :key)]
-     [:span.venue-state.float-right {:class (line :talk-state)} (line :venue-state)]]
+     [:span.venue-name {:title (str (line :client-report))} (line :key)]
+     [:span.venue-state.float-right {:class (line :talk-state)} (line :state)]
+     ]
     [:div.device-info
-     [:span.device-type {:class (line :client-type)} (line :client-type)]
-     (if (line :client-name) [:span.device-name (line :client-name)])
-     (if (line :client-state)
-       [:span.device-state {:class (line :client-state)} (line :client-state)])
+     [:span.device-type {:class (client-type line)} (client-type line)]
+     (if (line :device_id)
+       [:span.device-name (client-name line)])
+     (if (line :device_id)
+       [:span.device-state {:class (client-state line)} (client-state line)])
      [:span.device-heartbeat-holder.float-right
-      [:span.device-heartbeat {:style {:width (client-heartbeat-progress line)}}]]]
+      [:span.device-heartbeat {:style {:width (client-heartbeat-progress line)}}]
+      ]]
     [:div.server-info
-     [:span.server-id (line :instance-id)]
+     [:span.server-id (or (line :instance_id) "n/a")]
      [:span.listener-count
       [:img.listener-icon {:src "assets/person.svg"}]
-      ;; TODO use specter here
-      ((or (line :stats) {}) :listener_count)
+      (select-one [:stats :listener_count] line)
       ]
      [:span.server-heartbeat-holder.float-right
-      [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]]]]])
+      [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]
+      ]]]])
 
 (defn lines-comp []
   [:div#venue-column
    (doall (map line-comp (list-of-lines)))])
 
 (defn talk-comp [talk]
-  ^{:key (talk :slug)}
+  ^{:key (talk :id)}
   [:div.time-slot-holder
-   {:style {:margin-left (time-position (talk :starts-at) "%")}}
-   [:p.time-slot-title {:style {:width (talk-width talk)}} (talk :title)]
+   {:style {:margin-left (time-position (js/moment (talk :starts_at)) "%")}}
+   [:p.time-slot-title {:style {:width (talk-width talk)}}
+    [:a {:href (talk :url)} (talk :title)]]
    [:p.talk-state {:class (talk :state)} (talk :state)]
    [:div.time-slot-fill]
    [:div.time-slot {:style {:width (talk-width talk)}}]])
 
+(defn point-comp [event]
+  ^{:key (event :time)}
+  [:div.point-in-time
+   {:class (event :event)
+    :title (event :event)
+    :style {:margin-left (time-position (event :time) "%")}}])
+
 (defn timeline-comp [line]
-  ^{:key (line :key)}
+  ^{:key (line :slug)}
   [:div.venue-timeslot-row
-   ;; TODO use
-   ;; [:div.point-in-time {:style {:margin-left "350px"}}]
+   (if-not (empty? (line :events))
+     (doall (map point-comp (line :events))))
    (if (some? (line :talks))
      (doall (map talk-comp (line :talks))))])
 
 (defn timelines-comp []
   [:div.venue-timeslots
-   (doall (map timeline-comp (list-of-lines)))])
+   (doall (map timeline-comp (list-of-lines)))
+   ])
 
 (defn marker-comp [marker]
   ^{:key (marker :label)}
@@ -245,12 +272,8 @@
     [:div#current-time-line]
     [now-comp]]
    [:div#dashboard
-    [lines-comp]]])
-
-;; -------------------------
-;; briefings (initial data)
-
-;; TODO fill lines data from with briefings
+    [lines-comp]
+    ]])
 
 ;; ------------------------------
 ;; helpers
@@ -263,57 +286,98 @@
         (swap! state assoc-in [:lines key :key] key)))
     (or line-key key)))
 
+(defn dbg [name obj]
+  (print name)
+  (.log js/console (clj->js obj)))
+
+;; -------------------------
+;; briefings (initial data)
+
+;; TODO fill lines data from with briefings
+;(defn jsx->clj [x]
+;  (into {} (for [k (.keys js/Object x)] [k (aget x k)])))
+
+(swap! state assoc-in [:device-mapping] (js->clj (.. js/window -mappings -devices)))
+
+;;(dbg "device-mapping" (:device-mapping @state))
+
+(defn merge-into-state [key data]
+  (let [line-key (line-lookup key)]
+    (swap! state update-in [:lines line-key] merge (assoc data :key line-key))))
+
 ;; -------------------------
 ;; message handlers
 
 (defn server-heartbeat-handler [heartbeat]
+  ;;(dbg "SERVER HEARTBEAT IN" heartbeat)
   (let [now (js/moment)
-        key (heartbeat :token)
-        line-key (line-lookup key)]
-    (swap! state assoc-in [:lines line-key :server-heartbeat] now)))
+        key (heartbeat :token)]
+    (merge-into-state key {:server-heartbeat now}))
+  ;;(dbg "SERVER HEARTBEAT OUT" @state)
+  )
 
 (defn client-heartbeat-handler [heartbeat]
+  ;;(dbg "CLIENT HEARTBEAT" heartbeat)
   (let [now (js/moment)
-        key (heartbeat :identifier)
-        line-key (line-lookup key)]
-    (swap! state assoc-in [:lines line-key :client-heartbeat] now)))
+        key (heartbeat :identifier)]
+    (merge-into-state key {:client-heartbeat now}))
+  ;;(dbg "CLIENT HEARTBEAT OUT" @state)
+  )
 
 (defn client-report-handler [data]
-  (let [line-key (line-lookup (data :identifier))]
-    (swap! state assoc-in
-           [:lines line-key :client-report] data)))
+  ;;(dbg "CLIENT REPORT" data)
+  (let [key (data :identifier)]
+    (merge-into-state key {:client-report data})))
 
 (defn server-stats-handler [data]
-  ;;(prn "SERVER STATS" data)
-  (let [line-key (line-lookup (data :slug))]
-    (swap! state assoc-in
-           [:lines line-key :stats]
-           (data :stats)))
-  ;;(.log js/console (clj->js (@state :lines)))
+  ;;(dbg "SERVER STATS IN" data)
+  (let [key (data :slug)]
+    (merge-into-state key {:stats (data :stats)}))
+  ;;(dbg "SERVER STATS OUT" @state)
   )
 
 (defn venues-handler [data]
-  (prn "VENUE" data)
-  (let [key ((data :venue) :slug)
-        line-key (line-lookup key)]
-    (swap! state assoc-in
-           [:lines line-key :state]
-           ((data :venue) :state))))
+  ;;(dbg "VENUE IN" data)
+  (let [venue     (data :venue)
+        slug      (venue :slug)
+        token     (venue :client_token)
+        device-id (venue :device_id)
+        device    ((@state :device-mapping) (str device-id))] ; identifier
+    (swap! state assoc-in [:line-mapping device] slug)
+    (swap! state assoc-in [:line-mapping token] slug)
+    (merge-into-state slug venue)
+    )
+  ;;(dbg "VENUE OUT" @state)
+  )
 
-(defn talks-handler [data]
-  (let [key ((data :talk) :slug)
-        path [:talk key]]
-    (swap! state assoc-in path data)))
+(defn devices-handler [data]
+  ;;(dbg "DEVICE" data)
+  (swap! state assoc-in [:device-index :by-identifier (data :identifier)] (data :id))
+  (swap! state assoc-in [:devices (data :id)] data))
+
+;;(defn talks-handler [data]
+;;  (dbg "TALK" data)
+;;  (let [key ((data :talk) :slug)
+;;        path [:talk key]]
+;;    (swap! state assoc-in path data)))
 
 (defn client-event-handler [data]
+  (dbg "CLIENT EVENT IN" data)
   (let [key (data :identifier)
-        path [:client-event key]]
-    (swap! state assoc-in path data)))
+        line-key (line-lookup key)
+        new (assoc data :time (js/moment))
+        nav [:lines (keypath line-key) :events NIL->VECTOR END]]
+    (swap! state #(setval nav [new] %)))
+  (dbg "CLIENT EVENT OUT" @state)
+  )
 
 (defn connections-handler [data]
+  (dbg "CONNECTION EVENT IN" data)
   (let [key (data :slug)
         path [:connection key]]
-    (swap! state assoc-in path (data :event))))
+    (swap! state assoc-in path (data :event)))
+  (dbg "CONNECTION EVENT OUT" data)
+  )
 
 ;; ------------------------------
 ;; update loop at exactly 30fps
@@ -354,7 +418,8 @@
 (subscribe "/heartbeat"         client-heartbeat-handler)
 (subscribe "/admin/stats"       server-stats-handler)
 (subscribe "/admin/venues"      venues-handler)
-(subscribe "/admin/talks"       talks-handler)
+;;(subscribe "/admin/talks"       talks-handler)
 (subscribe "/admin/connections" connections-handler)
 (subscribe "/server/heartbeat"  server-heartbeat-handler)
 (subscribe "/event/devices"     client-event-handler)
+(subscribe "/admin/devices"     devices-handler)
