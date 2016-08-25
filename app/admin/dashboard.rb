@@ -11,17 +11,20 @@ ActiveAdmin.register_page "Dashboard" do
     }
   end
 
-  title = 'WITH GREAT POWER COMES GREAT RESPONSIBILITY'
+  title = 'With Great Power Comes Great Responsibility.'
   content title: title do
-    div id: 'livedashboard', style: 'margin: 30px; height: 100%' do
+    div id: 'livedashboard', style: 'height: 100vh' do
       script do
         x = <<-EOF
 
-        document.fayeUrl = '#{Settings.faye.server}';
+        fayeUrl = '#{Settings.faye.server}';
+
+        fayeClient = new Faye.Client(fayeUrl);
+        fayeExtension = new FayeAuthentication(fayeClient);
+        fayeClient.addExtension(fayeExtension);
 
         mappings = {
-          devices: #{Device.mapping.to_json},
-          venues: #{Venue.mapping.to_json}
+          devices: #{Device.mapping.to_json}
         }
 
         briefings = {
@@ -34,5 +37,6 @@ ActiveAdmin.register_page "Dashboard" do
         x.html_safe
       end
     end
+    script src: '/js/app.js'
   end
 end

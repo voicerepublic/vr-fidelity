@@ -1,0 +1,322 @@
+.admin_dashboard #active_admin_content {
+  padding: 0;
+}
+
+.clearfix::before,.clearfix::after {
+    content: ' ';
+    display: table;
+}
+
+.clearfix::after {
+    clear: both;
+}
+
+.float-right {
+    float: right;
+}
+
+.float-left {
+    float: left;
+}
+
+#livedashboard {
+    * {
+        box-sizing: border-box;
+    }
+    position: relative;
+    background: #ddd;
+    padding-left: 24px;
+    color: $talk-dark;
+    overflow-x: hidden;
+    margin:0;
+    $venue-column-width: 360px;
+    #dashboard {
+        display: flex;
+    }
+    #venue-column {
+        flex: 0 0 $venue-column-width;
+        z-index: 900;
+        padding-top: 44px;
+    }
+    #venue-header {
+        flex: 0 0 $venue-column-width;
+        padding: 12px;
+        border-bottom: 2px solid #999;
+        // border-right: 1px solid #999;
+        margin-bottom: 6px;
+        height: 50px;
+    }
+    #timeline-column {
+        flex: 1 1 100%;
+        position: relative;
+    }
+    #timeline-header {
+        padding: 12px;
+        border-bottom: 2px solid #999;
+        margin-bottom: 6px;
+        height: 50px;
+    }
+    #current-time-holder {
+        position: absolute;
+        text-align: center;
+        top: 23px;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+    #current-time-badge {
+        background: $vr-yellow;
+        font-size: .75rem;
+        padding: 2px 5px;
+        border-radius: 2px;
+        margin: 0 auto;
+        box-shadow: 0 1px 2px rgba(black, 0.2);
+        /*margin-left: 681px;*/
+    }
+    #current-time-line {
+        position: absolute;
+        background: $vr-yellow;
+        width: 2px;
+        left: 50%;
+        height: 100vh;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        margin-top: 44px;
+        z-index: 820;
+    }
+    .venue-tab {
+        background-image: linear-gradient(-180deg, white 0%, #eeeeee 100%);
+        border: 2px solid white;
+        // border-right: 1px solid #999;
+        border-bottom-left-radius: 4px;
+        border-top-left-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        padding: 0;
+        max-height: 80px;
+        // padding-bottom: 6px;
+        font-size: rem-calc(11);
+        margin-bottom: 6px;
+        p {
+            margin: 0;
+        }
+        .venue-name {
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 6px;
+            line-height: 22px;
+            margin-bottom: 8px;
+            max-width: 50%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            span:last-child {
+                font-weight: 300;
+            }
+        }
+        .venue-state {
+                background: $vr-beige;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                border-radius: 2px;
+                padding: 2px 4px;
+                margin-right: 4px;
+                &.offline,
+                &.available { background: #ccc; }
+                &.provisioning,
+                &.device_required { background: $vr-beige; }
+                &.awaiting_stream,
+                &.disconnect_required { background: $vr-yellow; }
+                &.connected { background: $success-color; }
+                &.disconnected { background: $vr-red; }
+        }
+        .device-type, .device-state, .device-name, .server-id {
+            background: #ddd;
+            border-radius:2px;
+            padding:0px 4px;
+            margin-right: 4px;
+            &.unpaired,
+            &.offline { background: #ccc; }
+            &.pairing { background: $vr-purple; }
+            &.idle { background: $vr-beige; }
+            &.starting { background: $vr-yellow; }
+            &.streaming { background: $success-color; }
+            &.starting_stream,
+            &.restarting_stream,
+            &.stopping_stream { background: $vr-red; }
+        }
+        .device-name {
+            background:none;
+            border:1px solid #ddd;
+        }
+        .play-button-holder {
+            padding: 16px;
+            float: left;
+            border-right: 1px solid #ccc;
+            .play-button {
+                width: 44px;
+                height: 44px;
+                border: 1px solid #ccc;
+                margin:0;
+                border-radius: 50%;
+                color: #ccc;
+                padding: 12px;
+                outline: none;
+                background: #f9f9f9;
+                img {
+                    opacity: .3;
+                }
+                &:hover {
+                    background: #eee;
+                    color: #bbb;
+                    img {
+                        opacity: .7;
+                    }
+                }
+                &.active {
+                    background: $vr-light-blue;
+                    color: white;
+                }
+            }
+        }
+        .info-box {
+
+            margin-left: 77px;
+            height: 76px;
+
+            .listener-icon {
+                opacity: .5;
+                margin-right: 3px;
+            }
+
+            .venue-info, .device-info {
+                border-bottom:1px solid #ccc;
+                padding-left: 6px;
+            }
+            .venue-info {
+                height: 33px;
+                padding-top:5px;
+            }
+            .device-info,.server-info {
+                height: 22px;
+                padding-top:2px;
+                padding-left:6px;
+            }
+            .device-heartbeat-holder,.server-heartbeat-holder {
+                // background:rgba(orange,.3);
+                box-shadow: inset 0 1px 1px rgba(black, 0.1);
+                height: 21px;
+                width: 24px;
+                display: inline-block;
+                text-align: left;
+                margin-top: -2px;
+                border-left:1px solid $steel;
+            }
+
+
+            .device-heartbeat, .server-heartbeat {
+                background: $success-color;
+                height: 21px;
+                display: inherit;
+            }
+
+
+        }
+        .bottom-row {
+            border-top: 2px solid white;
+        }
+    }
+    .time-slot-holder {
+        height: 80px;
+        position: absolute;
+        margin-left: 50px;
+        float:left;
+        width: 100%;
+        .time-slot-title {
+            font-size: 10px;
+            font-weight: 500;
+            z-index: 820;
+            line-height: 14px;
+            margin: 4px 6px 0 8px;
+        }
+        .talk-state {
+            padding: 0 4px;
+            border-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            display: inline;
+            &.prelive,
+            &.created,
+            &.pending,
+            &.postlive { background: $vr-beige; }
+            &.live,
+            &.archived{ background: $success-color; }
+            &.processing { background: $vr-yellow; }
+            &.suspended { background: $vr-red; }
+        }
+        .time-slot-fill {
+            background: $success-color;
+            height: 74px;
+            width: 210px;
+            margin-left: 10px;
+            position: absolute;
+            top: 2px;
+            z-index: -1;
+        }
+        .time-slot {
+            width: 200px;
+            border: 2px dotted $topbar-dark;
+            position: absolute;
+            height: 78px;
+            top: 0;
+        }
+    }
+    #time-grid {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
+        position: absolute;
+        width: 2000px;
+        cursor: -webkit-grab;
+        * {
+            cursor: -webkit-grab;
+        }
+        // background: yellow;
+        height: 100vh;
+        .marker {
+            position: absolute;
+            float: left;
+            border-left: 1px solid #bbb;
+            height: 100%;
+            padding-top: 12px;
+            padding-left: 6px;
+            font-size: 12px;
+            &.half {
+                border-left: 1px dotted #ccc;
+            }
+        }
+    }
+    .venue-timeslots {
+        position: absolute;
+        top: 44px;
+        width: 100%;
+    }
+    .venue-timeslot-row {
+        height: 80px;
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid rgba(white, 0.5);
+        width: 100%;
+        margin-bottom: 6px;
+        position:relative;
+    }
+    .point-in-time {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 6px 6px 0 6px;
+        border-color: $vr-purple transparent transparent transparent;
+        position: absolute;
+        z-index: 700;
+    }
+}

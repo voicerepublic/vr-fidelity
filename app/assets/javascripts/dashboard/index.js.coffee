@@ -1,4 +1,8 @@
 $ ->
+  $('#time-grid').draggable axis:"x"
+$ ->
+  return # deactivated
+
   return unless $('#livedashboard').length
 
   # TODO fix these
