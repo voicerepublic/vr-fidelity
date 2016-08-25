@@ -112,7 +112,7 @@
   [:div.venue-tab.clearfix
    [:div.play-button-holder ; --- left side
     [:button.play-button
-     [:img {:src "assets/sound_on.svg"}]]]
+     [:img {:src "/images/sound_on.svg"}]]]
    [:div.info-box ; --- right side
     [:div.venue-info
      [:span.venue-name {:title (str (line :client-report))} (line :key)]
@@ -130,7 +130,7 @@
     [:div.server-info
      [:span.server-id (or (line :instance_id) "n/a")]
      [:span.listener-count
-      [:img.listener-icon {:src "assets/person.svg"}]
+      [:img.listener-icon {:src "/images/person.svg"}]
       (select-one [:stats :listener_count] line) "/"
       (select-one [:stats :listener_peak] line) " "
       (goog.string.format "(%d kb/s)" (/ (select-one [:stats :bitrate] line) 1024))
