@@ -22,99 +22,13 @@
 (defonce state (atom {:line-mapping {}}))
 
 ;; ------------------------------
-;; demo data
-
-(defn populate-with-demo-data []
-  (swap! state assoc :lines
-         {"sophie-glaser1"
-          {:key         "sophie-glaser1"
-           :instance-id "i-065618ba"
-           :client-type "butt"
-           :state "offline"
-           :client-heartbeat (js/moment)
-           :server-heartbeat (js/moment)
-           :stats {:listener_count 6}
-           :talks
-           [{:slug  "a"
-             :starts-at (.subtract (js/moment) 2 "hours")
-             :ends-at (.subtract (js/moment) 1 "hours")
-             :state "archived"
-             :title "Anglo-American Cyclopedia 1917 edition"}
-            {:slug  "b"
-             :starts-at (.add (js/moment) 1 "hours")
-             :ends-at (.add (js/moment) 2 "hours")
-             :state "prelive"
-             :title "A First Encyclopaedia of Tlön"}
-            {:slug  "c"
-             :starts-at (.add (js/moment) 3 "hours")
-             :ends-at (.add (js/moment) 4 "hours")
-             :state "prelive"
-             :title "History of a Land called Uqbar by Silas Haslam"}]}
-
-          "sophie-glaser2"
-          {:key         "sophie-glaser2"
-           :instance-id "i-065618bb"
-           :client-type "darkice"
-           :state "available"
-           :client-heartbeat (js/moment)
-           :server-heartbeat (js/moment)
-           :stats {:listener_count 6}
-           :talks
-           [{:slug  "a"
-             :starts-at (.subtract (js/moment) 2 "hours")
-             :ends-at (.subtract (js/moment) 1.5 "hours")
-             :state "archived"
-             :title "Anglo-American Cyclopedia 1917 edition"}
-            {:slug  "b"
-             :starts-at (.subtract (js/moment) 3 "hours")
-             :ends-at (.subtract (js/moment) 2.5 "hours")
-             :state "archived"
-             :title "A First Encyclopaedia of Tlön"}
-            {:slug  "c"
-             :starts-at (.subtract (js/moment) 4 "hours")
-             :ends-at (.subtract (js/moment) 3.5 "hours")
-             :state "archived"
-             :title "History of a Land called Uqbar by Silas Haslam"}]}
-
-          "sophie-glaser3"
-          {:key         "sophie-glaser3 akljshdkjashd a"
-           :instance-id "i-065618bc"
-           :client-type "streamboxx"
-           :client-name "Aristoteles"
-           :client-state "streaming"
-           :state "awaiting_stream"
-           :client-heartbeat (js/moment)
-           :server-heartbeat (js/moment)
-           :stats {:listener_count 6}
-           :talks
-           [{:slug  "a"
-             :starts-at (.subtract (js/moment) 2 "hours")
-             :ends-at (.subtract (js/moment) 0 "hours")
-             :state "processing"
-             :title "Anglo-American Cyclopedia 1917 edition"}
-            {:slug  "b"
-             :starts-at (.subtract (js/moment) 4 "hours")
-             :ends-at (.subtract (js/moment) 2 "hours")
-             :state "archived"
-             :title "A First Encyclopaedia of Tlön"}
-            {:slug  "c"
-             :starts-at (.subtract (js/moment) 6 "hours")
-             :ends-at (.subtract (js/moment) 4 "hours")
-             :state "archived"
-             :title "History of a Land called Uqbar by Silas Haslam"}]}
-          })
-  (swap! state assoc :line-mapping
-         {"sophie-glaser1" "sophie-glaser1"
-          "sophie-glaser2" "sophie-glaser2"
-          "sophie-glaser3" "sophie-glaser3"}))
-
-;;(populate-with-demo-data)
-
-;; ------------------------------
 ;; data helpers
 
 (defn now []
   (@state :now))
+
+(defn parse-time [string]
+  (js/moment string "YYYY-MM-DD HH:mm:ss Z"))
 
 (defn progress [t0 t1 td]
   (* (/ 100 td) (- t1 t0)))
@@ -167,7 +81,7 @@
                   :pos (time-position % "%")) (marker-times)))
 
 (defn talk-width [talk]
-  (let [duration (- (js/moment (talk :ends_at)) (js/moment (talk :starts_at)))]
+  (let [duration (- (parse-time (talk :ends_at)) (parse-time (talk :starts_at)))]
     (duration-width duration "%")))
 
 ;; ------------------------------
@@ -215,7 +129,9 @@
      [:span.server-id (or (line :instance_id) "n/a")]
      [:span.listener-count
       [:img.listener-icon {:src "assets/person.svg"}]
-      (select-one [:stats :listener_count] line)
+      (select-one [:stats :listener_count] line) "/"
+      (select-one [:stats :listener_peak] line) " "
+      (goog.string.format "(%d kb/sbr)" (/ (select-one [:stats :bitrate] line) 1024))
       ]
      [:span.server-heartbeat-holder.float-right
       [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]
@@ -228,7 +144,7 @@
 (defn talk-comp [talk]
   ^{:key (talk :id)}
   [:div.time-slot-holder
-   {:style {:margin-left (time-position (js/moment (talk :starts_at)) "%")}}
+   {:style {:margin-left (time-position (parse-time (talk :starts_at)) "%")}}
    [:p.time-slot-title {:style {:width (talk-width talk)}}
     [:a {:href (talk :url)} (talk :title)]]
    [:p.talk-state {:class (talk :state)} (talk :state)]
@@ -243,7 +159,7 @@
     :style {:margin-left (time-position (event :time) "%")}}])
 
 (defn timeline-comp [line]
-  ^{:key (line :slug)}
+  ^{:key (line :key)}
   [:div.venue-timeslot-row
    (if-not (empty? (line :events))
      (doall (map point-comp (line :events))))
@@ -347,7 +263,7 @@
     (swap! state assoc-in [:line-mapping token] slug)
     (merge-into-state slug venue)
     )
-  ;;(dbg "VENUE OUT" @state)
+  (dbg "VENUE OUT" @state)
   )
 
 (defn devices-handler [data]
