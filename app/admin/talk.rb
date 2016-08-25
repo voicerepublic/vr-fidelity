@@ -33,6 +33,7 @@ ActiveAdmin.register Talk do
   filter :slug
   filter :title
   #filter :venue
+  filter :venue_user_id_eq, as: :string, label: "User ID"
   filter :featured_from
   filter :starts_at
   filter :ends_at
