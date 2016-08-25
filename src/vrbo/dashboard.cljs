@@ -15,11 +15,13 @@
   (:require-macros [cljs.core :refer [exists?]]
                    [com.rpl.specter.macros :as sm :refer [select-one transform setval]]))
 
+(enable-console-print!)
 
 ;; ------------------------------
 ;; state
 
-(defonce state (atom {:line-mapping {}}))
+(defonce state (atom {:line-mapping {}
+                      :lines {}}))
 
 ;; ------------------------------
 ;; data helpers
@@ -215,11 +217,29 @@
 
 (swap! state assoc-in [:device-mapping] (js->clj (.. js/window -mappings -devices)))
 
+;;(dbg "venue mapping" (js->clj (.. js/window -mappings -venues)))
+
+;;(dbg "briefings" (js->clj (.. js/window -briefings)))
+
 ;;(dbg "device-mapping" (:device-mapping @state))
 
 (defn merge-into-state [key data]
   (let [line-key (line-lookup key)]
+    ;;(prn "Merge" (str key) "/" (str line-key) "with" (str data))
     (swap! state update-in [:lines line-key] merge (assoc data :key line-key))))
+
+(def venue-briefing (js->clj (.. js/window -briefings -venues) :keywordize-keys true))
+
+(defn update-venue [venue]
+  (let [slug      (venue :slug)
+        token     (venue :client_token)
+        device-id (venue :device_id)
+        device    ((@state :device-mapping) (str device-id))] ; identifier
+    (swap! state assoc-in [:line-mapping device] slug)
+    (swap! state assoc-in [:line-mapping token] slug)
+    (merge-into-state (venue :slug) venue)))
+
+(doall (map update-venue venue-briefing))
 
 ;; -------------------------
 ;; message handlers
@@ -254,14 +274,8 @@
 
 (defn venues-handler [data]
   ;;(dbg "VENUE IN" data)
-  (let [venue     (data :venue)
-        slug      (venue :slug)
-        token     (venue :client_token)
-        device-id (venue :device_id)
-        device    ((@state :device-mapping) (str device-id))] ; identifier
-    (swap! state assoc-in [:line-mapping device] slug)
-    (swap! state assoc-in [:line-mapping token] slug)
-    (merge-into-state slug venue)
+  (let [venue     (data :venue)]
+    (update-venue venue)
     )
   (dbg "VENUE OUT" @state)
   )
@@ -299,7 +313,7 @@
 ;; update loop at exactly 30fps
 
 ;;(def fps 30)
-(def fps 4)
+(def fps 5)
 (def interval (/ 1000 fps))
 
 (defonce then (atom (.now js/Date)))

@@ -24,8 +24,7 @@ ActiveAdmin.register_page "Dashboard" do
         fayeClient.addExtension(fayeExtension);
 
         mappings = {
-          devices: #{Device.mapping.to_json},
-          venues: #{Venue.mapping.to_json}
+          devices: #{Device.mapping.to_json}
         }
 
         briefings = {
