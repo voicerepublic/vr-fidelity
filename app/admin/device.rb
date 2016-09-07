@@ -37,6 +37,7 @@ ActiveAdmin.register Device do
     selectable_column
     column :name
     column :type
+    column :version
     column :subtype
     column :identifier
     column :pairing_code
@@ -68,14 +69,18 @@ ActiveAdmin.register Device do
           row :identifier
           row :type
           row :subtype
+          row :version
           row :state
-          row :target
-          row :loglevel do |d|
-            LOGLEVELS.invert[d.loglevel]
+          if Settings.target == 'live'
+            row :target
+            row :loglevel do |d|
+              LOGLEVELS.invert[d.loglevel]
+            end
           end
-          row :report_interval
-          row :heartbeat_interval
           row :public_ip_address
+          row :private_ip_address
+          row :mac_address_ethernet
+          row :mac_address_wifi
           row :organization
           row :created_at
           row :updated_at
@@ -83,6 +88,8 @@ ActiveAdmin.register Device do
           row :disappeared_at
           row :pairing_code
           row :paired_at
+          row :report_interval
+          row :heartbeat_interval
         end
         panel 'Backup Recordings' do
           table do
@@ -135,8 +142,10 @@ ActiveAdmin.register Device do
     f.inputs do
       f.input :name
       f.input :organization
-      f.input :target, hint: t('.hint_target'), collection: %w(live staging dev)
-      f.input :loglevel, hint: t('.hint_loglevel'), as: :select, collection: LOGLEVELS
+      if Settings.target == 'live'
+        f.input :target, hint: t('.hint_target'), collection: %w(live staging dev)
+        f.input :loglevel, hint: t('.hint_loglevel'), as: :select, collection: LOGLEVELS
+      end
       f.input :report_interval
       f.input :heartbeat_interval
       f.input :options
