@@ -51,6 +51,7 @@ ActiveAdmin.register Device do
     column :state do |device|
       span device.state, class: 'status_tag '+device.state
     end
+    column :updated_at
     actions
   end
 
