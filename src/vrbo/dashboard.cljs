@@ -273,7 +273,7 @@
   )
 
 (defn venues-handler [data]
-  ;;(dbg "VENUE IN" data)
+  (dbg "VENUE IN Reason?" data)
   (let [venue     (data :venue)]
     (update-venue venue)
     )
