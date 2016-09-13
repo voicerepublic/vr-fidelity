@@ -96,15 +96,16 @@ ActiveAdmin.register Device do
           table do
             tr do
               th 'Name'
-              th 'Start'
-              th 'Duration*',
+              th 'Estim. Start*',
+                 title: 'Actual start of the recroding might differ.'
+              th 'Estim. Duration*',
                  title: 'Estimated based on size. Actual duration might differ.'
               th 'Size'
             end
             device.backup_recordings.each do |rec|
               tr do
                 td link_to rec.key, "/backup/#{rec.key}", target: '_blank'
-                td Time.at(rec.key.match(/_(\d+)\.ogg$/)[1].to_i)
+                td Time.at(rec.key.match(/_(\d+)(_\d+)?\.ogg$/)[1].to_i)
                 td hms(estimate_duration(rec.content_length))
                 td number_to_human_size(rec.content_length)
               end
