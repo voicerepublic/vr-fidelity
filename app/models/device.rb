@@ -11,6 +11,7 @@ class Device < ActiveRecord::Base
   validates :pairing_code, uniqueness: true, allow_nil: true
 
   belongs_to :organization
+  has_many :device_reports
 
   def unpair!
     self.pairing_code = ('0'..'9').to_a.shuffle[0,4].join

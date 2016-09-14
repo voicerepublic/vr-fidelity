@@ -127,8 +127,7 @@ ActiveAdmin.register Device do
           end
         end
         panel 'Status' do
-          div id: 'report' do
-          end
+          device.device_reports.order('created_at DESC').first.data.inspect
         end
         active_admin_comments
         script src: Settings.faye.server + '/client.js'
