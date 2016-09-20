@@ -114,18 +114,18 @@ ActiveAdmin.register Device do
         end
       end
       column do
-        panel 'REPL' do
-          div id: 'repl' do
-            div id: 'log' do
-              div id: 'bottom'
-            end
-            input id: 'code'
-          end
-        end
-        panel 'Debug Log' do
-          div id: 'debuglog' do
-          end
-        end
+        # panel 'REPL' do
+        #   div id: 'repl' do
+        #     div id: 'log' do
+        #       div id: 'bottom'
+        #     end
+        #     input id: 'code'
+        #   end
+        # end
+        # panel 'Debug Log' do
+        #   div id: 'debuglog' do
+        #   end
+        # end
         panel 'Status' do
           pre do
             device.device_reports.order('created_at DESC').first.try(:data)

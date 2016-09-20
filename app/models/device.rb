@@ -27,7 +27,7 @@ class Device < ActiveRecord::Base
   def backup_recordings
     bucket = Settings.storage.backup_recordings.split('@').first
     Storage.directories.get(bucket, prefix: identifier+'/').files.sort_by do |file|
-      file.last_modified
+      file.key
     end.reverse
   end
 
