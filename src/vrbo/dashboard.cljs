@@ -45,10 +45,14 @@
    "%.2f%%"
    (max 0 (- 100 (progress (line :client-heartbeat) (js/moment) 5000)))))
 
+(defn- reject-offline [line]
+  (not (= "offline" (line :state))))
+
 (defn list-of-lines []
   ;; TODO do some sorting
-  (doall (map #((@state :lines) %)
-              (distinct (vals (@state :line-mapping))))))
+  (doall (filter reject-offline
+                 (map (fn [n] ((@state :lines) n))
+                      (distinct (vals (@state :line-mapping)))))))
 
 (defn window-start []
   (.subtract (js/moment) 4 "hours"))
