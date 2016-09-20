@@ -25,7 +25,6 @@ ActiveAdmin.register Talk do
                     speakers
                     slides_uuid
                     penalty
-                    forward_url
                     recording_override ).map(&:to_sym)
 
   filter :id
@@ -76,31 +75,9 @@ ActiveAdmin.register Talk do
     end
   end
 
-  action_item :postprocess, only: :show do
-    if talk.state == 'postlive' && talk.recording_override.blank?
-      link_to 'Postprocess', postprocess_admin_talk_path(talk), method: 'put'
-    end
-  end
-
-  action_item :reprocess, only: :show do
-    if talk.state == 'archived' && talk.recording_override.blank?
-      link_to 'Reprocess', reprocess_admin_talk_path(talk), method: 'put'
-    end
-  end
-
   member_action :end_talk, method: 'put' do
     Delayed::Job.enqueue EndTalk.new(id: params[:id]), queue: 'trigger'
     redirect_to({action: :show}, { notice: "Placed in queue to end talk." })
-  end
-
-  member_action :postprocess, method: 'put' do
-    Delayed::Job.enqueue Postprocess.new(id: params[:id]), queue: 'audio'
-    redirect_to({ action: :show }, { notice: "Placed in queue for postprocessing." })
-  end
-
-  member_action :reprocess, method: 'put' do
-    Delayed::Job.enqueue Reprocess.new(id: params[:id]), queue: 'audio'
-    redirect_to({ action: :show }, { notice: "Placed in queue for reprocessing." })
   end
 
   scope :all
@@ -187,7 +164,7 @@ ActiveAdmin.register Talk do
   end
 
   show do
-    if %w(postlive processing archived).include?(talk.state)
+    if %w(postlive queued processing archived suspended).include?(talk.state)
       div id: 'visual' do
         script do
           [
@@ -233,7 +210,7 @@ ActiveAdmin.register Talk do
       row :live_listener_count do
         talk.listeners.size
       end
-      if %w(postlive processing archived).include?(talk.state)
+      if %w(postlive queued processing archived suspended).include?(talk.state)
         row :ended_at
         row :processed_at
         row :recording
@@ -299,7 +276,6 @@ ActiveAdmin.register Talk do
       f.input :related_talk_id, as: :string, hint: 'ID of related talk'
       f.input :penalty, hint: "1 = no penalty, 0 = max penalty (I know, it's confusing.) Applies only to this talk."
       f.input :image_alt
-      f.input :forward_url
     end
     #f.inputs 'Image' do
     #  f.input :image, as: :dragonfly
