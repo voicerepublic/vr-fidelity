@@ -161,8 +161,8 @@ p.me {
             margin-bottom: 8px;
             max-width: 50%;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            /*overflow: hidden;
+            text-overflow: ellipsis;*/
             display: inline-block;
             span:last-child {
                 font-weight: 300;

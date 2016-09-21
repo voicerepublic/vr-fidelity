@@ -162,6 +162,11 @@ ActiveAdmin.register Device do
     def propagate_restart
       Faye.publish_to "/device/#{resource.identifier}", event: 'exit'
     end
+
+    def find_resource
+      Device.where(id: params[:id]).first ||
+        Device.where(identifier: params[:id]).first
+    end
   end
 
 end
