@@ -25,7 +25,7 @@ module Fidelity
       # TODO check if `mplayer` is better than `avconv`
       def transcode_any_to_wav_cmd(name)
         "mplayer -quiet -vo null -vc dummy -demuxer +audio" +
-          "-ao pcm:waveheader:file='%s.wav' '%s'" %
+          " -ao pcm:waveheader:file='%s.wav' '%s'" %
           [ name, name ]
       end
 
