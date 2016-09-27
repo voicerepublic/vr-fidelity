@@ -111,11 +111,20 @@
    [:div#current-time-badge
     (.format (now) "HH:mm:ss")]])
 
+(defn toggle-audio-action [key]
+  (let [element (.getElementById js/document (str "spy-" key))]
+    (if (.-paused element)
+      (.play element)
+      (.pause element))))
+
 (defn line-comp [line]
   ^{:key (line :key)}
   [:div.venue-tab.clearfix
    [:div.play-button-holder ; --- left side
+    [:audio{:id (str "spy-" (line :key))}
+     [:source {:src (line :stream_url)}]]
     [:button.play-button
+     {:on-click #(toggle-audio-action (str "spy-" (line :key)))}
      [:img {:src "/images/sound_on.svg"}]]]
    [:div.info-box ; --- right side
     [:div.venue-info
