@@ -38,7 +38,8 @@ ActiveAdmin.register Device do
     column :name
     column :type
     column :version
-    column :subtype
+    column :target
+    column :public_ip_address
     column :identifier
     column :pairing_code
     column :disappeared_at do |d|
