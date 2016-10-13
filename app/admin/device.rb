@@ -165,8 +165,8 @@ ActiveAdmin.register Device do
     end
 
     def find_resource
-      Device.where(id: params[:id]).first ||
-        Device.where(identifier: params[:id]).first
+      Device.where(identifier: params[:id]).first ||
+        Device.where(id: params[:id]).first
     end
   end
 
