@@ -23,7 +23,7 @@ module Fidelity
       end
 
       def transcode_any_to_wav_cmd(name)
-          "ffmpeg -loglevel panic -i %s %s.wav" %
+          "ffmpeg -n -loglevel panic -i %s %s.wav" %
           [ name, name ]
       end
 
