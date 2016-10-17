@@ -22,10 +22,8 @@ module Fidelity
         outputs
       end
 
-      # TODO check if `mplayer` is better than `avconv`
       def transcode_any_to_wav_cmd(name)
-        "mplayer -quiet -vo null -vc dummy" +
-          " -ao pcm:waveheader:file='%s.wav' '%s'" %
+          "ffmpeg -i %s %s.wav" %
           [ name, name ]
       end
 
