@@ -6,7 +6,7 @@ module Fidelity
 
       class << self
         def required_executables
-          %w( mplayer )
+          %w( ffmpeg )
         end
       end
 
