@@ -6,7 +6,7 @@ module Fidelity
 
       class << self
         def required_executables
-          %w( mplayer )
+          %w( ffmpeg )
         end
       end
 
@@ -22,10 +22,8 @@ module Fidelity
         outputs
       end
 
-      # TODO check if `mplayer` is better than `avconv`
       def transcode_any_to_wav_cmd(name)
-        "mplayer -quiet -vo null -vc dummy" +
-          " -ao pcm:waveheader:file='%s.wav' '%s'" %
+          "ffmpeg -n -loglevel panic -i %s %s.wav" %
           [ name, name ]
       end
 
