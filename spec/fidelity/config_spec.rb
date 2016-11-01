@@ -17,7 +17,8 @@ describe Fidelity::Config do
     end
   end
 
-  it 'provides a list of participating users' do
+  # there is no notion of users anymore
+  pending 'provides a list of participating users' do
     audio_fixture('spec/fixtures/complex', 't1-u*') do |path|
       Dir.chdir(path) do
         setting = Fidelity::Config.new(path)
@@ -26,7 +27,8 @@ describe Fidelity::Config do
     end
   end
 
-  it 'provides the timestamp of the first fragment' do
+  # it doesn't work like this anymore
+  pending 'provides the timestamp of the first fragment' do
     audio_fixture('spec/fixtures/complex', 't1-u*') do |path|
       Dir.chdir(path) do
         setting = Fidelity::Config.new(path)
