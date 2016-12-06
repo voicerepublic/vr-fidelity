@@ -33,6 +33,25 @@ ActiveAdmin.register Device do
                     heartbeat_interval
                     options ).map(&:to_sym)
 
+  filter :id
+  filter :identifier
+  filter :name
+  filter :type
+  filter :subtype
+  filter :version
+  filter :target
+  filter :loglevel
+  filter :pairing_code
+  filter :last_heartbeat_at
+  filter :paired_at
+  filter :created_at
+  filter :updated_at
+  filter :disappeared_at
+  filter :public_ip_address
+  filter :private_ip_address
+  filter :mac_address_ethernet
+  filter :mac_address_wifi
+
   index do
     selectable_column
     column :name
