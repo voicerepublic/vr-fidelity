@@ -10,14 +10,25 @@ class Delayed::Job
 
   def display_handler
     case handler
+
+    when /struct:DestroyTalk/
+      "Talk.find(#{payload_object.opts.try(:[], :id)}).destroy!"
+
+    when /struct:ArchiveJob/
+      "Talk.find(#{payload_object.opts.try(:[], :id)}).archive_from_dump!"
+
     when /struct:ProcessOverride/
       "Talk.find(#{payload_object.opts.try(:[], :id)}).process_override!"
-    when /struct:Postprocess/
-      "Talk.find(#{payload_object.opts.try(:[], :id)}).postprocess!"
-    when /struct:Reprocess/
-      "Talk.find(#{payload_object.opts.try(:[], :id)}).reprocess!"
+
+    # when /struct:Postprocess/
+    #   "Talk.find(#{payload_object.opts.try(:[], :id)}).postprocess!"
+
+    # when /struct:Reprocess/
+    #   "Talk.find(#{payload_object.opts.try(:[], :id)}).reprocess!"
+
     when /struct:EndTalk/
       "Talk.find(#{payload_object.opts.try(:[], :id)}).end_talk!"
+
     when /struct:ProcessSlides/
       "Talk.find(#{payload_object.opts.try(:[], :id)}).process_slides!"
 
@@ -30,10 +41,12 @@ class Delayed::Job
       rescue Exception => e
         return e.message
       end
+
     when /object:Delayed::PerformableMailer/
       handler.match(/email: (.+)/)
 
     else '?'
+
     end
   end
 
