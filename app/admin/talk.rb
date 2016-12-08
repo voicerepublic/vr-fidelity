@@ -38,6 +38,8 @@ ActiveAdmin.register Talk do
   filter :ends_at
   filter :started_at
   filter :ended_at
+  filter :created_at
+  filter :updated_at
   filter :teaser
   filter :description
   filter :speakers
