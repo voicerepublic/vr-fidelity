@@ -12,7 +12,8 @@ module Fidelity
 
       def inputs
         e = Dir.new('.').entries.grep(/^dump_/)
-        e - e.grep(/\.wav$/)
+        e -= e.grep(/\.wav$/) # why?
+        e.select { |f| File.size(f) } # ignore empty files
       end
 
       def run
@@ -23,7 +24,7 @@ module Fidelity
       end
 
       def transcode_any_to_wav_cmd(name)
-          "ffmpeg -n -loglevel panic -i %s %s.wav" %
+        "ffmpeg -n -loglevel panic -i %s %s.wav" %
           [ name, name ]
       end
 
