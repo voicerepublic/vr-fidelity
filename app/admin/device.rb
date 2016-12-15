@@ -15,7 +15,7 @@ ActiveAdmin.register Device do
 
   action_item :unpair, only: :show do
     unless device.state == 'unpaired'
-      link_to 'Unpair', action: 'unpair'
+      link_to 'Unpair', action: 'unpair', id: device.id
     end
   end
 
