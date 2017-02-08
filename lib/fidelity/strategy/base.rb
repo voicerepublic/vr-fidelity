@@ -14,10 +14,10 @@ module Fidelity
   module Strategy
     class Base < Struct.new(:manifest)
 
-      extend Forwardable
       include CmdRunner
 
       class << self
+        # strategies don't have any dependencies by default
         def required_executables
           []
         end
@@ -28,6 +28,7 @@ module Fidelity
           instance = new(manifest)
           instance.logger.info "run #{self.name}"
 
+          # check the preconditions
           instance.inputs.each do |input|
             instance.logger.debug "<< #{input}"
           end
@@ -36,8 +37,10 @@ module Fidelity
           raise "preconditions not met for #{name} " +
                 "in #{path}: #{instance.inputs  * ', '}" unless precond
 
+          # run the strategy
           result = instance.run
 
+          # check the postconditions
           instance.outputs.each do |output|
             instance.logger.debug ">> #{output}"
           end
@@ -50,8 +53,7 @@ module Fidelity
         end
       end
 
-      #def_delegators :setting, :name, :opts, :journal, :fragments, :users, :file_start
-
+      # this is a shortcut since many strategies use `name`
       def name
         manifest.id
       end
