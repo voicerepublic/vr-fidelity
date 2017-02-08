@@ -22,38 +22,40 @@ module Fidelity
         "mv #{input} #{backup}"
       end
 
-      def run
-        make_backup
-        trim
-        input
+      def file_start
+        manifest.fragments.map { |f| f.match(/\d+/)[0] }.sort.first.to_i
       end
 
-      def trim_cmd
-        # ------------------------------ debug output
-        talk_start = opts[:talk_start]
-        talk_stop = opts[:talk_stop]
-
+      def audit
         [ ['Start Recording', file_start, fdt(file_start)],
-          ['Start Signal', talk_start, fdt(talk_start)],
+          ['Start Signal', manifest.talk_start, fdt(manifest.talk_start)],
           ['Start Offset (Trim)', start, 'seconds'],
-          ['Stop Signal', talk_stop, fdt(talk_stop)],
+          ['Stop Signal', manifest.talk_stop, fdt(manifest.talk_stop)],
           ['Time between Signals', duration, 'seconds'],
           ['Recording Length', dur(backup), 'seconds']
         ].each do |info|
           puts '    %-20s % 20s % 30s' % info
         end
-        # ------------------------------ end debug output
+      end
 
+      def run
+        make_backup
+        audit # for debugging only
+        trim
+        input
+      end
+
+      def trim_cmd
         "sox -V1 #{backup} #{input} trim #{start} #{duration}"
       end
 
       # start may never return a negative value
       def start
-        [ opts[:talk_start] - file_start, 0 ].max
+        [ manifest.talk_start - file_start, 0 ].max
       end
 
       def duration
-        opts[:talk_stop] - opts[:talk_start]
+        manifest.talk_stop - manifest.talk_start
       end
 
       def outputs

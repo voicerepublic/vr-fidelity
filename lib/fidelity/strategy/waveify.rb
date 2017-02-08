@@ -11,9 +11,7 @@ module Fidelity
       end
 
       def inputs
-        e = Dir.new('.').entries.grep(/^dump_/)
-        e -= e.grep(/\.wav$/) # why?
-        e.select { |f| File.size(f) } # ignore empty files
+        manifest.fragments
       end
 
       def run

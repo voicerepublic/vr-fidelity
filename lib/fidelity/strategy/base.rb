@@ -6,13 +6,13 @@ require 'fileutils_logger'
 # presence of one or more input files to produce one or more output
 # files. If `input` (for a single file) or `inputs` (for a list of
 # files) resp. `output` or `outputs` is defined, the presence of these
-# files will be checked as a pre- resp. postcondition. If the
+# files will be checked as a pre-/postcondition respectively. If the
 # condition is not met an error will be raised and the StrategyRunner
-# will skip the strategy.
+# will halt the chain.
 #
 module Fidelity
   module Strategy
-    class Base < Struct.new(:setting)
+    class Base < Struct.new(:manifest)
 
       extend Forwardable
       include CmdRunner
@@ -22,14 +22,14 @@ module Fidelity
           []
         end
 
-        def call(setting)
+        def call(manifest)
           result = nil
-          path = setting.path
-          instance = new(setting)
+          path = manifest.path
+          instance = new(manifest)
           instance.logger.info "run #{self.name}"
 
           instance.inputs.each do |input|
-            instance.logger.debug "+ #{input}"
+            instance.logger.debug "<< #{input}"
           end
 
           precond = instance.inputs.inject(true) { |r, i| r && File.exist?(i) }
@@ -39,7 +39,7 @@ module Fidelity
           result = instance.run
 
           instance.outputs.each do |output|
-            instance.logger.debug "+ #{output}"
+            instance.logger.debug ">> #{output}"
           end
 
           postcond = instance.outputs.inject(true) { |r, i| r && File.exist?(i) }
@@ -50,7 +50,11 @@ module Fidelity
         end
       end
 
-      def_delegators :setting, :name, :opts, :journal, :fragments, :users, :file_start
+      #def_delegators :setting, :name, :opts, :journal, :fragments, :users, :file_start
+
+      def name
+        manifest.id
+      end
 
       def input
         nil
@@ -74,7 +78,7 @@ module Fidelity
       end
 
       def logger
-        opts[:logger] || Logger.new('/dev/null')
+        manifest.logger || Logger.new('/dev/null')
       end
 
       def fu

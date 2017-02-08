@@ -20,11 +20,6 @@ module Fidelity
         "#{name}.wav"
       end
 
-      # checked as a precondition
-      def inputs
-        [ input ]
-      end
-
       def backup
         "#{name}-bak.wav"
       end
@@ -80,8 +75,8 @@ module Fidelity
       end
 
       def jingles
-        [ opts[:jingle_in],
-          opts[:jingle_out] ]
+        [ manifest.jingle_in,
+          manifest.jingle_out ]
       end
 
     end

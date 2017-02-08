@@ -12,11 +12,6 @@ module Fidelity
         fu.rm(inputs)
       end
 
-      # existence checked as postcondition
-      def outputs
-        []
-      end
-
     end
   end
 end

@@ -2,16 +2,13 @@
 # when running strategies. I will catch all errors and try to proceed.
 #
 module Fidelity
-  class StrategyRunner < Struct.new(:setting)
+  class StrategyRunner < Struct.new(:manifest)
 
     def run(strategy)
       if strategy.is_a?(String)
         strategy = Fidelity::Strategy.const_get(camelize(strategy))
       end
-      strategy.call(setting)
-    #rescue Exception => e
-    #  setting.opts[:logger].info "# Error running strategy #{strategy}: #{e.message}"
-    #  false
+      strategy.call(manifest)
     end
 
     private
