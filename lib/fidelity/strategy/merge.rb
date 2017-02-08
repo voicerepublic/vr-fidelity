@@ -14,7 +14,8 @@ module Fidelity
 
       # all wave files
       def inputs
-        Dir.new('.').entries.grep(/^dump_\d+.*\.wav$/)
+        manifest.fragments.map { |f| f + ".wav" }
+        # Dir.new('.').entries.grep(/^dump_\d+.*\.wav$/)
       end
 
       def run

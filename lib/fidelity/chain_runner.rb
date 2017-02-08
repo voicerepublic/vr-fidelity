@@ -1,5 +1,6 @@
 require 'yaml'
 require 'null_logger'
+require 'ostruct'
 
 # Runs chains of strategies by running StrategyRunner one at a time.
 #
@@ -19,14 +20,14 @@ module Fidelity
 
     def run(logger=nil)
       before_chain
-      manifest[:logger] = logger || new_logger
-      # TODO get rid of transitional code
-      path = File.dirname(manifestfile)
-      config = Config.new(path, manifest[:id], manifest)
-      strategy_runner = StrategyRunner.new(config)
       raise 'No chain defined.' if chain.nil?
-      manifest[:logger].info "% cd #{path}"
-      Dir.chdir(path) do
+      manifest.chain = chain
+      manifest.logger = logger || null_logger
+      manifest.path = File.dirname(manifestfile)
+
+      strategy_runner = StrategyRunner.new(manifest)
+      manifest.logger.info "% cd #{manifest.path}"
+      Dir.chdir(manifest.path) do
         chain.each_with_index do |name, index|
           before_strategy(index, name)
           strategy_runner.run(name)
@@ -55,18 +56,18 @@ module Fidelity
     end
 
     def chain
-      return manifest[:chain].split(/\s+/) if manifest[:chain].is_a?(String)
-      manifest[:chain]
+      return manifest.chain.split(/\s+/) if manifest.chain.is_a?(String)
+      manifest.chain
     end
 
     def manifest
       return @manifest unless @manifest.nil?
       path = File.expand_path(manifestfile, Dir.pwd)
       raise "Could not find file #{path}" unless File.exist?(path)
-      @manifest = YAML.load(File.read(path))
+      @manifest = OpenStruct.new(YAML.load(File.read(path)))
     end
 
-    def new_logger
+    def null_logger
       NullLogger.new
     end
 
