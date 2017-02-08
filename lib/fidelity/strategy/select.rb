@@ -29,7 +29,7 @@ module Fidelity
         result = result.map { |e| e.first }
 
         # remove empty files from the list
-        @inputs = result.select { |f| File.size(f) }
+        @inputs = result.select { |f| File.size(f) > 0 }
       end
 
       def run
