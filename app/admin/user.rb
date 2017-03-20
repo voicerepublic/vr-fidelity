@@ -192,12 +192,15 @@ ActiveAdmin.register User do
     column :sign_in_count
     column :last_request_at
     column :contact_email
+    column :website
+    column :facebook
+    column :twitter
   end
 
   permit_params :firstname, :lastname, :email, :avatar,
-                :retained_avatar, :remove_avatar, :about,
-                :paying, :featured_from, :featured_until,
-                :tag_list, :penalty, :image_alt, :summary,
-                :contact_email
+                :retained_avatar, :remove_avatar, :about, :paying,
+                :featured_from, :featured_until, :tag_list, :penalty,
+                :image_alt, :summary, :contact_email, :website,
+                :facebook, :twitter
 
 end

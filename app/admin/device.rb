@@ -15,7 +15,7 @@ ActiveAdmin.register Device do
 
   action_item :unpair, only: :show do
     unless device.state == 'unpaired'
-      link_to 'Unpair', action: 'unpair'
+      link_to 'Unpair', action: 'unpair', id: device.id
     end
   end
 
@@ -33,12 +33,32 @@ ActiveAdmin.register Device do
                     heartbeat_interval
                     options ).map(&:to_sym)
 
+  filter :id
+  filter :identifier
+  filter :name
+  filter :type
+  filter :subtype
+  filter :version
+  filter :target
+  filter :loglevel
+  filter :pairing_code
+  filter :last_heartbeat_at
+  filter :paired_at
+  filter :created_at
+  filter :updated_at
+  filter :disappeared_at
+  filter :public_ip_address
+  filter :private_ip_address
+  filter :mac_address_ethernet
+  filter :mac_address_wifi
+
   index do
     selectable_column
     column :name
     column :type
     column :version
-    column :subtype
+    column :target
+    column :public_ip_address
     column :identifier
     column :pairing_code
     column :disappeared_at do |d|
@@ -164,8 +184,8 @@ ActiveAdmin.register Device do
     end
 
     def find_resource
-      Device.where(id: params[:id]).first ||
-        Device.where(identifier: params[:id]).first
+      Device.where(identifier: params[:id]).first ||
+        Device.where(id: params[:id]).first
     end
   end
 
