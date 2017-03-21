@@ -21,7 +21,8 @@
 ;; state
 
 (defonce state (atom {:line-mapping {}
-                      :lines {}}))
+                      :lines {}
+                      :active {}}))
 
 ;; ------------------------------
 ;; data helpers
@@ -111,50 +112,65 @@
    [:div#current-time-badge
     (.format (now) "HH:mm:ss")]])
 
-(defn toggle-audio-action [key]
-  (let [element (.getElementById js/document (str "spy-" key))]
+(defn paused? [spy-key]
+  (let [e (.getElementById js/document spy-key)]
+    (and (not (nil? e)) (.-paused e))))
+
+(defn toggle-audio-action [spy-key]
+  (let [element (.getElementById js/document spy-key)]
     (if (.-paused element)
-      (.play element)
-      (.pause element))))
+      (do
+        (.load element)
+        (.play element))
+      (do
+        (.pause element)))))
 
 (defn line-comp [line]
-  ^{:key (line :key)}
-  [:div.venue-tab.clearfix
-   [:div.play-button-holder ; --- left side
-    [:audio{:id (str "spy-" (line :key))}
-     [:source {:src (line :stream_url)}]]
-    [:button.play-button
-     {:on-click #(toggle-audio-action (str "spy-" (line :key)))}
-     [:img {:src "/images/sound_on.svg"}]]]
-   [:div.info-box ; --- right side
-    [:div.venue-info
-     [:span.venue-name {:title (str (line :client-report))} (line :key)]
-     [:span.venue-state.float-right {:class (line :state)} (line :state)]
-     ]
-    [:div.device-info
-     [:span.device-type {:class (client-type line)} (client-type line)]
-     (if (line :device_id)
-       [:span.device-name (client-name line)])
-     (if (line :device_id)
-       [:span.device-state {:class (client-state line)} (client-state line)])
-     [:span.device-heartbeat-holder.float-right
-      [:span.device-heartbeat {:style {:width (client-heartbeat-progress line)}}]
-      ]]
-    [:div.server-info
-     [:span.server-id (or (line :instance_id) "n/a")]
-     [:span.listener-count
-      [:img.listener-icon {:src "/images/person.svg"}]
-      (select-one [:stats :listener_count] line) "/"
-      (select-one [:stats :listener_peak] line) " "
-      (goog.string.format "(%d kb/s)" (/ (select-one [:stats :bitrate] line) 1024))
-      ]
-     [:span.server-heartbeat-holder.float-right
-      [:span.server-heartbeat {:style {:width (server-heartbeat-progress line)}}]
-      ]]]])
+  (let [spy-key (str "spy-" (line :key))]
+    ^{:key (line :key)}
+    [:div.venue-tab.clearfix
+     [:div.play-button-holder ; --- left side
+        [:audio {:id spy-key}
+         [:source {:src (line :stream_url)}]]
+        [:button.play-button
+         {:on-click #(toggle-audio-action spy-key)}
+         ;;:class (if (> -1 (.indexOf (:active @state) spy-key)) "" "")}
+         [:img {:src "/images/sound_on.svg"}]]]
+       [:div.info-box ; --- right side
+        [:div.venue-info
+         [:span.venue-name {:title (str (line :client-report))} (line :key)]
+         [:span.venue-state.float-right {:class (line :state)} (line :state)]
+         ]
+        [:div.device-info
+         [:span.device-type {:class (client-type line)} (client-type line)]
+         (if (line :device_id)
+           [:span.device-name (client-name line)])
+         (if (line :device_id)
+           [:span.device-state {:class (client-state line)} (client-state line)])
+         [:span.device-heartbeat-holder.float-right
+          [:span.device-heartbeat {:style {:width (client-heartbeat-progress line)}}]
+          ]]
+        [:div.server-info
+         [:span.server-id (or (line :instance_id) "n/a")]
+         [:span.listener-count
+          [:img.listener-icon {:src "/images/person.svg"}]
+          (select-one [:stats :listener_count] line) "/"
+          (select-one [:stats :listener_peak] line) " "
+          (goog.string.format
+           "(%d kb/s)" (/ (select-one [:stats :bitrate] line) 1024))
+          ]
+         [:span.server-heartbeat-holder.float-right
+          [:span.server-heartbeat
+           {:style {:width (server-heartbeat-progress line)}}]
+          ]]]]))
+
+(def line-comp-with-lifecycle
+  (with-meta line-comp
+    {:component-did-mount #(print "hello")}))
 
 (defn lines-comp []
   [:div#venue-column
-   (doall (map line-comp (list-of-lines)))])
+   (doall (map line-comp-with-lifecycle (list-of-lines)))])
 
 (defn talk-comp [talk]
   ^{:key (talk :id)}
