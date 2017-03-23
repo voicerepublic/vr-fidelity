@@ -22,7 +22,7 @@
 
 (defonce state (atom {:line-mapping {}
                       :lines {}
-                      :active {}}))
+                      :players {}}))
 
 ;; ------------------------------
 ;; data helpers
@@ -120,9 +120,14 @@
   (let [element (.getElementById js/document spy-key)]
     (if (.-paused element)
       (do
+        (.log js/console spy-key)
+        (.log js/console @state)
+        (swap! state assoc-in [:players spy-key] true)
+        (.log js/console @state)
         (.load element)
         (.play element))
       (do
+        (swap! state assoc-in [:players spy-key] false)
         (.pause element)))))
 
 (defn line-comp [line]
@@ -133,8 +138,8 @@
         [:audio {:id spy-key}
          [:source {:src (line :stream_url)}]]
         [:button.play-button
-         {:on-click #(toggle-audio-action spy-key)}
-         ;;:class (if (> -1 (.indexOf (:active @state) spy-key)) "" "")}
+         {:on-click #(toggle-audio-action spy-key)
+          :class (if (get-in @state [:players spy-key]) "active" "inactive")}
          [:img {:src "/images/sound_on.svg"}]]]
        [:div.info-box ; --- right side
         [:div.venue-info
