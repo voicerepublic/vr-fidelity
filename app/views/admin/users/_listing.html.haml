@@ -11,7 +11,7 @@
         = talk.starts_at
         - if talk.state == 'live'
           %span.badge.ok= t('.live')
-      %td= talk.venue.name
+      %td= link_to talk.venue.name, [:admin, talk.venue]
       %td= link_to talk.title, public_url(talk)
       %td
         %ul
