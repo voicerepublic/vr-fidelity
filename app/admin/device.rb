@@ -164,7 +164,7 @@ ActiveAdmin.register Device do
   form do |f|
     f.inputs do
       f.input :name
-      f.input :organization
+      f.input :organization, collection: Organization.ordered
       if Settings.target == 'live'
         f.input :target, hint: t('.hint_target'), collection: %w(live staging dev)
         f.input :loglevel, hint: t('.hint_loglevel'), as: :select, collection: LOGLEVELS
