@@ -66,7 +66,7 @@ ActiveAdmin.register Venue do
     div "Use if venue hangs in CONNECTED after last talk."
     div class: 'danger_zone' do
       link_to 'Shutdown Venue',
-              shutdown_venue_admin_venue_path(venue),
+              shutdown_admin_venue_path(venue),
               method: 'put', class: 'danger'
     end
   end
