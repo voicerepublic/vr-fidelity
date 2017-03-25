@@ -217,3 +217,15 @@ border: none;
     .restarting_stream,
     .stopping_stream { background: $vr-red; }
 }
+
+.danger_zone {
+    padding: 10px 20px;
+}
+
+a.danger {
+    background-color: red;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 6px 10px;
+}
