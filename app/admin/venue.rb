@@ -45,42 +45,46 @@ ActiveAdmin.register Venue do
   end
 
   sidebar "Danger Zone", only: :show do
-    div "Use if venue hangs in DISCONNECT_REQUIRED."
     div class: 'danger_zone' do
       link_to 'Fake Disconnect',
               fake_disconnect_admin_venue_path(venue),
-              method: 'put', class: 'danger'
+              method: 'put', class: 'danger',
+              title: "Use if venue hangs in DISCONNECT_REQUIRED."
     end
 
-    div "Use if Input can be listened to but Output is mute. This will
-         terminate the current Streaming Server and immediately launch
-         a new one. Terminating the Streaming Server might cause data
-         loss. Special care is needed if this is used during the last
-         talk!"
     div class: 'danger_zone' do
       link_to 'Replace Streaming Server',
               replace_streaming_server_admin_venue_path(venue),
-              method: 'put', class: 'danger'
+              method: 'put', class: 'danger',
+              title: "Use if Input can be listened to but Output is
+                      mute. This will terminate the current Streaming
+                      Server and immediately launch a new
+                      one. Terminating the Streaming Server might
+                      cause data loss. Special care is needed if this
+                      is used during the last talk!"
     end
 
-    div "Use if venue hangs in CONNECTED after last talk."
     div class: 'danger_zone' do
       link_to 'Shutdown Venue',
               shutdown_admin_venue_path(venue),
-              method: 'put', class: 'danger'
+              method: 'put', class: 'danger',
+              title: "Use if venue hangs in CONNECTED after last talk."
     end
   end
 
   member_action :fake_disconnect, method: 'put' do
     Delayed::Job.enqueue FakeDisconnect.new(id: params[:id]), queue: 'trigger'
+    redirect_to action: :show, notice: "Fake disconnect dispatched."
   end
 
   member_action :replace_streaming_server, method: 'put' do
     Delayed::Job.enqueue ReplaceStreamingServer.new(id: params[:id]), queue: 'trigger'
+    redirect_to action: :show, notice: "Replace Streaming Server dispatched."
   end
 
   member_action :shutdown, method: 'put' do
     Delayed::Job.enqueue ShutdownVenue.new(id: params[:id]), queue: 'trigger'
+    redirect_to action: :show, notice: "Shutdown Venue dispatched."
   end
 
   show do |v|
