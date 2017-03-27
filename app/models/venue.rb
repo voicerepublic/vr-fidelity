@@ -36,6 +36,7 @@ class Venue < ActiveRecord::Base
               no_email )
 
   belongs_to :user
+  belongs_to :device
   has_many :talks
 
   before_create :set_default_state
