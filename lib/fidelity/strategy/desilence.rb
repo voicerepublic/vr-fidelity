@@ -34,7 +34,7 @@ module Fidelity
       end
 
       def desilence_wav_cmd
-        "sox #{input} #{tmpfile} #{silence}; mv #{tmpfile} #{file}"
+        "sox #{input} #{tmpfile} #{silence}; mv #{tmpfile} #{output}"
       end
 
     end
