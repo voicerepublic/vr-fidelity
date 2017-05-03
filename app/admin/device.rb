@@ -28,6 +28,7 @@ ActiveAdmin.register Device do
   permit_params %w( name
                     organization_id
                     target
+                    release
                     loglevel
                     report_interval
                     heartbeat_interval
@@ -40,6 +41,7 @@ ActiveAdmin.register Device do
   filter :subtype
   filter :version
   filter :target
+  filter :release
   filter :loglevel
   filter :pairing_code
   filter :last_heartbeat_at
@@ -58,6 +60,7 @@ ActiveAdmin.register Device do
     column :type
     column :version
     column :target
+    column :release
     column :public_ip_address
     column :identifier
     column :pairing_code
@@ -98,6 +101,7 @@ ActiveAdmin.register Device do
               LOGLEVELS.invert[d.loglevel]
             end
           end
+          row :release
           row :public_ip_address
           row :private_ip_address
           row :mac_address_ethernet
@@ -171,6 +175,7 @@ ActiveAdmin.register Device do
       end
       f.input :report_interval
       f.input :heartbeat_interval
+      f.input :release
       f.input :options
     end
     f.actions
