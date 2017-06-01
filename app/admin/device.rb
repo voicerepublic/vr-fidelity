@@ -150,6 +150,9 @@ ActiveAdmin.register Device do
         #   div id: 'debuglog' do
         #   end
         # end
+        panel "Disk Usage" do
+          number_to_human_size(device.disk_usage)
+        end
         panel 'Status' do
           pre do
             device.device_reports.order('created_at DESC').first.try(:data)

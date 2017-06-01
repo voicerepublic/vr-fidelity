@@ -28,6 +28,10 @@ class Device < ActiveRecord::Base
     (new_recordings + old_recordings).sort_by { |f| -f[:date].to_i }
   end
 
+  def disk_usage
+    recordings.inject(0) { |r, f| r + f[:size] }
+  end
+
   private
 
   def prefix
