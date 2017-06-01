@@ -33,4 +33,8 @@ class Series < ActiveRecord::Base
     self.description_as_html = MARKDOWN.render(description)
   end
 
+  def disk_usage
+    talks.map(&:disk_usage).inject(0) { |r, s| r + s }
+  end
+
 end

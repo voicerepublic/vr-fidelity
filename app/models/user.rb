@@ -70,4 +70,8 @@ class User < ActiveRecord::Base
     end
   end
 
+  def disk_usage
+    talks.map(&:disk_usage).inject(0) { |r, s| r + s }
+  end
+
 end

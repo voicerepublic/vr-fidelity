@@ -120,17 +120,8 @@ ActiveAdmin.register Talk do
     end
   end
 
-  sidebar :social, only: :show, if: ->{ talk.state == 'archived' } do
-    svg id: 'social'
-    script "listeners = #{talk.listeners_for_json.to_json}".html_safe
-    talk.speakers
-    ul do
-      talk.social_links.each do |link|
-        li do
-          link_to link, link
-        end
-      end
-    end
+  sidebar :disk_usage, only: :show do
+    number_to_human_size talk.disk_usage
   end
 
   sidebar 'Tags, TagBundles & Icon', only: :show do
@@ -161,6 +152,19 @@ ActiveAdmin.register Talk do
       div do
         span 'Future Icon: '
         b future
+      end
+    end
+  end
+
+  sidebar :social, only: :show, if: ->{ talk.state == 'archived' } do
+    svg id: 'social'
+    script "listeners = #{talk.listeners_for_json.to_json}".html_safe
+    talk.speakers
+    ul do
+      talk.social_links.each do |link|
+        li do
+          link_to link, link
+        end
       end
     end
   end
@@ -198,12 +202,10 @@ ActiveAdmin.register Talk do
       row :language
       row :related_talk_id
       row 'download' do
-        url = public_url "vrmedia/#{talk.id}-clean.mp3"
-        link_to '&#10148; mp3'.html_safe, url, target: '_blank'
-      end
-      row 'download' do
-        url = public_url "vrmedia/#{talk.id}-clean.ogg"
-        link_to '&#10148; ogg'.html_safe, url, target: '_blank'
+        url_mp3 = public_url("vrmedia/#{talk.id}-clean.mp3")
+        url_ogg = public_url("vrmedia/#{talk.id}-clean.ogg")
+        ([link_to('&#10148; mp3'.html_safe, url_mp3, target: '_blank'),
+          link_to('&#10148; ogg'.html_safe, url_ogg, target: '_blank')] * ' ').html_safe
       end
       row :started_at
       row :format
@@ -218,13 +220,6 @@ ActiveAdmin.register Talk do
         row :recording
         row :recording_override
         row :play_count
-        # row :flv_data do
-        #   number_to_human_size(talk.flv_data[0]) +
-        #     ' (' + talk.flv_data[1] + ')'
-        # end
-        row :disk_usage do
-          number_to_human_size talk.disk_usage
-        end
         row :files do
           if talk.storage.is_a?(Hash)
             table do
@@ -233,9 +228,9 @@ ActiveAdmin.register Talk do
                 meta = talk.storage[key]
                 tr do
                   td meta[:key]
-                  td meta[:size]
-                  td meta[:duration]
-                  td meta[:start] && Time.at(meta[:start].to_i)
+                  td number_to_human_size(meta[:size])
+                  td (meta[:duration] || '-' )
+                  #td meta[:start] && Time.at(meta[:start].to_i)
                 end
               end
             end

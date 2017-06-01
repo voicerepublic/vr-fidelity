@@ -67,6 +67,11 @@ ActiveAdmin.register Series do
     active_admin_comments
   end
 
+  sidebar :disk_usage, only: :show do
+    number_to_human_size(series.disk_usage) +
+      " (for #{series.talks.archived.size} archived talks)"
+  end
+
   form do |f|
     f.inputs do
       f.input :title

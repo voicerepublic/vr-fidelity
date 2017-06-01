@@ -145,6 +145,11 @@ ActiveAdmin.register User do
     active_admin_comments
   end
 
+  sidebar :disk_usage, only: :show do
+    number_to_human_size(user.disk_usage) +
+      " (for #{user.talks.archived.size} archived talks)"
+  end
+
   form do |f|
     f.inputs do
       f.input :firstname
