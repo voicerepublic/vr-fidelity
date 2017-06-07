@@ -1,3 +1,4 @@
+# coding: utf-8
 ActiveAdmin.register Talk do
 
   menu priority: 13
@@ -112,6 +113,9 @@ ActiveAdmin.register Talk do
     # end
     # column :series
     column :play_count
+    column :slides do |talk|
+      talk.slides_uuid.present? ? '✔'.html_safe : ''
+    end
     column :state do |talk|
       span talk.state, class: 'status_tag '+talk.state
     end
