@@ -84,6 +84,15 @@ ActiveAdmin.register Organization do
         end
       end
     end
+    panel 'Members' do
+      table do
+        tr do
+          th 'Name'
+        end
+        organization.users.each do |user|
+          td link_to(user.name, [:admin, user])
+        end
+      end
+    end
   end
-
 end
