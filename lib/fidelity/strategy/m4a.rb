@@ -6,7 +6,7 @@ module Fidelity
 
       class << self
         def required_executables
-          %w( avconv )
+          %w( ffmpeg )
         end
       end
 
@@ -20,9 +20,9 @@ module Fidelity
       end
 
       def convert_wav_to_m4a_cmd
-        #"avconv -v quiet -y -i #{input} -b:a 128k -ar 44100" +
+        #"ffmpeg -v quiet -y -i #{input} -b:a 128k -ar 44100" +
         #  " -strict experimental #{output}"
-        "avconv -v quiet -y -i #{input} -b:a 64k" +
+        "ffmpeg -v quiet -y -i #{input} -b:a 64k" +
           " -strict experimental #{output}"
       end
 

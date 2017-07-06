@@ -124,4 +124,4 @@ Where...
 
 List durations of flv files, e.g.
 
-    ls -1 app/shared/recordings/t3338* | xargs -n 1 -irpl avconv -i rpl 2>&1 | grep Duration
+    ls -1 app/shared/recordings/t3338* | xargs -n 1 -irpl ffmpeg -i rpl 2>&1 | grep Duration

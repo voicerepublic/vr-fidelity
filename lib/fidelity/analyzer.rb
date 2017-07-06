@@ -54,7 +54,7 @@ module Fidelity
     end
 
     def duration(file)
-      line = %x[ avconv -i #{file} 2>&1 | grep Duration ]
+      line = %x[ ffmpeg -i #{file} 2>&1 | grep Duration ]
       return 0 if line.empty?
       _, h, m, s = line.match(/(\d\d):(\d\d):(\d\d)/).to_a.map { |c| c.to_i }
       (h * 60 + m) * 60 + s

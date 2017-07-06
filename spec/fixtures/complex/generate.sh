@@ -19,9 +19,9 @@ sox -n t1-u2-$TS3.wav synth 2 sine 400-100
 sox -m t1-u1-$TS0.wav "|sox t1-u2-$TS1.wav -p pad 1" "|sox t1-u1-$TS2.wav -p pad 2" "|sox t1-u2-$TS3.wav -p pad 4" 1.wav
 
 # convert fragments to flv
-avconv -y -i t1-u1-$TS0.wav -acodec libspeex -ar 16k -ac 1 t1-u1-$TS0.flv
-avconv -y -i t1-u2-$TS1.wav -acodec libspeex -ar 16k -ac 1 t1-u2-$TS1.flv
-avconv -y -i t1-u1-$TS2.wav -acodec libspeex -ar 16k -ac 1 t1-u1-$TS2.flv
-avconv -y -i t1-u2-$TS3.wav -acodec libspeex -ar 16k -ac 1 t1-u2-$TS3.flv
+ffmpeg -y -i t1-u1-$TS0.wav -acodec libspeex -ar 16k -ac 1 t1-u1-$TS0.flv
+ffmpeg -y -i t1-u2-$TS1.wav -acodec libspeex -ar 16k -ac 1 t1-u2-$TS1.flv
+ffmpeg -y -i t1-u1-$TS2.wav -acodec libspeex -ar 16k -ac 1 t1-u1-$TS2.flv
+ffmpeg -y -i t1-u2-$TS3.wav -acodec libspeex -ar 16k -ac 1 t1-u2-$TS3.flv
 
 

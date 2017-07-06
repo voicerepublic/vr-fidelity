@@ -20,7 +20,7 @@ module Fidelity
       end
 
       def convert_wav_to_mp3_cmd
-        # "avconv -v quiet -y -i #{input} -b:a 64k -strict experimental #{output}"
+        # "ffmpeg -v quiet -y -i #{input} -b:a 64k -strict experimental #{output}"
         "lame --quiet #{input} #{output}"
       end
 
