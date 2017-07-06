@@ -15,8 +15,8 @@ ADD . /fidelity
 
 RUN apt-get -y update \
     && apt-get -y install vorbis-tools sox lame ffmpeg ruby \
-    && (cd fidelity && bundle install) \
     && gem install bundler --no-rdoc --no-ri \
+    && (cd fidelity && bundle install) \
     && gem install auphonic --no-rdoc --no-ri \
     && mkdir /audio
 
