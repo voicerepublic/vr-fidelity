@@ -14,9 +14,10 @@ MAINTAINER phil@voicerepublic.com
 ADD . /fidelity
 
 RUN apt-get -y update \
-    && apt-get -y install vorbis-tools sox lame ffmpeg ruby \
-    && gem install bundler --no-rdoc --no-ri \
-    && (cd fidelity && bundle install) \
+    && apt-get -y install vorbis-tools sox lame ffmpeg ruby git \
+    && gem install bundler --no-rdoc --no-ri
+
+RUN (cd fidelity && bundle install) \
     && gem install auphonic --no-rdoc --no-ri \
     && mkdir /audio
 
