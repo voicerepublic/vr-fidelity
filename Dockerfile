@@ -14,7 +14,7 @@ MAINTAINER phil@voicerepublic.com
 ADD . /fidelity
 
 RUN apt-get -y update \
-    && apt-get -y install libav-tools vorbis-tools sox lame \
+    && apt-get -y install libav-tools vorbis-tools sox lame ffmpeg \
     && (cd fidelity && bundle install) \
     && gem install auphonic \
     && mkdir /audio
