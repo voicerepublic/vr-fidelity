@@ -14,7 +14,7 @@ MAINTAINER phil@voicerepublic.com
 ADD . /fidelity
 
 RUN apt-get -y update \
-    && apt-get -y install vorbis-tools sox libsox-fmt-mp3 lame ffmpeg ruby git wget \
+    && apt-get -y install vorbis-tools sox lame ffmpeg ruby git wget \
     && gem install bundler --no-rdoc --no-ri
 
 RUN (cd fidelity && bundle install) \
