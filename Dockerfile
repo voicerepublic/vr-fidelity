@@ -7,14 +7,14 @@
 #
 #     docker run -v /home/phil/src/vr/fidelity/uat:/audio -i branch14/fidelity:latest /bin/bash
 
-FROM ruby:2.1
+FROM debian:jessie-backports
 
 MAINTAINER phil@voicerepublic.com
 
 ADD . /fidelity
 
 RUN apt-get -y update \
-    && apt-get -y install libav-tools vorbis-tools sox lame ffmpeg \
+    && apt-get -y install libav-tools vorbis-tools sox lame ffmpeg ruby \
     && (cd fidelity && bundle install) \
     && gem install auphonic \
     && mkdir /audio
