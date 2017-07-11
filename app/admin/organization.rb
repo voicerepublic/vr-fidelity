@@ -90,7 +90,7 @@ ActiveAdmin.register Organization do
           th 'Name'
         end
         organization.users.each do |user|
-          td link_to(user.name, [:admin, user])
+          td link_to(user.full_name, [:admin, user])
         end
       end
     end
