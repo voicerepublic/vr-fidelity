@@ -13,7 +13,7 @@ module Fidelity
       # cut silence at the beginning and end & reduce silence in
       # between to 2 seconds if longer
       def silence
-        "silence -l 1 0.2 1% -1 2.0 1% reverse silence 1 0.2 1% reverse"
+        "silence 1 0.2 1% -1 2.0 1% reverse silence 1 0.2 1% reverse"
       end
 
       def input
