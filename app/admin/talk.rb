@@ -206,8 +206,8 @@ ActiveAdmin.register Talk do
       row :language
       row :related_talk_id
       row 'download' do
-        url_mp3 = public_url("vrmedia/#{talk.id}-clean.mp3")
-        url_ogg = public_url("vrmedia/#{talk.id}-clean.ogg")
+        url_mp3 = public_url("vrmedia/#{talk.id}.mp3")
+        url_ogg = public_url("vrmedia/#{talk.id}.ogg")
         ([link_to('&#10148; mp3'.html_safe, url_mp3, target: '_blank'),
           link_to('&#10148; ogg'.html_safe, url_ogg, target: '_blank')] * ' ').html_safe
       end
